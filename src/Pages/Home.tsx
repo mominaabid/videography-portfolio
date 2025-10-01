@@ -1,8 +1,29 @@
 import { useState, useEffect, useRef } from 'react';
+import { motion } from "framer-motion";
 import Header from '../Components/Header';
-import Footer from '../Components/Footer'; 
+import Footer from '../Components/footer'; 
 import Testimonials from '../Components/Testimonials'; 
-import { Play, Award, Film, Calendar, Users, MapPin, ArrowUpRight, HelpCircle } from 'lucide-react';
+import { 
+  Play, 
+  Award, 
+  Film, 
+  Calendar, 
+  Users, 
+  MapPin, 
+  ArrowUpRight, 
+  HelpCircle, 
+  PenTool, 
+  Palette, 
+  Music, 
+  Type, 
+  MessageCircle, 
+  Edit3, 
+  Cpu, 
+  Camera, 
+  Laptop,
+  Workflow, 
+  Wifi 
+} from 'lucide-react';
 
 // Define the shape of the counts state
 interface Counts {
@@ -64,7 +85,6 @@ const Home = () => {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          // Define target values for each stat
           const targetCounts: Counts = {
             yearsExp: 8,
             happyClients: 200,
@@ -72,14 +92,12 @@ const Home = () => {
             citiesCov: 25,
           };
 
-          // Animation duration (in ms)
           const duration = 1000;
-
           const startTime = Date.now();
 
           const interval = setInterval(() => {
             const elapsed = Date.now() - startTime;
-            const progress = Math.min(elapsed / duration, 1); // Normalize to [0,1]
+            const progress = Math.min(elapsed / duration, 1);
 
             setCounts({
               yearsExp: Math.min(Math.floor(targetCounts.yearsExp * progress), targetCounts.yearsExp),
@@ -91,14 +109,14 @@ const Home = () => {
             if (progress >= 1) {
               clearInterval(interval);
             }
-          }, 50); // Update every 50ms for smooth animation
+          }, 50);
 
           if (statsRef.current) {
             observer.unobserve(statsRef.current);
           }
         }
       },
-      { threshold: 0.5 } // Trigger when 50% of the section is visible
+      { threshold: 0.5 }
     );
 
     if (statsRef.current) {
@@ -108,9 +126,9 @@ const Home = () => {
     return () => observer.disconnect();
   }, []);
 
-  // Scroll Animation useEffect for left/right slide-in 
+  // Scroll Animation useEffect
   useEffect(() => {
-    const sections = document.querySelectorAll('.intro-section, .faq-section');
+    const sections = document.querySelectorAll('.intro-section, .faq-section, .skills-section, .tools-section, .cta-section');
     sections.forEach((section) => {
       if (!section) return;
 
@@ -319,6 +337,32 @@ const Home = () => {
           </div>
         </div>
       </section>
+      {/* Skills Section */}
+      <section className="skills-section bg-gray-900 py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto text-center">
+          <h2 className="text-4xl font-bold text-white mb-4">Our Key Skills</h2>
+          <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-12">
+            The foundation of our  work lies in combining creativity with technical expertise.
+          </p>
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              { icon: PenTool, title: "Storytelling", desc: "Transforming ideas into compelling narratives." },
+              { icon: Palette, title: "Color Grading", desc: "Enhancing visuals with cinematic color tones." },
+              { icon: Music, title: "Sound Designing", desc: "Crafting immersive soundscapes for impactful videos." },
+              { icon: Cpu, title: "Basic Motion Graphics", desc: "Adding motion elements to elevate engagement." },
+              { icon: MessageCircle, title: "Good Communication", desc: "Clear collaboration ensures your vision shines." },
+              { icon: Edit3, title: "Script Writing", desc: "Shaping ideas into structured, engaging scripts." },
+            ].map((skill, index) => (
+              <div key={index} className="bg-gray-800/50 p-8 rounded-2xl border border-gray-700 hover:border-purple-500 transition-all group">
+                <skill.icon className="text-purple-400 mb-4 w-12 h-12 mx-auto" />
+                <h3 className="text-2xl font-bold mb-2">{skill.title}</h3>
+                <p className="text-gray-400">{skill.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
 
       {/* Additional Sections */}
       <section className="bg-gray-900 py-20">
@@ -356,6 +400,128 @@ const Home = () => {
           </div>
         </div>
       </section>
+     {/* Process / Tools Section */}
+
+{/* Process / Tools Section */}
+<section className="relative py-20 bg-gray-900">
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="text-center mb-16">
+      <motion.h2
+        initial={{ opacity: 0, y: -30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+        className="text-4xl md:text-5xl font-bold text-white mb-4"
+      >
+        Process &{" "}
+        <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600">
+          Tools
+        </span>
+      </motion.h2>
+      <motion.p
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ duration: 1, delay: 0.2 }}
+        className="text-gray-400 max-w-2xl mx-auto text-lg"
+      >
+        From concept to final cut, we combine creativity with the latest
+        technology to craft unforgettable visual stories.
+      </motion.p>
+    </div>
+
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+      {/* Left - Process */}
+      <motion.div
+        initial={{ opacity: 0, x: -50 }}
+        whileInView={{ opacity: 1, x: 0 }}
+        transition={{ duration: 1 }}
+        className="space-y-8"
+      >
+        {[
+          {
+            icon: <PenTool size={28} />,
+            title: "Creative Planning",
+            desc: "We brainstorm and conceptualize your story with detailed scripts and shot planning.",
+          },
+          {
+            icon: <Camera size={28} />,
+            title: "Filming",
+            desc: "State-of-the-art equipment and cinematic techniques ensure breathtaking visuals.",
+          },
+          {
+            icon: <Edit3 size={28} />,
+            title: "Post Production",
+            desc: "Advanced editing, color grading, and sound design to bring your story to life.",
+          },
+        ].map((step, index) => (
+          <motion.div
+            key={index}
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: index * 0.3 }}
+            className="flex items-start gap-4"
+          >
+            <div className="w-12 h-12 flex items-center justify-center rounded-xl bg-purple-600/20 border border-purple-500/40 text-purple-400">
+              {step.icon}
+            </div>
+            <div>
+              <h3 className="text-xl font-semibold text-white">
+                {step.title}
+              </h3>
+              <p className="text-gray-400">{step.desc}</p>
+            </div>
+          </motion.div>
+        ))}
+      </motion.div>
+
+      {/* Right - Tools */}
+      <motion.div
+        initial={{ opacity: 0, x: 50 }}
+        whileInView={{ opacity: 1, x: 0 }}
+        transition={{ duration: 1 }}
+        className="grid grid-cols-2 gap-8"
+      >
+        {[
+          {
+            icon: <Laptop size={32} className="text-purple-400 mb-3" />,
+            title: "Software",
+            desc: "Adobe Premiere Pro, DaVinci Resolve, After Effects",
+          },
+          {
+            icon: <Camera size={32} className="text-purple-400 mb-3" />,
+            title: "Equipment",
+            desc: "Cinema Cameras, Drones, Gimbals, Lenses",
+          },
+          {
+            icon: <Workflow size={32} className="text-purple-400 mb-3" />,
+            title: "Process",
+            desc: "Agile workflow, storyboarding, collaborative feedback loops",
+          },
+          {
+            icon: <Wifi size={32} className="text-purple-400 mb-3" />,
+            title: "Internet Speed",
+            desc: "High-speed 1 Gbps connection for seamless remote collaboration",
+          },
+        ].map((tool, index) => (
+          <motion.div
+            key={index}
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6, delay: index * 0.2 }}
+            className="p-6 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:border-purple-500/50 transition"
+          >
+            {tool.icon}
+            <h4 className="text-lg font-semibold text-white">{tool.title}</h4>
+            <p className="text-gray-400 text-sm">{tool.desc}</p>
+          </motion.div>
+        ))}
+      </motion.div>
+    </div>
+  </div>
+
+  {/* Gradient bottom overlay for cinematic feel */}
+  <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-gray-900 to-transparent"></div>
+</section>
+
       {/* Testimonials Section */}
       <Testimonials />
       {/* FAQ Section */}
@@ -400,6 +566,48 @@ const Home = () => {
           </div>
         </div>
       </section>
+{/* ✅ CTA Section */}
+<section className="relative py-20 bg-gray-900 overflow-hidden">
+  {/* Gradient Overlay */}
+  <div className="absolute inset-0 bg-gradient-to-r from-purple-600/30 via-pink-600/20 to-purple-900/30"></div>
+
+  <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <motion.h2
+      initial={{ opacity: 0, y: -30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8 }}
+      className="text-4xl md:text-5xl font-bold text-white mb-6"
+    >
+      Ready to{" "}
+      <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600">
+        Start Your Project?
+      </span>
+    </motion.h2>
+
+    <motion.p
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      transition={{ duration: 1, delay: 0.2 }}
+      className="text-gray-300 text-lg md:text-xl mb-10"
+    >
+      Let’s collaborate and bring your vision to life with cinematic excellence.
+    </motion.p>
+
+    <motion.a
+      initial={{ opacity: 0, scale: 0.9 }}
+      whileInView={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.6, delay: 0.4 }}
+      href="/contact"
+      className="inline-block px-10 py-4 text-lg font-semibold rounded-xl bg-white/10 border border-purple-400/50 backdrop-blur-sm 
+      text-white hover:bg-white/20 hover:border-purple-400/80 transition-all duration-300 shadow-lg hover:shadow-purple-500/40"
+    >
+      Contact Me
+    </motion.a>
+  </div>
+
+  {/* Bottom cinematic fade */}
+  <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-gray-900 to-transparent"></div>
+</section>
       <Footer /> 
     </div>
   );

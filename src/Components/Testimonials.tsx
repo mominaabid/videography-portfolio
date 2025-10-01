@@ -84,7 +84,7 @@ const Testimonials = () => {
     setCurrentIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
   };
 
-  const goToSlide = (index) => {
+  const goToSlide = (index:any) => {
     setCurrentIndex(index);
   };
 
