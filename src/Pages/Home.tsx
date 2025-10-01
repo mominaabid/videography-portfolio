@@ -1,11 +1,30 @@
-import  { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Header from '../Components/Header';
-import { Play, Award, Film } from 'lucide-react';
+import Footer from '../Components/Footer'; 
+import Testimonials from '../Components/Testimonials'; 
+import { Play, Award, Film, Calendar, Users, MapPin, ArrowUpRight, HelpCircle } from 'lucide-react';
+
+// Define the shape of the counts state
+interface Counts {
+  yearsExp: number;
+  happyClients: number;
+  awardsWon: number;
+  citiesCov: number;
+}
 
 const Home = () => {
   const [typewriterText, setTypewriterText] = useState('');
   const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
+  
+  // State for counting animation with explicit type
+  const [counts, setCounts] = useState<Counts>({
+    yearsExp: 0,
+    happyClients: 0,
+    awardsWon: 0,
+    citiesCov: 0,
+  });
+  const statsRef = useRef<HTMLDivElement>(null); // Type the ref as HTMLDivElement
 
   const phrases = [
     'Cinematic Excellence',
@@ -15,6 +34,7 @@ const Home = () => {
     'Artistic Narratives'
   ];
 
+  // Typewriter effect 
   useEffect(() => {
     const currentPhrase = phrases[currentPhraseIndex];
     const typingSpeed = isDeleting ? 50 : 150;
@@ -39,13 +59,114 @@ const Home = () => {
     return () => clearTimeout(timer);
   }, [typewriterText, isDeleting, currentPhraseIndex]);
 
+  // Counting animation for stats
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          // Define target values for each stat
+          const targetCounts: Counts = {
+            yearsExp: 8,
+            happyClients: 200,
+            awardsWon: 15,
+            citiesCov: 25,
+          };
+
+          // Animation duration (in ms)
+          const duration = 1000;
+
+          const startTime = Date.now();
+
+          const interval = setInterval(() => {
+            const elapsed = Date.now() - startTime;
+            const progress = Math.min(elapsed / duration, 1); // Normalize to [0,1]
+
+            setCounts({
+              yearsExp: Math.min(Math.floor(targetCounts.yearsExp * progress), targetCounts.yearsExp),
+              happyClients: Math.min(Math.floor(targetCounts.happyClients * progress), targetCounts.happyClients),
+              awardsWon: Math.min(Math.floor(targetCounts.awardsWon * progress), targetCounts.awardsWon),
+              citiesCov: Math.min(Math.floor(targetCounts.citiesCov * progress), targetCounts.citiesCov),
+            });
+
+            if (progress >= 1) {
+              clearInterval(interval);
+            }
+          }, 50); // Update every 50ms for smooth animation
+
+          if (statsRef.current) {
+            observer.unobserve(statsRef.current);
+          }
+        }
+      },
+      { threshold: 0.5 } // Trigger when 50% of the section is visible
+    );
+
+    if (statsRef.current) {
+      observer.observe(statsRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
+  // Scroll Animation useEffect for left/right slide-in 
+  useEffect(() => {
+    const sections = document.querySelectorAll('.intro-section, .faq-section');
+    sections.forEach((section) => {
+      if (!section) return;
+
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            entry.target.querySelectorAll('.slide-in-left').forEach((el) => {
+              el.classList.add('animate-slideInLeft');
+            });
+            entry.target.querySelectorAll('.slide-in-right').forEach((el) => {
+              el.classList.add('animate-slideInRight');
+            });
+            observer.unobserve(section);
+          }
+        },
+        { threshold: 0.1 }
+      );
+
+      observer.observe(section);
+
+      return () => observer.disconnect();
+    });
+  }, []);
+
+  // State for FAQ accordion 
+  const [openFAQ, setOpenFAQ] = useState<number | null>(null);
+
+  const faqs = [
+    {
+      question: 'What working hours are manageable for you?',
+      answer: 'I am flexible and available to work during standard business hours (9 AM - 5 PM PKT) or can accommodate evening and weekend schedules based on project needs. Let’s discuss your timeline!'
+    },
+    {
+      question: 'Are you capable of playing with large data?',
+      answer: 'Yes, I have experience handling large datasets and can efficiently process and analyze them to create impactful visual stories. My tools and expertise ensure smooth delivery even with complex projects.'
+    },
+    {
+      question: 'Can you sign an NDA?',
+      answer: 'Absolutely, I am happy to sign a Non-Disclosure Agreement to protect your project’s confidentiality. Please provide the necessary documents, and I’ll review them promptly.'
+    },
+    {
+      question: 'Which subscriptions do you have?',
+      answer: 'I maintain subscriptions to industry-leading tools like Adobe Creative Cloud, Final Cut Pro, and other relevant software to ensure top-quality production. Specific details can be shared upon request.'
+    },
+    {
+      question: 'You are familiar with which platforms?',
+      answer: 'I am well-versed in platforms including Vimeo, YouTube, Instagram, and client-specific CMS systems. I can adapt to your preferred distribution channels seamlessly.'
+    }
+  ];
+
   return (
-    <>
+    <div className="min-h-screen bg-gray-900 text-white">
       <Header />
       
-      {/* Hero Section with Background Video */}
+      {/* Hero Section */}
       <section className="relative h-screen w-full overflow-hidden">
-        {/* Background Video */}
         <video
           autoPlay
           loop
@@ -56,21 +177,13 @@ const Home = () => {
           <source src="/intro.mp4" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
-
-        {/* Dark Overlay */}
         <div className="absolute inset-0 bg-black/50"></div>
-
-        {/* Content */}
         <div className="relative z-10 h-full flex items-center justify-center">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            
-            {/* Award Badge */}
             <div className="inline-flex items-center gap-2 bg-purple-600/20 backdrop-blur-sm border border-purple-500/30 px-4 py-2 rounded-full mb-6">
               <Award className="text-purple-400" size={20} />
               <span className="text-purple-300 text-sm font-medium">Award-Winning Videographer</span>
             </div>
-
-            {/* Main Heading with Typewriter */}
             <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-6">
               <span className="text-white block mb-2">Capturing</span>
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 block min-h-[1.2em]">
@@ -78,13 +191,9 @@ const Home = () => {
                 <span className="animate-pulse">|</span>
               </span>
             </h1>
-
-            {/* Subtitle */}
             <p className="text-gray-300 text-lg md:text-xl lg:text-2xl max-w-3xl mx-auto mb-8 leading-relaxed">
               Transforming your precious moments into breathtaking visual stories through professional cinematography and creative excellence
             </p>
-
-            {/* Call-to-Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <button className="group bg-purple-600 hover:bg-purple-700 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 transform hover:scale-105 flex items-center gap-2 shadow-lg hover:shadow-purple-500/50">
                 <Play size={24} className="group-hover:scale-110 transition-transform" />
@@ -94,8 +203,6 @@ const Home = () => {
                 View Our Work
               </button>
             </div>
-
-            {/* Stats */}
             <div className="grid grid-cols-3 gap-8 mt-16 max-w-3xl mx-auto">
               <div className="text-center">
                 <div className="text-4xl md:text-5xl font-bold text-purple-400 mb-2">500+</div>
@@ -110,8 +217,6 @@ const Home = () => {
                 <div className="text-gray-400 text-sm md:text-base">Awards Won</div>
               </div>
             </div>
-
-            {/* Scroll Indicator */}
             <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">
               <div className="w-6 h-10 border-2 border-white/50 rounded-full flex items-start justify-center p-2">
                 <div className="w-1.5 h-3 bg-white rounded-full animate-pulse"></div>
@@ -120,12 +225,102 @@ const Home = () => {
             </div>
           </div>
         </div>
-
-        {/* Gradient Overlay at Bottom */}
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-gray-900 to-transparent"></div>
       </section>
 
-      {/* Additional Sections (Optional) */}
+      {/* Intro Section */}
+      <section className="intro-section py-16 px-0 bg-gray-900 opacity-0 animate-fadeIn overflow-visible">
+        <div className="max-w-7xl mx-auto w-full bg-gray-900 rounded-3xl shadow-2xl transition-all duration-500 ease-in-out">
+          <div className="flex flex-col md:flex-row gap-0">
+            {/* Left: Image */}
+            <div className="md:w-1/2 pl-8 md:pl-12 pr-0 md:pr-0 p-4 md:p-4 flex flex-col">
+              <div className="relative slide-in-left opacity-0 transition-all duration-700 ease-out -translate-x-10">
+                <img
+                  src="/src/assets/videographerman.jpg"
+                  alt="Alex Rodriguez holding a camera"
+                  className="w-full h-[700px] object-cover border-4 border-gray-700 rounded-2xl shadow-[0_0_20px_rgba(147,112,219,0.8)]"
+                />
+                <div className="bg-gradient-to-r from-gray-800 to-transparent h-2 rounded-b-2xl mt-2"></div>
+              </div>
+              
+              {/* Stats Grid */}
+              <div ref={statsRef} className="grid grid-cols-2 gap-4 pt-4 slide-in-left opacity-0 transition-all duration-700 ease-out -translate-x-10 delay-200">
+                <div className="bg-gradient-to-br from-gray-800 to-gray-950 p-2 rounded-2xl max-w-xs min-h-32 text-center flex flex-col items-center justify-center shadow-[0_4px_8px_rgba(0,0,0,0.5)]">
+                  <Calendar className="text-purple-500" size={24} />
+                  <p className="text-2xl font-bold px-2">{counts.yearsExp}+</p>
+                  <p className="text-base text-gray-400 px-2">Years Exp</p>
+                </div>
+                <div className="bg-gradient-to-br from-gray-800 to-gray-950 p-2 rounded-2xl max-w-xs min-h-32 text-center flex flex-col items-center justify-center shadow-[0_4px_8px_rgba(0,0,0,0.5)]">
+                  <Users className="text-purple-500" size={24} />
+                  <p className="text-2xl font-bold px-2">{counts.happyClients}+</p>
+                  <p className="text-base text-gray-400 px-2">Happy Clients</p>
+                </div>
+                <div className="bg-gradient-to-br from-gray-800 to-gray-950 p-2 rounded-2xl max-w-xs min-h-32 text-center flex flex-col items-center justify-center shadow-[0_4px_8px_rgba(0,0,0,0.5)]">
+                  <Award className="text-purple-500" size={24} />
+                  <p className="text-2xl font-bold px-2">{counts.awardsWon}</p>
+                  <p className="text-base text-gray-400 px-2">Awards Won</p>
+                </div>
+                <div className="bg-gradient-to-br from-gray-800 to-gray-950 p-2 rounded-2xl max-w-xs min-h-32 text-center flex flex-col items-center justify-center shadow-[0_4px_8px_rgba(0,0,0,0.5)]">
+                  <MapPin className="text-purple-500" size={24} />
+                  <p className="text-2xl font-bold px-2">{counts.citiesCov}+</p>
+                  <p className="text-base text-gray-400 px-2">Cities Cov</p>
+                </div>
+              </div>
+            </div>
+            
+            {/* Right: Content */}
+            <div className="md:w-1/2 p-0 md:p-0 slide-in-right opacity-0 transition-all duration-700 ease-out translate-x-10">
+              <h1 className="text-5xl md:text-6xl font-bold pt-10 mb-4 text-white leading-tight">
+                Crafting Visual<br />Stories<br />That{' '}
+                <span className="bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 bg-clip-text text-transparent">Inspire</span>
+              </h1>
+              <div className="w-15 h-1 bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 rounded-full mb-6"></div>
+              <p className="text-gray-300 text-base md:text-lg mb-4">
+                With over 8 years of experience in professional videography, I specialize in capturing the essence of life's most precious moments and transform into cinematic masterpieces.
+              </p>
+              <p className="text-gray-300 text-base md:text-lg mb-4">
+                My journey began with a simple camera and an insatiable curiosity for storytelling. Today, I've had the privilege of working with loving couples, businesses, and creators across the globe, helping them share their unique stories through the power of video.
+              </p>
+              <p className="text-gray-300 text-base md:text-lg mb-4">
+                Every project is an opportunity to push creative boundaries while delivering results that exceed expectations. I believe in the perfect blend of technical expertise and artistic vision.
+              </p>
+              <div className="flex items-center mb-6">
+                <ArrowUpRight className="text-purple-500 mr-2" size={20} />
+                <h2 className="text-xl font-semibold text-purple-400">Recent Achievements</h2>
+              </div>
+              <ul className="space-y-2">
+                <li className="flex items-center text-gray-300 text-base md:text-lg">
+                  <div className="w-2 h-2 bg-purple-500 rounded-full mr-3"></div>
+                  Vimeo Staff Pick Winner 2023
+                </li>
+                <li className="flex items-center text-gray-300 text-base md:text-lg">
+                  <div className="w-2 h-2 bg-purple-500 rounded-full mr-3"></div>
+                  Wedding Wire Couples Choice Award
+                </li>
+                <li className="flex items-center text-gray-300 text-base md:text-lg">
+                  <div className="w-2 h-2 bg-purple-500 rounded-full mr-4"></div>
+                  Featured in Canon Creator Showcase
+                </li>
+                <li className="flex items-center text-gray-300 text-base md:text-lg">
+                  <div className="w-2 h-2 bg-purple-500 rounded-full mr-3"></div>
+                  Real Estate Marketing Award
+                </li>
+              </ul>
+              <div className="flex space-x-4 justify-start pt-4 mt-8">
+                <button className="group bg-purple-600 hover:bg-purple-700 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 transform hover:scale-105 flex items-center gap-2 shadow-lg hover:shadow-purple-500/50">
+                  <Play size={24} className="group-hover:scale-110 transition-transform" />
+                  View My Portfolio
+                </button>
+                <button className="bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 border border-white/30 hover:border-white/50">
+                  Contact Me
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Additional Sections */}
       <section className="bg-gray-900 py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
@@ -136,8 +331,6 @@ const Home = () => {
               Every frame matters. We blend artistry with cutting-edge technology to create videos that resonate and inspire.
             </p>
           </div>
-
-          {/* Service Cards */}
           <div className="grid md:grid-cols-3 gap-8 mt-16">
             <div className="bg-gray-800/50 backdrop-blur-sm p-8 rounded-2xl border border-gray-700 hover:border-purple-500 transition-all duration-300 group">
               <div className="w-16 h-16 bg-purple-600/20 rounded-xl flex items-center justify-center mb-6 group-hover:bg-purple-600/30 transition-colors">
@@ -146,7 +339,6 @@ const Home = () => {
               <h3 className="text-2xl font-bold text-white mb-4">Wedding Films</h3>
               <p className="text-gray-400">Capturing the magic of your special day with cinematic elegance and emotional depth.</p>
             </div>
-
             <div className="bg-gray-800/50 backdrop-blur-sm p-8 rounded-2xl border border-gray-700 hover:border-purple-500 transition-all duration-300 group">
               <div className="w-16 h-16 bg-purple-600/20 rounded-xl flex items-center justify-center mb-6 group-hover:bg-purple-600/30 transition-colors">
                 <Play className="text-purple-400" size={32} />
@@ -154,7 +346,6 @@ const Home = () => {
               <h3 className="text-2xl font-bold text-white mb-4">Commercial Videos</h3>
               <p className="text-gray-400">Elevate your brand with compelling video content that drives engagement and results.</p>
             </div>
-
             <div className="bg-gray-800/50 backdrop-blur-sm p-8 rounded-2xl border border-gray-700 hover:border-purple-500 transition-all duration-300 group">
               <div className="w-16 h-16 bg-purple-600/20 rounded-xl flex items-center justify-center mb-6 group-hover:bg-purple-600/30 transition-colors">
                 <Award className="text-purple-400" size={32} />
@@ -165,7 +356,52 @@ const Home = () => {
           </div>
         </div>
       </section>
-    </>
+      {/* Testimonials Section */}
+      <Testimonials />
+      {/* FAQ Section */}
+      <section className="faq-section pt-10 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-900 via-gray-900 to-[#1A0D2A] opacity-0 animate-fadeIn">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-5xl md:text-6xl font-bold mb-4 text-white text-center leading-tight slide-in-right">
+            Frequently Asked<br />{' '}
+            <span className="bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 bg-clip-text text-transparent">Questions</span>
+          </h2>
+          <p className="text-gray-300 text-lg md:text-xl text-center max-w-3xl mx-auto mb-12 slide-in-right">
+            Get clarity on how I can bring your vision to life with professional videography services.
+          </p>
+          <div className="grid grid-cols-1 gap-6">
+            {faqs.map((faq, index) => (
+              <div
+                key={index}
+                className="bg-gradient-to-br from-gray-800 to-gray-950 p-6 rounded-2xl shadow-[0_4px_8px_rgba(0,0,0,0.5)] hover:border-purple-500 transition-all duration-300 ease-in-out cursor-pointer max-w-[50rem] mx-auto"
+                onClick={() => setOpenFAQ(openFAQ === index ? null : index)}
+              >
+                <h3 className="text-xl font-semibold text-white flex items-center gap-3">
+                  <HelpCircle className="text-purple-400" size={28} />
+                  {faq.question}
+                  <span className={`ml-auto transition-transform duration-300 ${openFAQ === index ? 'rotate-180' : ''}`}>
+                    <ArrowUpRight size={20} className="text-purple-400" />
+                  </span>
+                </h3>
+                <p
+                  className={`text-gray-300 mt-2 overflow-hidden transition-all duration-500 ease-in-out ${
+                    openFAQ === index ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+                  }`}
+                >
+                  {faq.answer}
+                </p>
+              </div>
+            ))}
+          </div>
+          <div className="py-14 px-4 sm:px-4 lg:px-8 max-w-7xl mx-auto">
+            <h2 className="text-4xl md:text-4xl font-bold mb-4 text-white text-center leading-tight slide-in-right">Still have questions?</h2>
+            <p className="text-gray-300 text-lg md:text-xl text-center max-w-3xl mx-auto mb-12 slide-in-right">
+              Don't hesitate to reach out. I'm here to help clarify anything about the process.
+            </p>
+          </div>
+        </div>
+      </section>
+      <Footer /> 
+    </div>
   );
 };
 
