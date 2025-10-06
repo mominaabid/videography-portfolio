@@ -72,3 +72,40 @@
   animation: fadeInLeft 0.6s ease-out forwards;
   opacity: 0;
 }
+
+/* Remove white line and adjust section heights */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow-x: hidden;
+}
+
+.min-h-screen {
+  min-height: 100vh !important;
+}
+
+.intro-section {
+  padding-top: 12vh !important;
+  padding-bottom: 12vh !important;
+}
+
+.skills-section {
+  padding-top: 15vh !important;
+  padding-bottom: 15vh !important;
+}
+
+.faq-section {
+  padding-top: 8vh !important;
+  padding-bottom: 12vh !important;
+}
+
+section.py-20 {
+  padding-top: 10vh !important;
+  padding-bottom: 10vh !important;
+}
+
+section.relative.py-20 {
+  padding-top: 12vh !important;
+  padding-bottom: 12vh !important;
+}

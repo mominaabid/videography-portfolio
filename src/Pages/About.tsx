@@ -124,7 +124,7 @@ const About = () => {
       <Header />
 
       {/* Hero Section */}
-      <section className="relative h-screen overflow-hidden">
+      <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent z-10"></div>
         <video
           autoPlay
@@ -135,19 +135,19 @@ const About = () => {
         >
           <source src="/aboutvideo.mp4" type="video/mp4" />
         </video>
-        <div className="relative z-20 h-full flex items-center max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="relative z-20 flex items-center justify-center min-h-screen max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="max-w-3xl scroll-reveal opacity-0 translate-x-[-100px]">
             <div className="inline-flex items-center gap-2 bg-purple-600/20 backdrop-blur-sm border border-purple-500/30 px-4 py-2 rounded-full mb-6">
               <Sparkles className="text-purple-400" size={20} />
               <span className="text-purple-300 text-sm font-medium">About Me</span>
             </div>
-            <h1 className="text-6xl md:text-7xl font-bold mb-6 leading-tight">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight break-words">
               Turning Moments Into
               <span className="block bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 bg-clip-text text-transparent">
                 Timeless Art
               </span>
             </h1>
-            <p className="text-xl text-gray-300 leading-relaxed mb-8">
+            <p className="text-lg sm:text-xl text-gray-300 leading-relaxed mb-8 break-words">
               I'm Alex Rodriguez, a passionate videographer dedicated to capturing the essence of your story through cinematic excellence and creative vision.
             </p>
             <button className="group bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 transform hover:scale-105 flex items-center gap-2 shadow-lg hover:shadow-purple-500/50">
