@@ -1,22 +1,17 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   Camera,
-  Film,
-  Sparkles,
   Award,
-  Clock,
   Users,
-  Zap,
   Heart,
   Star,
   TrendingUp,
-  Play,
   CheckCircle,
-  ArrowRight,
-  Mic,
   Home,
   User,
   Palette,
+  ArrowRight,
+  Sparkles,
 } from 'lucide-react';
 import Header from '../Components/Header';
 import Footer from '../Components/footer';
@@ -238,9 +233,23 @@ export default function ServicesPage() {
           from { transform: rotate(0deg); }
           to { transform: rotate(360deg); }
         }
+        @keyframes float {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-20px); }
+        }
+        @keyframes shimmer {
+          0% { background-position: -1000px 0; }
+          100% { background-position: 1000px 0; }
+        }
         .animate-fade-in { animation: fade-in 1s ease-out; }
         .animate-slide-up { animation: slide-up 1s ease-out; }
         .animate-spin-slow { animation: spin-slow 8s linear infinite; }
+        .animate-float { animation: float 3s ease-in-out infinite; }
+        .animate-shimmer {
+          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+          background-size: 1000px 100%;
+          animation: shimmer 3s infinite;
+        }
       `,
         }}
       />
@@ -254,7 +263,7 @@ export default function ServicesPage() {
           playsInline
           className="absolute top-0 left-0 w-full h-full object-cover"
         >
-          <source src="/services.mp4" type="video/mp4" />
+          <source src="/Service2.mp4" type="video/mp4" />
         </video>
         <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-black/70 via-black/50 to-black/90" />
 
@@ -514,13 +523,80 @@ export default function ServicesPage() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
 
-          <div className="mt-20 inline-flex items-center gap-3 bg-gradient-to-r from-purple-600 to-pink-600 px-12 py-6 rounded-full hover:scale-105 transition-all duration-300 shadow-2xl shadow-purple-500/50 cursor-pointer">
-            <Heart className="w-6 h-6 animate-pulse" />
-            <span className="text-xl font-semibold">
-              Start Your Project Today
+      {/* CTA Section */}
+      <section className="py-32 px-4 bg-black relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-purple-900/20 via-pink-900/20 to-purple-900/20" />
+        
+        {/* Floating Elements */}
+        <div className="absolute top-20 left-10 w-32 h-32 bg-purple-500/10 rounded-full blur-3xl animate-float" />
+        <div className="absolute bottom-20 right-10 w-40 h-40 bg-pink-500/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '1s' }} />
+        
+        <div className="max-w-5xl mx-auto text-center relative z-10">
+          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600/30 to-pink-600/30 backdrop-blur-sm px-6 py-3 rounded-full border border-purple-500/30 mb-8 animate-fade-in">
+            <Sparkles className="w-5 h-5 text-purple-400" />
+            <span className="text-purple-300 text-sm font-medium">
+              Ready to Get Started?
             </span>
-            <ArrowRight className="w-6 h-6" />
+          </div>
+
+          <h2 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 bg-clip-text text-transparent">
+            Let's Create Something
+            <br />
+            Extraordinary Together
+          </h2>
+          
+          <p className="text-xl md:text-2xl text-gray-300 mb-12 max-w-3xl mx-auto leading-relaxed">
+            Transform your vision into stunning visual stories. Our award-winning team is ready to bring your project to life with cinematic excellence.
+          </p>
+
+          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+            <a
+              href="/Contact"
+              className="group relative px-10 py-5 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full font-bold text-lg overflow-hidden hover:scale-105 transition-all duration-300 shadow-lg shadow-purple-500/50 hover:shadow-purple-500/80"
+            >
+              <span className="relative z-10 flex items-center gap-3">
+                Start Your Project
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </span>
+              <div className="absolute inset-0 bg-gradient-to-r from-pink-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            </a>
+
+            <a
+              href="/Contact"
+              className="px-10 py-5 border-2 border-purple-500/50 rounded-full font-bold text-lg hover:bg-purple-500/10 hover:border-purple-400 transition-all duration-300 backdrop-blur-sm"
+            >
+              Schedule a Consultation
+            </a>
+          </div>
+
+          <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
+            <div className="text-center">
+              <div className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent mb-2">
+                24/7
+              </div>
+              <div className="text-gray-400 text-sm">Support Available</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent mb-2">
+                Fast
+              </div>
+              <div className="text-gray-400 text-sm">Turnaround Time</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent mb-2">
+                100%
+              </div>
+              <div className="text-gray-400 text-sm">Satisfaction Rate</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent mb-2">
+                Free
+              </div>
+              <div className="text-gray-400 text-sm">Initial Consultation</div>
+            </div>
           </div>
         </div>
       </section>
