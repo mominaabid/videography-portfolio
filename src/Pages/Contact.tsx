@@ -180,7 +180,7 @@ export default function ContactPage() {
           playsInline
           className="absolute top-0 left-0 w-full h-full object-cover"
         >
-          <source src="/contact.mp4" type="video/mp4" />
+          <source src="/talking2.mp4" type="video/mp4" />
         </video>
         
         <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-black/70 via-black/50 to-black/90" />
