@@ -1,4 +1,7 @@
+
 import { useState, useEffect, useRef } from 'react';
+import Header from '../Components/Header';
+import Footer from '../Components/footer';
 import { Link } from 'react-router-dom';
 import { 
   Camera,
@@ -122,6 +125,7 @@ const About = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-900 to-black text-white">
+      <Header />
       <style>{`
         @keyframes fadeInUp {
           from {
@@ -485,22 +489,23 @@ const About = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-8 sm:py-12 md:py-16 px-4 sm:px-6 lg:px-8 bg-gray-900">
-        <div className="max-w-4xl mx-auto text-center scroll-reveal opacity-0 translate-y-10">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6 px-2">Let's Create Together</h2>
-          <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-300 mb-6 sm:mb-8 leading-relaxed px-4">
-            Ready to turn your vision into a cinematic masterpiece? Let's start a conversation about your next project.
-          </p>
-          <Link 
-            to="/contact"
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="group bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-5 sm:px-6 md:px-8 py-2.5 sm:py-3 md:py-4 rounded-lg font-semibold text-sm sm:text-base md:text-lg transition-all duration-300 transform hover:scale-105 inline-flex items-center gap-2 sm:gap-3 shadow-lg hover:shadow-purple-500/50"
-          >
-            Get In Touch
-            <ArrowRight size={18} className="sm:w-5 sm:h-5 group-hover:translate-x-2 transition-transform" />
-          </Link>
-        </div>
-      </section>
+      <section className="py-2 pb-8 sm:py-4 md:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 bg-gray-900">
+  <div className="max-w-4xl pb-8 mx-auto text-center scroll-reveal opacity-0 translate-y-10">
+    <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6 px-2">Let's Create Together</h2>
+    <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-300 mb-6 sm:mb-8 md:mb-10 leading-relaxed px-4 max-w-2xl mx-auto">
+      Ready to turn your vision into a cinematic masterpiece? Let's start a conversation about your next project.
+    </p>
+    <Link 
+      to="/contact"
+      onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+      className="group bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-5 sm:px-6 md:px-8 py-2.5 sm:py-3 md:py-4 rounded-lg font-semibold text-sm sm:text-base md:text-lg transition-all duration-300 transform hover:scale-105 inline-flex items-center gap-2 sm:gap-3 shadow-lg hover:shadow-purple-500/50"
+    >
+      Get In Touch
+      <ArrowRight size={18} className="sm:w-5 sm:h-5 group-hover:translate-x-2 transition-transform" />
+    </Link>
+  </div>
+    </section>
+      <Footer/>
     </div>
   );
 };

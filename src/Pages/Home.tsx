@@ -246,97 +246,98 @@ const Home = () => {
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-gray-900 to-transparent"></div>
       </section>
 
-      {/* Intro Section */}
-      <section className="intro-section py-16 px-0 bg-gray-900 opacity-0 animate-fadeIn overflow-visible">
-        <div className="max-w-7xl mx-auto w-full bg-gray-900 rounded-3xl shadow-2xl transition-all duration-500 ease-in-out">
-          <div className="flex flex-col md:flex-row gap-0">
-            {/* Left: Image */}
-            <div className="md:w-1/2 pl-8 md:pl-12 pr-0 md:pr-0 p-4 md:p-4 flex flex-col">
-              <div className="relative slide-in-left opacity-0 transition-all duration-700 ease-out -translate-x-10">
-                <img
-                  src="/src/assets/videographerman.jpg"
-                  alt="Alex Rodriguez holding a camera"
-                  className="w-full h-[700px] object-cover border-4 border-gray-700 rounded-2xl shadow-[0_0_20px_rgba(147,112,219,0.8)]"
-                />
-                <div className="bg-gradient-to-r from-gray-800 to-transparent h-2 rounded-b-2xl mt-2"></div>
-              </div>
-              
-              {/* Stats Grid */}
-              <div ref={statsRef} className="grid grid-cols-2 gap-4 pt-4 slide-in-left opacity-0 transition-all duration-700 ease-out -translate-x-10 delay-200">
-                <div className="bg-gradient-to-br from-gray-800 to-gray-950 p-2 rounded-2xl max-w-xs min-h-32 text-center flex flex-col items-center justify-center shadow-[0_4px_8px_rgba(0,0,0,0.5)]">
-                  <Calendar className="text-purple-500" size={24} />
-                  <p className="text-2xl font-bold px-2">{counts.yearsExp}+</p>
-                  <p className="text-base text-gray-400 px-2">Years Exp</p>
-                </div>
-                <div className="bg-gradient-to-br from-gray-800 to-gray-950 p-2 rounded-2xl max-w-xs min-h-32 text-center flex flex-col items-center justify-center shadow-[0_4px_8px_rgba(0,0,0,0.5)]">
-                  <Users className="text-purple-500" size={24} />
-                  <p className="text-2xl font-bold px-2">{counts.happyClients}+</p>
-                  <p className="text-base text-gray-400 px-2">Happy Clients</p>
-                </div>
-                <div className="bg-gradient-to-br from-gray-800 to-gray-950 p-2 rounded-2xl max-w-xs min-h-32 text-center flex flex-col items-center justify-center shadow-[0_4px_8px_rgba(0,0,0,0.5)]">
-                  <Award className="text-purple-500" size={24} />
-                  <p className="text-2xl font-bold px-2">{counts.awardsWon}</p>
-                  <p className="text-base text-gray-400 px-2">Awards Won</p>
-                </div>
-                <div className="bg-gradient-to-br from-gray-800 to-gray-950 p-2 rounded-2xl max-w-xs min-h-32 text-center flex flex-col items-center justify-center shadow-[0_4px_8px_rgba(0,0,0,0.5)]">
-                  <MapPin className="text-purple-500" size={24} />
-                  <p className="text-2xl font-bold px-2">{counts.citiesCov}+</p>
-                  <p className="text-base text-gray-400 px-2">Cities Cov</p>
-                </div>
-              </div>
-            </div>
-            
-            {/* Right: Content */}
-            <div className="md:w-1/2 p-0 md:p-0 slide-in-right opacity-0 transition-all duration-700 ease-out translate-x-10">
-              <h1 className="text-5xl md:text-6xl font-bold pt-10 mb-4 text-white leading-tight">
-                Crafting Visual<br />Stories<br />That{' '}
-                <span className="bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 bg-clip-text text-transparent">Inspire</span>
-              </h1>
-              <div className="w-15 h-1 bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 rounded-full mb-6"></div>
-              <p className="text-gray-300 text-base md:text-lg mb-4">
-                With over 8 years of experience in professional videography, I specialize in capturing the essence of life's most precious moments and transform into cinematic masterpieces.
-              </p>
-              <p className="text-gray-300 text-base md:text-lg mb-4">
-                My journey began with a simple camera and an insatiable curiosity for storytelling. Today, I've had the privilege of working with loving couples, businesses, and creators across the globe, helping them share their unique stories through the power of video.
-              </p>
-              <p className="text-gray-300 text-base md:text-lg mb-4">
-                Every project is an opportunity to push creative boundaries while delivering results that exceed expectations. I believe in the perfect blend of technical expertise and artistic vision.
-              </p>
-              <div className="flex items-center mb-6">
-                <ArrowUpRight className="text-purple-500 mr-2" size={20} />
-                <h2 className="text-xl font-semibold text-purple-400">Recent Achievements</h2>
-              </div>
-              <ul className="space-y-2">
-                <li className="flex items-center text-gray-300 text-base md:text-lg">
-                  <div className="w-2 h-2 bg-purple-500 rounded-full mr-3"></div>
-                  Vimeo Staff Pick Winner 2023
-                </li>
-                <li className="flex items-center text-gray-300 text-base md:text-lg">
-                  <div className="w-2 h-2 bg-purple-500 rounded-full mr-3"></div>
-                  Wedding Wire Couples Choice Award
-                </li>
-                <li className="flex items-center text-gray-300 text-base md:text-lg">
-                  <div className="w-2 h-2 bg-purple-500 rounded-full mr-4"></div>
-                  Featured in Canon Creator Showcase
-                </li>
-                <li className="flex items-center text-gray-300 text-base md:text-lg">
-                  <div className="w-2 h-2 bg-purple-500 rounded-full mr-3"></div>
-                  Real Estate Marketing Award
-                </li>
-              </ul>
-              <div className="flex space-x-4 justify-start pt-4 mt-8">
-                <button className="group bg-purple-600 hover:bg-purple-700 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 transform hover:scale-105 flex items-center gap-2 shadow-lg hover:shadow-purple-500/50">
-                  <Play size={24} className="group-hover:scale-110 transition-transform" />
-                  View My Portfolio
-                </button>
-                <button className="bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 border border-white/30 hover:border-white/50">
-                  Contact Me
-                </button>
-              </div>
-            </div>
+      <section className="intro-section py-10 px-0 bg-gray-900 opacity-0 animate-fadeIn overflow-visible">
+  <div className="max-w-7xl pb-8 mx-auto w-full bg-gray-900 rounded-3xl shadow-2xl transition-all duration-500 ease-in-out">
+    <div className="flex flex-col lg:flex-row gap-0 items-center justify-center min-h-[600px] lg:min-h-[700px]">
+      {/* Left: Image */}
+      <div className="w-full lg:w-1/2 px-8 lg:px-16 p-4 md:p-4 flex flex-col items-center">
+        <div className="relative slide-in-left opacity-0 transition-all duration-700 ease-out -translate-x-10">
+          <img
+            src="/src/assets/videographerman.jpg"
+            alt="Alex Rodriguez holding a camera"
+            className="w-full h-[600px] object-cover border-4 border-gray-700 rounded-2xl shadow-[0_0_20px_rgba(147,112,219,0.8)]"
+          />
+          <div className="bg-gradient-to-r from-gray-800 to-transparent h-2 rounded-b-2xl mt-2"></div>
+        </div>
+        
+        {/* Stats Grid */}
+        <div ref={statsRef} className="grid grid-cols-2 gap-4 pt-4 slide-in-left opacity-0 transition-all duration-700 ease-out -translate-x-10 delay-200 w-full max-w-[400px]">
+          <div className="bg-gradient-to-br from-gray-800 to-gray-950 p-2 rounded-2xl max-w-xs min-h-32 text-center flex flex-col items-center justify-center shadow-[0_4px_8px_rgba(0,0,0,0.5)]">
+            <Calendar className="text-purple-500" size={24} />
+            <p className="text-2xl font-bold px-2">{counts.yearsExp}+</p>
+            <p className="text-base text-gray-400 px-2">Years Exp</p>
+          </div>
+          <div className="bg-gradient-to-br from-gray-800 to-gray-950 p-2 rounded-2xl max-w-xs min-h-32 text-center flex flex-col items-center justify-center shadow-[0_4px_8px_rgba(0,0,0,0.5)]">
+            <Users className="text-purple-500" size={24} />
+            <p className="text-2xl font-bold px-2">{counts.happyClients}+</p>
+            <p className="text-base text-gray-400 px-2">Happy Clients</p>
+          </div>
+          <div className="bg-gradient-to-br from-gray-800 to-gray-950 p-2 rounded-2xl max-w-xs min-h-32 text-center flex flex-col items-center justify-center shadow-[0_4px_8px_rgba(0,0,0,0.5)]">
+            <Award className="text-purple-500" size={24} />
+            <p className="text-2xl font-bold px-2">{counts.awardsWon}</p>
+            <p className="text-base text-gray-400 px-2">Awards Won</p>
+          </div>
+          <div className="bg-gradient-to-br from-gray-800 to-gray-950 p-2 rounded-2xl max-w-xs min-h-32 text-center flex flex-col items-center justify-center shadow-[0_4px_8px_rgba(0,0,0,0.5)]">
+            <MapPin className="text-purple-500" size={24} />
+            <p className="text-2xl font-bold px-2">{counts.citiesCov}+</p>
+            <p className="text-base text-gray-400 px-2">Cities Cov</p>
           </div>
         </div>
-      </section>
+      </div>
+      
+      {/* Right: Content */}
+      <div className="w-full lg:w-1/2 px-8 lg:px-16 p-4 md:p-4 flex items-center justify-center">
+        <div className="max-w-[550px]">
+          <h1 className="text-5xl md:text-6xl font-bold pt-10 mb-4 text-white leading-tight">
+            Crafting Visual<br />Stories<br />That{' '}
+            <span className="bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 bg-clip-text text-transparent">Inspire</span>
+          </h1>
+          <div className="w-15 h-1 bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 rounded-full mb-6"></div>
+          <p className="text-gray-300 text-base md:text-lg mb-4">
+            With over 8 years of experience in professional videography, I specialize in capturing the essence of life's most precious moments and transform into cinematic masterpieces.
+          </p>
+          <p className="text-gray-300 text-base md:text-lg mb-4">
+            My journey began with a simple camera and an insatiable curiosity for storytelling. Today, I've had the privilege of working with loving couples, businesses, and creators across the globe, helping them share their unique stories through the power of video.
+          </p>
+          <p className="text-gray-300 text-base md:text-lg mb-4">
+            Every project is an opportunity to push creative boundaries while delivering results that exceed expectations. I believe in the perfect blend of technical expertise and artistic vision.
+          </p>
+          <div className="flex items-center mb-6">
+            <ArrowUpRight className="text-purple-500 mr-2" size={20} />
+            <h2 className="text-xl font-semibold text-purple-400">Recent Achievements</h2>
+          </div>
+          <ul className="space-y-2">
+            <li className="flex items-center text-gray-300 text-base md:text-lg">
+              <div className="w-2 h-2 bg-purple-500 rounded-full mr-3"></div>
+              Vimeo Staff Pick Winner 2023
+            </li>
+            <li className="flex items-center text-gray-300 text-base md:text-lg">
+              <div className="w-2 h-2 bg-purple-500 rounded-full mr-3"></div>
+              Wedding Wire Couples Choice Award
+            </li>
+            <li className="flex items-center text-gray-300 text-base md:text-lg">
+              <div className="w-2 h-2 bg-purple-500 rounded-full mr-4"></div>
+              Featured in Canon Creator Showcase
+            </li>
+            <li className="flex items-center text-gray-300 text-base md:text-lg">
+              <div className="w-2 h-2 bg-purple-500 rounded-full mr-3"></div>
+              Real Estate Marketing Award
+            </li>
+          </ul>
+          <div className="flex space-x-4 justify-start pt-4 mt-8">
+            <button className="group bg-purple-600 hover:bg-purple-700 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 transform hover:scale-105 flex items-center gap-2 shadow-lg hover:shadow-purple-500/50">
+              <Play size={24} className="group-hover:scale-110 transition-transform" />
+              View My Portfolio
+            </button>
+            <button className="bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 border border-white/30 hover:border-white/50">
+              Contact Me
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
       {/* Skills Section */}
       <section className="skills-section bg-gray-900 py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto text-center">

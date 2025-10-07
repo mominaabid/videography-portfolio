@@ -1,5 +1,4 @@
 import { Instagram, Youtube, Twitter, Linkedin, Send } from 'lucide-react';
-import { Link } from 'react-router-dom'; // Import Link from react-router-dom
 
 const Footer = () => {
   return (
@@ -57,10 +56,13 @@ const Footer = () => {
           <ul className="space-y-3">
             {['Home', 'About', 'Portfolio', 'Contact'].map((link, index) => (
               <li key={link} style={{ animationDelay: `${0.1 + index * 0.05}s` }} className="animate-fadeInLeft">
-                <Link to={link === 'Home' ? '/' : `/${link.toLowerCase()}`} className="text-gray-400 hover:text-purple-400 transition-all duration-300 text-sm inline-block hover:translate-x-2 relative group">
+                <a
+                  href={link === 'Home' ? '/' : `/${link.toLowerCase()}`}
+                  className="text-gray-400 hover:text-purple-400 transition-all duration-300 text-sm inline-block hover:translate-x-2 relative group"
+                >
                   <span className="relative z-10">{link}</span>
                   <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-purple-400 group-hover:w-full transition-all duration-300"></span>
-                </Link>
+                </a>
               </li>
             ))}
           </ul>
@@ -72,10 +74,13 @@ const Footer = () => {
           <ul className="space-y-3">
             {['Wedding Videography', 'Corporate Videos', 'Real Estate Tours', 'Commercial Production', 'Event Coverage', 'Brand Storytelling'].map((service, index) => (
               <li key={service} style={{ animationDelay: `${0.2 + index * 0.05}s` }} className="animate-fadeInLeft">
-                <Link to={`/services/${service.toLowerCase().replace(/ /g, '-')}`} className="text-gray-400 hover:text-purple-400 transition-all duration-300 text-sm inline-block hover:translate-x-2 relative group">
+                <a
+                  href="/services"
+                  className="text-gray-400 hover:text-purple-400 transition-all duration-300 text-sm inline-block hover:translate-x-2 relative group"
+                >
                   <span className="relative z-10">{service}</span>
                   <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-purple-400 group-hover:w-full transition-all duration-300"></span>
-                </Link>
+                </a>
               </li>
             ))}
           </ul>
@@ -105,15 +110,15 @@ const Footer = () => {
       <div className="max-w-7xl mx-auto mt-16 pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-500 animate-fadeInUp" style={{ animationDelay: '0.4s' }}>
         <p className="transition-colors duration-300 hover:text-purple-400">© 2024 Alex Rodriguez. All rights reserved.</p>
         <div className="flex gap-6">
-          <Link to="/privacy-policy" className="hover:text-purple-400 transition-all duration-300 relative group">
+          <a href="/privacy-policy" className="hover:text-purple-400 transition-all duration-300 relative group">
             <span className="relative z-10">Privacy Policy</span>
             <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-purple-400 group-hover:w-full transition-all duration-300"></span>
-          </Link>
-          <Link to="/terms-of-service" className="hover:text-purple-400 transition-all duration-300 relative group">
+          </a>
+          <a href="/terms-of-service" className="hover:text-purple-400 transition-all duration-300 relative group">
             <span className="relative z-10">Terms of Service</span>
             <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-purple-400 group-hover:w-full transition-all duration-300"></span>
-          </Link>
-          <a href="#" className="hover:text-purple-400 transition-all duration-300 relative group" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
+          </a>
+          <a href="#" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="hover:text-purple-400 transition-all duration-300 relative group">
             <span className="relative z-10">Back to Top</span>
             <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-purple-400 group-hover:w-full transition-all duration-300"></span>
           </a>
