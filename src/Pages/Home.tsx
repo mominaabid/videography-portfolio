@@ -257,10 +257,9 @@ const Home = () => {
             alt="Alex Rodriguez holding a camera"
             className="w-full max-w-[90%] h-[600px] object-cover border-4 border-gray-700 rounded-2xl shadow-[0_0_20px_rgba(147,112,219,0.8)] mx-auto"
           />
-          <div className="bg-gradient-to-r from-gray-800 to-transparent h-2 rounded-b-2xl mt-2"></div>
         </div>
         {/* Stats Grid */}
-        <div ref={statsRef} className="grid grid-cols-2 gap-4 pt-4 slide-in-left opacity-0 transition-all duration-700 ease-out md:-translate-x-10 translate-x-0 -translate-x-10 delay-200">
+        <div ref={statsRef} className="grid grid-cols-2 gap-6 pt-8 slide-in-left opacity-0 transition-all duration-700 ease-out md:-translate-x-10 translate-x-0 -translate-x-10 delay-200">
           <div className="bg-gradient-to-br from-gray-800 to-gray-950 p-2 rounded-2xl max-w-xs min-h-32 text-center flex flex-col items-center justify-center shadow-[0_4px_8px_rgba(0,0,0,0.5)]">
             <Calendar className="text-purple-500" size={24} />
             <p className="text-2xl font-bold px-2">{counts.yearsExp}+</p>
