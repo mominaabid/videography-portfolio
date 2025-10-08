@@ -250,18 +250,17 @@ const Home = () => {
   <div className="max-w-7xl pb-8 mx-auto w-full bg-gray-900 rounded-3xl shadow-2xl transition-all duration-500 ease-in-out">
     <div className="flex flex-col md:flex-row gap-0">
       {/* Left: Image */}
-      <div className="md:w-1/2 pl-24 md:pl-32 pr-0 md:pr-0 p-4 md:p-4 flex flex-col">
-        <div className="relative slide-in-left opacity-0 transition-all duration-700 ease-out -translate-x-10">
+      <div className="md:w-1/2 pl-4 sm:pl-8 md:pl-32 pr-0 md:pr-0 p-4 md:p-4 flex flex-col items-center">
+        <div className="relative slide-in-left opacity-0 transition-all duration-700 ease-out md:-translate-x-10 translate-x-0 mx-auto">
           <img
             src="/videographerman.jpg"
             alt="Alex Rodriguez holding a camera"
-            className="w-full h-[600px] object-cover border-4 border-gray-700 rounded-2xl shadow-[0_0_20px_rgba(147,112,219,0.8)]"
+            className="w-full max-w-[90%] h-[600px] object-cover border-4 border-gray-700 rounded-2xl shadow-[0_0_20px_rgba(147,112,219,0.8)] mx-auto"
           />
           <div className="bg-gradient-to-r from-gray-800 to-transparent h-2 rounded-b-2xl mt-2"></div>
         </div>
-        
         {/* Stats Grid */}
-        <div ref={statsRef} className="grid grid-cols-2 gap-4 pt-4 slide-in-left opacity-0 transition-all duration-700 ease-out -translate-x-10 delay-200">
+        <div ref={statsRef} className="grid grid-cols-2 gap-4 pt-4 slide-in-left opacity-0 transition-all duration-700 ease-out md:-translate-x-10 translate-x-0 -translate-x-10 delay-200">
           <div className="bg-gradient-to-br from-gray-800 to-gray-950 p-2 rounded-2xl max-w-xs min-h-32 text-center flex flex-col items-center justify-center shadow-[0_4px_8px_rgba(0,0,0,0.5)]">
             <Calendar className="text-purple-500" size={24} />
             <p className="text-2xl font-bold px-2">{counts.yearsExp}+</p>
