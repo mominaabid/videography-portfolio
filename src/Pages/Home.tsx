@@ -253,7 +253,7 @@ const Home = () => {
       <div className="w-full lg:w-1/2 px-8 lg:px-16 p-4 md:p-4 flex flex-col items-center">
         <div className="relative slide-in-left opacity-0 transition-all duration-700 ease-out -translate-x-10">
           <img
-            src="/src/assets/videographerman.jpg"
+            src="/videographerman.jpg"
             alt="Alex Rodriguez holding a camera"
             className="w-full h-[600px] object-cover border-4 border-gray-700 rounded-2xl shadow-[0_0_20px_rgba(147,112,219,0.8)]"
           />

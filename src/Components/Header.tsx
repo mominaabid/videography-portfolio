@@ -9,9 +9,25 @@ const Header = () => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll as () => void);
+    return () => window.removeEventListener('scroll', handleScroll as () => void);
   }, []);
+
+  useEffect(() => {
+  const handleClickOutside = (event: MouseEvent) => {
+    const target = event.target as HTMLElement;
+    if (isMobileMenuOpen && target.closest('nav') === null) {
+      setIsMobileMenuOpen(false);
+    }
+  };
+
+  if (isMobileMenuOpen) {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }
+}, [isMobileMenuOpen]);
 
   const navItems = [
     { name: 'Home', href: '/' },
@@ -21,7 +37,6 @@ const Header = () => {
     { name: 'Contact', href: '/contact' }
   ];
 
-  // Replace with your WhatsApp number (include country code without + or spaces)
   const whatsappNumber = '1234567890';
   const whatsappMessage = 'Hello! I would like to inquire about your videography services.';
 

@@ -274,7 +274,7 @@ const About = () => {
             <div className="w-full lg:w-5/12 flex justify-center animate-fadeInLeft">
               <div className="w-full max-w-[300px] sm:max-w-[400px] md:max-w-[500px]">
                 <img
-                  src="/src/assets/videographerman.jpg"
+                  src="/videographerman.jpg"
                   alt="Alex Rodriguez with camera"
                   className="w-full h-auto object-cover rounded-2xl sm:rounded-3xl shadow-2xl border-2 sm:border-4 border-purple-500/30 hover:border-purple-500/60 transition-all duration-500 hover:scale-105 transform"
                 />
