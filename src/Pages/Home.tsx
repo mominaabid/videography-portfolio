@@ -15,7 +15,7 @@ import {
   PenTool, 
   Palette, 
   Music, 
-  Type, 
+  
   MessageCircle, 
   Edit3, 
   Cpu, 

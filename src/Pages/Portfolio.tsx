@@ -8,7 +8,7 @@ import {
   MessageCircle, 
   Sparkles,
   Film,
-  Award,
+  
   Eye,
   X,
   ExternalLink,
