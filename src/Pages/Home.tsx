@@ -248,9 +248,9 @@ const Home = () => {
 
       <section className="intro-section py-10 px-0 bg-gray-900 opacity-0 animate-fadeIn overflow-visible">
   <div className="max-w-7xl pb-8 mx-auto w-full bg-gray-900 rounded-3xl shadow-2xl transition-all duration-500 ease-in-out">
-    <div className="flex flex-col lg:flex-row gap-0 items-center justify-center min-h-[600px] lg:min-h-[700px]">
+    <div className="flex flex-col md:flex-row gap-0">
       {/* Left: Image */}
-      <div className="w-full lg:w-1/2 px-8 lg:px-16 p-4 md:p-4 flex flex-col items-center">
+      <div className="md:w-1/2 pl-24 md:pl-32 pr-0 md:pr-0 p-4 md:p-4 flex flex-col">
         <div className="relative slide-in-left opacity-0 transition-all duration-700 ease-out -translate-x-10">
           <img
             src="/videographerman.jpg"
@@ -261,7 +261,7 @@ const Home = () => {
         </div>
         
         {/* Stats Grid */}
-        <div ref={statsRef} className="grid grid-cols-2 gap-4 pt-4 slide-in-left opacity-0 transition-all duration-700 ease-out -translate-x-10 delay-200 w-full max-w-[400px]">
+        <div ref={statsRef} className="grid grid-cols-2 gap-4 pt-4 slide-in-left opacity-0 transition-all duration-700 ease-out -translate-x-10 delay-200">
           <div className="bg-gradient-to-br from-gray-800 to-gray-950 p-2 rounded-2xl max-w-xs min-h-32 text-center flex flex-col items-center justify-center shadow-[0_4px_8px_rgba(0,0,0,0.5)]">
             <Calendar className="text-purple-500" size={24} />
             <p className="text-2xl font-bold px-2">{counts.yearsExp}+</p>
