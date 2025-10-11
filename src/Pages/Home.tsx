@@ -225,84 +225,85 @@ const Home = () => {
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-gray-900 to-transparent"></div>
       </section>
 
-      <section className="intro-section py-10 px-0 bg-gray-900 opacity-0 animate-fadeIn overflow-visible">
-        <div className="max-w-7xl pb-8 mx-auto w-full bg-gray-900 rounded-3xl shadow-2xl transition-all duration-500 ease-in-out">
+      {/*Intro Section */}
+      <section className="intro-section py-6 sm:py-10 px-0 bg-gray-900 opacity-0 animate-fadeIn overflow-visible">
+        <div className="max-w-7xl pb-6 sm:pb-8 mx-auto w-full bg-gray-900 rounded-3xl shadow-2xl transition-all duration-500 ease-in-out">
           <div className="flex flex-col md:flex-row gap-0">
             <div className="md:w-1/2 pl-4 sm:pl-8 md:pl-32 pr-0 md:pr-0 p-4 md:p-4 flex flex-col items-center">
               <div className="relative slide-in-left opacity-0 transition-all duration-700 ease-out md:-translate-x-10 translate-x-0 mx-auto">
                 <img
                   src="/videographerman.jpg"
                   alt="Alex Rodriguez holding a camera"
-                  className="w-full max-w-[90%] h-[600px] object-cover border-4 border-gray-700 rounded-2xl shadow-[0_0_20px_rgba(147,112,219,0.8)] mx-auto"
+                  className="w-full max-w-[90%] h-[300px] sm:h-[400px] md:h-[500px] lg:h-[600px] object-cover border-2 sm:border-4 border-gray-700 rounded-xl sm:rounded-2xl shadow-[0_0_20px_rgba(147,112,219,0.8)] mx-auto"
                 />
               </div>
-              <div ref={statsRef} className="grid grid-cols-2 gap-6 pt-8 slide-in-left opacity-0 transition-all duration-700 ease-out md:-translate-x-10 translate-x-0 -translate-x-10 delay-200">
-                <div className="bg-gradient-to-br from-gray-800 to-gray-950 p-2 rounded-2xl max-w-xs min-h-32 text-center flex flex-col items-center justify-center shadow-[0_4px_8px_rgba(0,0,0,0.5)]">
-                  <Calendar className="text-purple-500" size={24} />
-                  <p className="text-xl sm:text-2xl font-bold px-2">{counts.yearsExp}+</p>
-                  <p className="text-sm sm:text-base text-gray-400 px-2">Years Exp</p>
+              <div ref={statsRef} className="grid grid-cols-2 gap-3 sm:gap-6 pt-6 sm:pt-8 slide-in-left opacity-0 transition-all duration-700 ease-out md:-translate-x-10 translate-x-0 -translate-x-10 delay-200">
+                <div className="bg-gradient-to-br from-gray-800 to-gray-950 p-3 sm:p-4 rounded-xl sm:rounded-2xl max-w-xs min-h-24 sm:min-h-32 text-center flex flex-col items-center justify-center shadow-[0_4px_8px_rgba(0,0,0,0.5)]">
+                  <Calendar className="text-purple-500" size={18} />
+                  <p className="text-lg sm:text-xl md:text-2xl font-bold px-2">{counts.yearsExp}+</p>
+                  <p className="text-xs sm:text-sm text-gray-400 px-2">Years Exp</p>
                 </div>
-                <div className="bg-gradient-to-br from-gray-800 to-gray-950 p-2 rounded-2xl max-w-xs min-h-32 text-center flex flex-col items-center justify-center shadow-[0_4px_8px_rgba(0,0,0,0.5)]">
-                  <Users className="text-purple-500" size={24} />
-                  <p className="text-xl sm:text-2xl font-bold px-2">{counts.happyClients}+</p>
-                  <p className="text-sm sm:text-base text-gray-400 px-2">Happy Clients</p>
+                <div className="bg-gradient-to-br from-gray-800 to-gray-950 p-3 sm:p-4 rounded-xl sm:rounded-2xl max-w-xs min-h-24 sm:min-h-32 text-center flex flex-col items-center justify-center shadow-[0_4px_8px_rgba(0,0,0,0.5)]">
+                  <Users className="text-purple-500" size={18} />
+                  <p className="text-lg sm:text-xl md:text-2xl font-bold px-2">{counts.happyClients}+</p>
+                  <p className="text-xs sm:text-sm text-gray-400 px-2">Happy Clients</p>
                 </div>
-                <div className="bg-gradient-to-br from-gray-800 to-gray-950 p-2 rounded-2xl max-w-xs min-h-32 text-center flex flex-col items-center justify-center shadow-[0_4px_8px_rgba(0,0,0,0.5)]">
-                  <Award className="text-purple-500" size={24} />
-                  <p className="text-xl sm:text-2xl font-bold px-2">{counts.awardsWon}</p>
-                  <p className="text-sm sm:text-base text-gray-400 px-2">Awards Won</p>
+                <div className="bg-gradient-to-br from-gray-800 to-gray-950 p-3 sm:p-4 rounded-xl sm:rounded-2xl max-w-xs min-h-24 sm:min-h-32 text-center flex flex-col items-center justify-center shadow-[0_4px_8px_rgba(0,0,0,0.5)]">
+                  <Award className="text-purple-500" size={18} />
+                  <p className="text-lg sm:text-xl md:text-2xl font-bold px-2">{counts.awardsWon}</p>
+                  <p className="text-xs sm:text-sm text-gray-400 px-2">Awards Won</p>
                 </div>
-                <div className="bg-gradient-to-br from-gray-800 to-gray-950 p-2 rounded-2xl max-w-xs min-h-32 text-center flex flex-col items-center justify-center shadow-[0_4px_8px_rgba(0,0,0,0.5)]">
-                  <MapPin className="text-purple-500" size={24} />
-                  <p className="text-xl sm:text-2xl font-bold px-2">{counts.citiesCov}+</p>
-                  <p className="text-sm sm:text-base text-gray-400 px-2">Cities Cov</p>
+                <div className="bg-gradient-to-br from-gray-800 to-gray-950 p-3 sm:p-4 rounded-xl sm:rounded-2xl max-w-xs min-h-24 sm:min-h-32 text-center flex flex-col items-center justify-center shadow-[0_4px_8px_rgba(0,0,0,0.5)]">
+                  <MapPin className="text-purple-500" size={18} />
+                  <p className="text-lg sm:text-xl md:text-2xl font-bold px-2">{counts.citiesCov}+</p>
+                  <p className="text-xs sm:text-sm text-gray-400 px-2">Cities Cov</p>
                 </div>
               </div>
             </div>
-            <div className="w-full lg:w-1/2 px-8 lg:px-16 p-4 md:p-4 flex items-center justify-center">
-              <div className="max-w-[550px]">
-                <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold pt-10 mb-4 text-white leading-tight">
+            <div className="w-full lg:w-1/2 px-4 sm:px-8 lg:px-16 py-4 md:p-4 flex items-center justify-center">
+              <div className="max-w-[550px] text-center">
+                <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold pt-6 sm:pt-10 mb-3 sm:mb-4 text-white leading-tight">
                   Crafting Visual<br />Stories<br />That{' '}
                   <span className="bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 bg-clip-text text-transparent">Inspire</span>
                 </h1>
-                <div className="w-15 h-1 bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 rounded-full mb-6"></div>
-                <p className="text-gray-300 text-sm sm:text-base md:text-lg mb-4">
+                <div className="w-12 sm:w-15 h-0.5 sm:h-1 bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 rounded-full mb-4 sm:mb-6 mx-auto"></div>
+                <p className="text-gray-300 text-xs sm:text-sm md:text-base lg:text-lg mb-3 sm:mb-4">
                   With over 8 years of experience in professional videography, I specialize in capturing the essence of life's most precious moments and transform into cinematic masterpieces.
                 </p>
-                <p className="text-gray-300 text-sm sm:text-base md:text-lg mb-4">
+                <p className="text-gray-300 text-xs sm:text-sm md:text-base lg:text-lg mb-3 sm:mb-4">
                   My journey began with a simple camera and an insatiable curiosity for storytelling. Today, I've had the privilege of working with loving couples, businesses, and creators across the globe, helping them share their unique stories through the power of video.
                 </p>
-                <p className="text-gray-300 text-sm sm:text-base md:text-lg mb-4">
+                <p className="text-gray-300 text-xs sm:text-sm md:text-base lg:text-lg mb-3 sm:mb-4">
                   Every project is an opportunity to push creative boundaries while delivering results that exceed expectations. I believe in the perfect blend of technical expertise and artistic vision.
                 </p>
-                <div className="flex items-center mb-6">
-                  <ArrowUpRight className="text-purple-500 mr-2" size={20} />
-                  <h2 className="text-lg sm:text-xl font-semibold text-purple-400">Recent Achievements</h2>
+                <div className="flex items-center justify-center mb-4 sm:mb-6">
+                  <ArrowUpRight className="text-purple-500 mr-2" size={16} />
+                  <h2 className="text-sm sm:text-base md:text-lg font-semibold text-purple-400">Recent Achievements</h2>
                 </div>
-                <ul className="space-y-2">
-                  <li className="flex items-center text-gray-300 text-sm sm:text-base md:text-lg">
-                    <div className="w-2 h-2 bg-purple-500 rounded-full mr-3"></div>
+                <ul className="space-y-1.5 sm:space-y-2 inline-block text-left">
+                  <li className="flex items-center text-gray-300 text-xs sm:text-sm md:text-base">
+                    <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-purple-500 rounded-full mr-2 sm:mr-3"></div>
                     Vimeo Staff Pick Winner 2023
                   </li>
-                  <li className="flex items-center text-gray-300 text-sm sm:text-base md:text-lg">
-                    <div className="w-2 h-2 bg-purple-500 rounded-full mr-3"></div>
+                  <li className="flex items-center text-gray-300 text-xs sm:text-sm md:text-base">
+                    <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-purple-500 rounded-full mr-2 sm:mr-3"></div>
                     Wedding Wire Couples Choice Award
                   </li>
-                  <li className="flex items-center text-gray-300 text-sm sm:text-base md:text-lg">
-                    <div className="w-2 h-2 bg-purple-500 rounded-full mr-4"></div>
+                  <li className="flex items-center text-gray-300 text-xs sm:text-sm md:text-base">
+                    <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-purple-500 rounded-full mr-2 sm:mr-3"></div>
                     Featured in Canon Creator Showcase
                   </li>
-                  <li className="flex items-center text-gray-300 text-sm sm:text-base md:text-lg">
-                    <div className="w-2 h-2 bg-purple-500 rounded-full mr-3"></div>
+                  <li className="flex items-center text-gray-300 text-xs sm:text-sm md:text-base">
+                    <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-purple-500 rounded-full mr-2 sm:mr-3"></div>
                     Real Estate Marketing Award
                   </li>
                 </ul>
-                <div className="flex space-x-4 justify-start pt-4 mt-8">
-                  <button className="group bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 sm:px-8 sm:py-4 rounded-lg font-semibold text-base sm:text-lg transition-all duration-300 transform hover:scale-105 flex items-center gap-2 shadow-lg hover:shadow-purple-500/50">
-                    <Play size={20} className="group-hover:scale-110 transition-transform" />
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center pt-4 sm:pt-6 mt-4 sm:mt-8">
+                  <button className="group bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 sm:px-5 sm:py-2.5 rounded-lg font-semibold text-sm sm:text-base transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2 shadow-lg hover:shadow-purple-500/50 w-fit mx-auto sm:mx-0">
+                    <Play size={16} className="group-hover:scale-110 transition-transform" />
                     View My Portfolio
                   </button>
-                  <button className="bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white px-6 py-3 sm:px-8 sm:py-4 rounded-lg font-semibold text-base sm:text-lg transition-all duration-300 border border-white/30 hover:border-white/50">
+                  <button className="bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white px-3 py-2 sm:px-5 sm:py-2.5 rounded-lg font-semibold text-sm sm:text-base transition-all duration-300 border border-white/30 hover:border-white/50 w-fit mx-auto sm:mx-0">
                     Contact Me
                   </button>
                 </div>
@@ -493,47 +494,47 @@ const Home = () => {
       <Testimonials />
 
       {/* FAQ Section */}
-      <section className="faq-section pt-10 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-900 via-gray-900 to-[#1A0D2A] opacity-0 animate-fadeIn">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4 text-white text-center leading-tight slide-in-right">
-            Frequently Asked<br />{' '}
-            <span className="bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 bg-clip-text text-transparent">Questions</span>
-          </h2>
-          <p className="text-gray-300 text-base sm:text-lg md:text-xl text-center max-w-3xl mx-auto mb-12 slide-in-right">
-            Get clarity on how I can bring your vision to life with professional videography services.
+<section className="faq-section pt-6 sm:pt-10 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-900 via-gray-900 to-[#1A0D2A] opacity-0 animate-fadeIn">
+  <div className="max-w-7xl mx-auto">
+    <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 text-white text-center leading-tight slide-in-right">
+      Frequently Asked<br />{' '}
+      <span className="bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 bg-clip-text text-transparent">Questions</span>
+    </h2>
+    <p className="text-gray-300 text-xs sm:text-sm md:text-base lg:text-lg text-center max-w-3xl mx-auto mb-6 sm:mb-8 md:mb-12 slide-in-right">
+      Get clarity on how I can bring your vision to life with professional videography services.
+    </p>
+    <div className="grid grid-cols-1 gap-3 sm:gap-4 md:gap-6">
+      {faqs.map((faq, index) => (
+        <div
+          key={index}
+          className="bg-gradient-to-br from-gray-800 to-gray-950 p-4 sm:p-5 md:p-6 rounded-xl sm:rounded-2xl shadow-[0_4px_8px_rgba(0,0,0,0.5)] hover:border-purple-500 transition-all duration-300 ease-in-out cursor-pointer max-w-[50rem] mx-auto w-full"
+          onClick={() => setOpenFAQ(openFAQ === index ? null : index)}
+        >
+          <h3 className="text-sm sm:text-base md:text-lg lg:text-xl font-semibold text-white flex items-center gap-2 sm:gap-3">
+            <HelpCircle className="text-purple-400 flex-shrink-0" size={20} />
+            <span className="flex-1">{faq.question}</span>
+            <span className={`transition-transform duration-300 flex-shrink-0 ${openFAQ === index ? 'rotate-180' : ''}`}>
+              <ArrowUpRight size={16} className="text-purple-400" />
+            </span>
+          </h3>
+          <p
+            className={`text-gray-300 text-xs sm:text-sm md:text-base mt-2 overflow-hidden transition-all duration-500 ease-in-out ${
+              openFAQ === index ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+            }`}
+          >
+            {faq.answer}
           </p>
-          <div className="grid grid-cols-1 gap-6">
-            {faqs.map((faq, index) => (
-              <div
-                key={index}
-                className="bg-gradient-to-br from-gray-800 to-gray-950 p-6 rounded-2xl shadow-[0_4px_8px_rgba(0,0,0,0.5)] hover:border-purple-500 transition-all duration-300 ease-in-out cursor-pointer max-w-[50rem] mx-auto"
-                onClick={() => setOpenFAQ(openFAQ === index ? null : index)}
-              >
-                <h3 className="text-lg sm:text-xl font-semibold text-white flex items-center gap-3">
-                  <HelpCircle className="text-purple-400" size={28} />
-                  {faq.question}
-                  <span className={`ml-auto transition-transform duration-300 ${openFAQ === index ? 'rotate-180' : ''}`}>
-                    <ArrowUpRight size={20} className="text-purple-400" />
-                  </span>
-                </h3>
-                <p
-                  className={`text-gray-300 mt-2 overflow-hidden transition-all duration-500 ease-in-out ${
-                    openFAQ === index ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
-                  }`}
-                >
-                  {faq.answer}
-                </p>
-              </div>
-            ))}
-          </div>
-          <div className="py-14 px-4 sm:px-4 lg:px-8 max-w-7xl mx-auto">
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-white text-center leading-tight slide-in-right">Still have questions?</h2>
-            <p className="text-gray-300 text-base sm:text-lg md:text-xl text-center max-w-3xl mx-auto mb-12 slide-in-right">
-              Don't hesitate to reach out. I'm here to help clarify anything about the process.
-            </p>
-          </div>
         </div>
-      </section>
+      ))}
+    </div>
+    <div className="py-8 sm:py-10 md:py-14 px-4 sm:px-4 lg:px-8 max-w-7xl mx-auto">
+      <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-3 sm:mb-4 text-white text-center leading-tight slide-in-right">Still have questions?</h2>
+      <p className="text-gray-300 text-xs sm:text-sm md:text-base lg:text-lg text-center max-w-3xl mx-auto mb-6 sm:mb-8 md:mb-12 slide-in-right">
+        Don't hesitate to reach out. I'm here to help clarify anything about the process.
+      </p>
+    </div>
+  </div>
+</section>
 
       {/* CTA Section */}
       <section className="relative py-20 bg-gray-900 overflow-hidden">

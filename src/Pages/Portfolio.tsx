@@ -8,7 +8,6 @@ import {
   MessageCircle, 
   Sparkles,
   Film,
-  
   Eye,
   X,
   ExternalLink,
@@ -239,7 +238,7 @@ const Portfolio = () => {
       <Header />
 
       {/* Hero Slider Section */}
-      <section className="relative h-screen overflow-hidden">
+      <section className="relative h-[70vh] sm:h-[80vh] md:h-screen overflow-hidden">
         {/* Background Images */}
         <div className="absolute inset-0">
           {heroSlides.map((slide, index) => (
@@ -261,36 +260,36 @@ const Portfolio = () => {
 
         {/* Video Player Overlay */}
         <div className="relative z-10 h-full flex items-center justify-center px-4 sm:px-6 lg:px-8">
-          <div className="max-w-7xl w-full grid md:grid-cols-2 gap-12 items-center">
+          <div className="max-w-7xl w-full grid md:grid-cols-2 gap-6 md:gap-12 items-center">
             {/* Left: Content */}
             <div className="text-center md:text-left">
-              <div className="inline-flex items-center gap-2 bg-purple-600/20 backdrop-blur-sm border border-purple-500/30 px-4 py-2 rounded-full mb-6">
-                <Film className="text-purple-400" size={20} />
-                <span className="text-purple-300 text-sm font-medium">Featured Project</span>
+              <div className="inline-flex items-center gap-2 bg-purple-600/20 backdrop-blur-sm border border-purple-500/30 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full mb-4 sm:mb-6">
+                <Film className="text-purple-400" size={16} />
+                <span className="text-purple-300 text-xs sm:text-sm font-medium">Featured Project</span>
               </div>
-              <h1 className="text-5xl md:text-6xl font-bold mb-4 leading-tight">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-3 sm:mb-4 leading-tight">
                 {heroSlides[currentSlide].title}
               </h1>
-              <div className="flex items-center gap-4 mb-6 justify-center md:justify-start">
-                <span className="px-4 py-2 bg-purple-600/30 rounded-full text-sm">
+              <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6 justify-center md:justify-start flex-wrap">
+                <span className="px-3 py-1.5 sm:px-4 sm:py-2 bg-purple-600/30 rounded-full text-xs sm:text-sm">
                   {heroSlides[currentSlide].category}
                 </span>
-                <div className="flex items-center gap-2 text-gray-300">
-                  <Eye size={18} />
+                <div className="flex items-center gap-2 text-gray-300 text-xs sm:text-sm">
+                  <Eye size={16} />
                   <span>{heroSlides[currentSlide].views} views</span>
                 </div>
               </div>
               <button
                 onClick={() => setVideoPopup(heroSlides[currentSlide].video)}
-                className="group bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 transform hover:scale-105 flex items-center gap-2 shadow-lg hover:shadow-purple-500/50 mx-auto md:mx-0"
+                className="group bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-5 py-2.5 sm:px-6 sm:py-3 md:px-8 md:py-4 rounded-lg font-semibold text-sm sm:text-base md:text-lg transition-all duration-300 transform hover:scale-105 flex items-center gap-2 shadow-lg hover:shadow-purple-500/50 mx-auto md:mx-0"
               >
-                <Play size={24} className="group-hover:scale-110 transition-transform" />
+                <Play size={18} className="sm:w-5 sm:h-5 md:w-6 md:h-6 group-hover:scale-110 transition-transform" />
                 Watch Full Video
               </button>
             </div>
 
             {/* Right: Video Preview */}
-            <div className="relative group">
+            <div className="relative group hidden md:block">
               <div className="relative overflow-hidden rounded-2xl border-4 border-purple-500/50 shadow-2xl shadow-purple-500/20">
                 <video
                   src={heroSlides[currentSlide].video}
@@ -304,9 +303,9 @@ const Portfolio = () => {
                 <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   <button
                     onClick={() => setVideoPopup(heroSlides[currentSlide].video)}
-                    className="w-20 h-20 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center transform scale-90 group-hover:scale-100 transition-transform duration-300 shadow-2xl"
+                    className="w-16 h-16 lg:w-20 lg:h-20 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center transform scale-90 group-hover:scale-100 transition-transform duration-300 shadow-2xl"
                   >
-                    <Play size={32} fill="white" />
+                    <Play size={28} fill="white" />
                   </button>
                 </div>
               </div>
@@ -317,61 +316,61 @@ const Portfolio = () => {
         {/* Slider Controls */}
         <button
           onClick={prevSlide}
-          className="absolute left-8 top-1/2 -translate-y-1/2 z-20 w-12 h-12 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center transition-all duration-300"
+          className="absolute left-2 sm:left-4 md:left-8 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center transition-all duration-300"
         >
-          <ChevronLeft size={24} />
+          <ChevronLeft size={20} className="sm:w-6 sm:h-6" />
         </button>
         <button
           onClick={nextSlide}
-          className="absolute right-8 top-1/2 -translate-y-1/2 z-20 w-12 h-12 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center transition-all duration-300"
+          className="absolute right-2 sm:right-4 md:right-8 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center transition-all duration-300"
         >
-          <ChevronRight size={24} />
+          <ChevronRight size={20} className="sm:w-6 sm:h-6" />
         </button>
 
         {/* Slider Dots */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex gap-3">
+        <div className="absolute bottom-4 sm:bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 z-20 flex gap-2 sm:gap-3">
           {heroSlides.map((_, index) => (
             <button
               key={index}
               onClick={() => setCurrentSlide(index)}
               className={`transition-all duration-300 rounded-full ${
                 index === currentSlide
-                  ? 'w-12 h-3 bg-gradient-to-r from-purple-500 to-pink-500'
-                  : 'w-3 h-3 bg-white/30 hover:bg-white/50'
+                  ? 'w-8 sm:w-10 md:w-12 h-2 sm:h-2.5 md:h-3 bg-gradient-to-r from-purple-500 to-pink-500'
+                  : 'w-2 sm:w-2.5 md:w-3 h-2 sm:h-2.5 md:h-3 bg-white/30 hover:bg-white/50'
               }`}
             />
           ))}
         </div>
 
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-gray-900 to-transparent z-10"></div>
+        <div className="absolute bottom-0 left-0 right-0 h-20 sm:h-24 md:h-32 bg-gradient-to-t from-gray-900 to-transparent z-10"></div>
       </section>
 
       {/* Category Filter */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-900">
+      <section className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8 bg-gray-900">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12 fade-in-section opacity-0">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
+          <div className="text-center mb-8 sm:mb-10 md:mb-12 fade-in-section opacity-0">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4">
               Explore Our <span className="bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 bg-clip-text text-transparent">Work</span>
             </h2>
-            <div className="w-24 h-1 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full mx-auto mb-6"></div>
+            <div className="w-16 sm:w-20 md:w-24 h-0.5 sm:h-1 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full mx-auto mb-4 sm:mb-6"></div>
           </div>
 
-          <div className="flex flex-wrap justify-center gap-4 mb-16 fade-in-section opacity-0">
+          <div className="flex flex-wrap justify-center gap-2 sm:gap-3 md:gap-4 mb-10 sm:mb-12 md:mb-16 fade-in-section opacity-0">
             {categories.map((category) => {
               const IconComponent = category.icon;
               return (
                 <button
                   key={category.id}
                   onClick={() => handleCategoryChange(category.id)}
-                  className={`group px-6 py-4 rounded-xl font-semibold text-lg transition-all duration-300 transform hover:scale-105 flex items-center gap-3 ${
+                  className={`group px-3 py-2 sm:px-4 sm:py-3 md:px-6 md:py-4 rounded-lg md:rounded-xl font-semibold text-xs sm:text-sm md:text-base lg:text-lg transition-all duration-300 transform hover:scale-105 flex items-center gap-2 sm:gap-2.5 md:gap-3 ${
                     selectedCategory === category.id
                       ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-500/50'
                       : 'bg-gray-800 text-gray-400 hover:bg-gray-700 hover:border-purple-500/30 border border-gray-700'
                   }`}
                 >
-                  <IconComponent size={24} className="group-hover:rotate-12 transition-transform duration-300" />
+                  <IconComponent size={16} className="sm:w-5 sm:h-5 md:w-6 md:h-6 group-hover:rotate-12 transition-transform duration-300" />
                   <span>{category.name}</span>
-                  <span className={`text-sm px-2 py-1 rounded-full ${
+                  <span className={`text-xs px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full ${
                     selectedCategory === category.id ? 'bg-white/20' : 'bg-gray-700'
                   }`}>
                     {category.count}
@@ -382,14 +381,14 @@ const Portfolio = () => {
           </div>
 
           {/* Projects Grid */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8 mb-8 sm:mb-10 md:mb-12">
             {currentProjects.map((project, index) => (
               <div
                 key={project.id}
                 className="fade-in-section opacity-0 group"
                 style={{ transitionDelay: `${index * 100}ms` }}
               >
-                <div className="relative overflow-hidden rounded-2xl border border-gray-700 hover:border-purple-500 transition-all duration-500 bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm hover:scale-105 transform">
+                <div className="relative overflow-hidden rounded-xl md:rounded-2xl border border-gray-700 hover:border-purple-500 transition-all duration-500 bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm hover:scale-105 transform">
                   <div className="aspect-video overflow-hidden relative">
                     <img
                       src={project.thumbnail}
@@ -400,34 +399,34 @@ const Portfolio = () => {
                     <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                       <button
                         onClick={() => setVideoPopup(project.video)}
-                        className="w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center transform scale-0 group-hover:scale-100 transition-transform duration-300 shadow-2xl"
+                        className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center transform scale-0 group-hover:scale-100 transition-transform duration-300 shadow-2xl"
                       >
-                        <Play size={24} fill="white" />
+                        <Play size={20} fill="white" className="sm:w-6 sm:h-6" />
                       </button>
                     </div>
                   </div>
-                  <div className="p-6">
-                    <h3 className="text-xl font-bold mb-2 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-purple-400 group-hover:to-pink-400 transition-all duration-300">
+                  <div className="p-4 sm:p-5 md:p-6">
+                    <h3 className="text-base sm:text-lg md:text-xl font-bold mb-1.5 sm:mb-2 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-purple-400 group-hover:to-pink-400 transition-all duration-300">
                       {project.title}
                     </h3>
-                    <p className="text-gray-400 mb-4 text-sm">{project.description}</p>
+                    <p className="text-gray-400 mb-3 sm:mb-4 text-xs sm:text-sm">{project.description}</p>
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-4 text-sm">
+                      <div className="flex items-center gap-3 sm:gap-4 text-xs sm:text-sm">
                         <div className="flex items-center gap-1 text-gray-400">
-                          <Eye size={16} />
+                          <Eye size={14} className="sm:w-4 sm:h-4" />
                           <span>{project.views}</span>
                         </div>
                         <div className="flex items-center gap-1 text-gray-400">
-                          <Heart size={16} />
+                          <Heart size={14} className="sm:w-4 sm:h-4" />
                           <span>{project.likes}</span>
                         </div>
                       </div>
                       <button
                         onClick={() => setVideoPopup(project.video)}
-                        className="text-purple-400 hover:text-purple-300 transition-colors flex items-center gap-1 text-sm font-semibold group"
+                        className="text-purple-400 hover:text-purple-300 transition-colors flex items-center gap-1 text-xs sm:text-sm font-semibold group"
                       >
                         Watch
-                        <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                        <ChevronRight size={14} className="sm:w-4 sm:h-4 group-hover:translate-x-1 transition-transform" />
                       </button>
                     </div>
                   </div>
@@ -438,20 +437,20 @@ const Portfolio = () => {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-center gap-2 fade-in-section opacity-0">
+            <div className="flex items-center justify-center gap-1.5 sm:gap-2 fade-in-section opacity-0">
               <button
                 onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                 disabled={currentPage === 1}
-                className="w-10 h-10 rounded-lg bg-gray-800 hover:bg-purple-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
+                className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-lg bg-gray-800 hover:bg-purple-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
               >
-                <ChevronLeft size={20} />
+                <ChevronLeft size={16} className="sm:w-5 sm:h-5" />
               </button>
               
               {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
                 <button
                   key={page}
                   onClick={() => setCurrentPage(page)}
-                  className={`w-10 h-10 rounded-lg font-semibold transition-all duration-300 ${
+                  className={`w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-lg font-semibold text-xs sm:text-sm md:text-base transition-all duration-300 ${
                     currentPage === page
                       ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-500/50'
                       : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
@@ -464,9 +463,9 @@ const Portfolio = () => {
               <button
                 onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                 disabled={currentPage === totalPages}
-                className="w-10 h-10 rounded-lg bg-gray-800 hover:bg-purple-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
+                className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-lg bg-gray-800 hover:bg-purple-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
               >
-                <ChevronRight size={20} />
+                <ChevronRight size={16} className="sm:w-5 sm:h-5" />
               </button>
             </div>
           )}
@@ -474,18 +473,18 @@ const Portfolio = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-[#1A0D2A] to-gray-900">
+      <section className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-[#1A0D2A] to-gray-900">
         <div className="max-w-4xl mx-auto text-center fade-in-section opacity-0">
-          <h2 className="text-5xl font-bold mb-6">Ready to Create Your Masterpiece?</h2>
-          <p className="text-xl text-gray-300 mb-8 leading-relaxed">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-5 md:mb-6">Ready to Create Your Masterpiece?</h2>
+          <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-300 mb-6 sm:mb-7 md:mb-8 leading-relaxed px-4">
             Let's bring your vision to life with cinematic excellence. Contact us today to start your project.
           </p>
           <button
             onClick={handleContactClick}
-            className="group bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-10 py-5 rounded-lg font-semibold text-xl transition-all duration-300 transform hover:scale-105 flex items-center gap-3 shadow-lg hover:shadow-purple-500/50 mx-auto"
+            className="group bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-6 py-3 sm:px-8 sm:py-4 md:px-10 md:py-5 rounded-lg font-semibold text-sm sm:text-base md:text-lg lg:text-xl transition-all duration-300 transform hover:scale-105 flex items-center gap-2 sm:gap-3 shadow-lg hover:shadow-purple-500/50 mx-auto"
           >
             Start Your Project
-            <ExternalLink size={24} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+            <ExternalLink size={18} className="sm:w-5 sm:h-5 md:w-6 md:h-6 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
           </button>
         </div>
       </section>
@@ -497,16 +496,16 @@ const Portfolio = () => {
         <div className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4 animate-fadeInUp">
           <button
             onClick={() => setVideoPopup(null)}
-            className="absolute top-8 right-8 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors group"
+            className="absolute top-4 right-4 sm:top-6 sm:right-6 md:top-8 md:right-8 w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors group"
           >
-            <X size={24} className="group-hover:rotate-90 transition-transform duration-300" />
+            <X size={20} className="sm:w-6 sm:h-6 group-hover:rotate-90 transition-transform duration-300" />
           </button>
           <div className="max-w-5xl w-full">
             <video
               src={videoPopup}
               controls
               autoPlay
-              className="w-full rounded-2xl shadow-2xl"
+              className="w-full rounded-xl sm:rounded-2xl shadow-2xl"
             >
               Your browser does not support the video tag.
             </video>
