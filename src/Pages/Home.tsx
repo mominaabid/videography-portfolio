@@ -225,11 +225,11 @@ const Home = () => {
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-gray-900 to-transparent"></div>
       </section>
 
-     {/*Intro Section */}
-      <section className="intro-section py-0 px-0 bg-gray-900 opacity-0 animate-fadeIn overflow-visible -mt-8 sm:mt-0">
+      {/*Intro Section */}
+      <section className="intro-section py-0 sm:py-12 px-0 bg-gray-900 opacity-0 animate-fadeIn overflow-visible">
         <div className="max-w-7xl pb-6 sm:pb-8 mx-auto w-full bg-gray-900 rounded-3xl shadow-2xl transition-all duration-500 ease-in-out">
           <div className="flex flex-col md:flex-row gap-0">
-            <div className="md:w-1/2 pl-4 sm:pl-8 md:pl-32 pr-0 md:pr-0 p-4 md:p-4 flex flex-col items-center">
+            <div className="md:w-1/2 pl-4 sm:pl-8 md:pl-32 pr-0 md:pr-0 pt-4 sm:pt-6 md:pt-4 pb-4 flex flex-col items-center">
               <div className="relative slide-in-left opacity-0 transition-all duration-700 ease-out md:-translate-x-10 translate-x-0 mx-auto">
                 <img
                   src="/videographerman.jpg"
@@ -237,7 +237,7 @@ const Home = () => {
                   className="w-full max-w-[90%] h-[300px] sm:h-[400px] md:h-[500px] lg:h-[600px] object-cover border-2 sm:border-4 border-gray-700 rounded-xl sm:rounded-2xl shadow-[0_0_20px_rgba(147,112,219,0.8)] mx-auto"
                 />
               </div>
-              <div ref={statsRef} className="grid grid-cols-2 gap-3 sm:gap-6 pt-6 sm:pt-8 slide-in-left opacity-0 transition-all duration-700 ease-out md:-translate-x-10 translate-x-0 -translate-x-10 delay-200">
+              <div ref={statsRef} className="grid grid-cols-2 gap-3 sm:gap-6 pt-6 sm:pt-8 slide-in-left opacity-0 transition-all duration-700 ease-out md:-translate-x-10 translate-x-0 delay-200">
                 <div className="bg-gradient-to-br from-gray-800 to-gray-950 p-3 sm:p-4 rounded-xl sm:rounded-2xl max-w-xs min-h-24 sm:min-h-32 text-center flex flex-col items-center justify-center shadow-[0_4px_8px_rgba(0,0,0,0.5)]">
                   <Calendar className="text-purple-500" size={18} />
                   <p className="text-lg sm:text-xl md:text-2xl font-bold px-2">{counts.yearsExp}+</p>
@@ -260,9 +260,9 @@ const Home = () => {
                 </div>
               </div>
             </div>
-            <div className="w-full lg:w-1/2 px-4 sm:px-8 lg:px-16 py-4 md:p-4 flex items-center justify-center">
+            <div className="w-full lg:w-1/2 px-4 sm:px-8 lg:px-16 py-4 sm:py-6 md:py-4 flex items-center justify-center">
               <div className="max-w-[550px] text-center">
-                <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold pt-6 sm:pt-10 mb-3 sm:mb-4 text-white leading-tight">
+                <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold pt-0 sm:pt-4 mb-3 sm:mb-4 text-white leading-tight">
                   Crafting Visual<br />Stories<br />That{' '}
                   <span className="bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 bg-clip-text text-transparent">Inspire</span>
                 </h1>
