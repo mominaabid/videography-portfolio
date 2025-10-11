@@ -226,7 +226,7 @@ const Home = () => {
       </section>
 
      {/*Intro Section */}
-      <section className="intro-section py-0 px-0 bg-gray-900 opacity-0 animate-fadeIn overflow-visible">
+      <section className="intro-section py-0 px-0 bg-gray-900 opacity-0 animate-fadeIn overflow-visible -mt-8 sm:mt-0">
         <div className="max-w-7xl pb-6 sm:pb-8 mx-auto w-full bg-gray-900 rounded-3xl shadow-2xl transition-all duration-500 ease-in-out">
           <div className="flex flex-col md:flex-row gap-0">
             <div className="md:w-1/2 pl-4 sm:pl-8 md:pl-32 pr-0 md:pr-0 p-4 md:p-4 flex flex-col items-center">
