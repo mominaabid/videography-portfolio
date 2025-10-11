@@ -82,25 +82,25 @@ export default function ContactPage() {
 
   const contactInfo = [
     {
-      icon: <Phone className="w-6 h-6" />,
+      icon: <Phone className="w-4 h-4 sm:w-6 sm:h-6" />,
       title: "Phone",
       info: "+92 300 1234567",
       link: "tel:+923001234567"
     },
     {
-      icon: <Mail className="w-6 h-6" />,
+      icon: <Mail className="w-4 h-4 sm:w-6 sm:h-6" />,
       title: "Email",
       info: "info@alexrodriguez.com",
       link: "mailto:info@alexrodriguez.com"
     },
     {
-      icon: <MapPin className="w-6 h-6" />,
+      icon: <MapPin className="w-4 h-4 sm:w-6 sm:h-6" />,
       title: "Location",
       info: "I-8, Islamabad, Pakistan",
       link: "#map"
     },
     {
-      icon: <Clock className="w-6 h-6" />,
+      icon: <Clock className="w-4 h-4 sm:w-6 sm:h-6" />,
       title: "Working Hours",
       info: "Mon - Sat: 9AM - 8PM",
       link: "#"
@@ -109,22 +109,22 @@ export default function ContactPage() {
 
   const reasons = [
     {
-      icon: <Award className="w-8 h-8" />,
+      icon: <Award className="w-5 h-5 sm:w-8 sm:h-8" />,
       title: "Award Winning",
       description: "15+ industry awards and recognition"
     },
     {
-      icon: <Star className="w-8 h-8" />,
+      icon: <Star className="w-5 h-5 sm:w-8 sm:h-8" />,
       title: "500+ Projects",
       description: "Successfully delivered with excellence"
     },
     {
-      icon: <Heart className="w-8 h-8" />,
+      icon: <Heart className="w-5 h-5 sm:w-8 sm:h-8" />,
       title: "98% Satisfaction",
       description: "Happy clients who return"
     },
     {
-      icon: <Camera className="w-8 h-8" />,
+      icon: <Camera className="w-5 h-5 sm:w-8 sm:h-8" />,
       title: "Premium Quality",
       description: "Cinema-grade equipment & expertise"
     }
@@ -132,15 +132,15 @@ export default function ContactPage() {
 
   return (
     <div className="bg-black text-white min-h-screen overflow-hidden">
-        <Header />
+      <Header />
       <style dangerouslySetInnerHTML={{__html: `
         @keyframes fade-in {
-          from { opacity: 0; transform: translateY(20px); }
+          from { opacity: 0; transform: translateY(10px); }
           to { opacity: 1; transform: translateY(0); }
         }
         
         @keyframes slide-up {
-          from { opacity: 0; transform: translateY(30px); }
+          from { opacity: 0; transform: translateY(15px); }
           to { opacity: 1; transform: translateY(0); }
         }
 
@@ -150,16 +150,16 @@ export default function ContactPage() {
         }
 
         @keyframes pulse-glow {
-          0%, 100% { box-shadow: 0 0 20px rgba(168, 85, 247, 0.4); }
-          50% { box-shadow: 0 0 40px rgba(236, 72, 153, 0.6); }
+          0%, 100% { box-shadow: 0 0 10px rgba(168, 85, 247, 0.4); }
+          50% { box-shadow: 0 0 20px rgba(236, 72, 153, 0.6); }
         }
         
         .animate-fade-in {
-          animation: fade-in 1s ease-out;
+          animation: fade-in 0.8s ease-out;
         }
         
         .animate-slide-up {
-          animation: slide-up 1s ease-out;
+          animation: slide-up 0.8s ease-out;
         }
 
         .animate-spin-slow {
@@ -168,6 +168,11 @@ export default function ContactPage() {
 
         .animate-pulse-glow {
           animation: pulse-glow 2s ease-in-out infinite;
+        }
+
+        @media (max-width: 640px) {
+          .animate-slide-up { transform: translateY(8px); }
+          .animate-fade-in { transform: translateY(4px); }
         }
       `}} />
 
@@ -187,10 +192,10 @@ export default function ContactPage() {
         
         {/* Animated particles */}
         <div className="absolute inset-0">
-          {[...Array(20)].map((_: undefined, i: number) => (
+          {[...Array(15)].map((_: undefined, i: number) => (
             <div
               key={i}
-              className="absolute w-2 h-2 bg-purple-500/30 rounded-full animate-pulse"
+              className="absolute w-1 h-1 sm:w-2 sm:h-2 bg-purple-500/30 rounded-full animate-pulse"
               style={{
                 left: `${Math.random() * 100}%`,
                 top: `${Math.random() * 100}%`,
@@ -201,51 +206,51 @@ export default function ContactPage() {
           ))}
         </div>
         
-        <div className="relative z-10 text-center px-4 max-w-5xl mx-auto">
-          <div className="inline-flex items-center gap-2 bg-purple-600/20 backdrop-blur-sm px-6 py-3 rounded-full border border-purple-500/30 mb-8 animate-fade-in">
-            <MessageSquare className="w-5 h-5 text-purple-400 animate-spin-slow" />
-            <span className="text-purple-300 text-sm font-medium">We're Here to Help</span>
+        <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
+          <div className="inline-flex items-center gap-2 bg-purple-600/20 backdrop-blur-sm px-3 py-1.5 sm:px-6 sm:py-3 rounded-full border border-purple-500/30 mb-4 sm:mb-8 animate-fade-in">
+            <MessageSquare className="w-3 h-3 sm:w-5 sm:h-5 text-purple-400 animate-spin-slow" />
+            <span className="text-purple-300 text-xs sm:text-sm font-medium">We're Here to Help</span>
           </div>
           
-          <h1 className="text-6xl md:text-8xl font-bold mb-6 bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 bg-clip-text text-transparent animate-slide-up">
+          <h1 className="text-3xl sm:text-6xl md:text-8xl font-bold mb-3 sm:mb-6 bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 bg-clip-text text-transparent animate-slide-up">
             Get in Touch
           </h1>
           
-          <div className="h-20 flex items-center justify-center">
-            <p className="text-2xl md:text-3xl text-gray-300 font-light">
+          <div className="h-12 sm:h-20 flex items-center justify-center">
+            <p className="text-base sm:text-2xl md:text-3xl text-gray-300 font-light">
               {typewriterText}
               <span className="animate-pulse">|</span>
             </p>
           </div>
           
-          <p className="mt-6 text-xl text-gray-400 max-w-2xl mx-auto animate-fade-in">
+          <p className="mt-3 sm:mt-6 text-sm sm:text-xl text-gray-400 max-w-md sm:max-w-2xl mx-auto animate-fade-in">
             Have a project in mind? Let's discuss how we can bring your vision to life with our cinematic expertise.
           </p>
         </div>
 
-        <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">
-          <div className="w-6 h-10 border-2 border-white/30 rounded-full flex items-start justify-center p-2">
-            <div className="w-1 h-3 bg-white/50 rounded-full" />
+        <div className="absolute bottom-6 sm:bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">
+          <div className="w-4 h-6 sm:w-6 sm:h-10 border-2 border-white/30 rounded-full flex items-start justify-center p-1 sm:p-2">
+            <div className="w-0.5 h-1.5 sm:w-1 sm:h-3 bg-white/50 rounded-full" />
           </div>
         </div>
       </section>
 
       {/* Contact Info Bar */}
-      <section className="py-12 px-4 bg-gradient-to-r from-purple-900/20 to-pink-900/20 border-y border-purple-500/20">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-4 gap-6">
+      <section className="py-6 sm:py-12 px-4 bg-gradient-to-r from-purple-900/20 to-pink-900/20 border-y border-purple-500/20">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 sm:gap-6">
             {contactInfo.map((item, index: number) => (
               <a
                 key={index}
                 href={item.link}
-                className="flex items-center gap-4 p-4 rounded-xl bg-black/30 backdrop-blur-sm border border-purple-500/20 hover:border-purple-500/50 transition-all duration-300 hover:scale-105 group"
+                className="flex items-center gap-2 sm:gap-4 p-2 sm:p-4 rounded-lg sm:rounded-xl bg-black/30 backdrop-blur-sm border border-purple-500/20 hover:border-purple-500/50 transition-all duration-300 hover:scale-103 sm:hover:scale-105 group"
               >
                 <div className="text-purple-400 group-hover:scale-110 transition-transform duration-300">
                   {item.icon}
                 </div>
                 <div>
-                  <h3 className="text-sm text-gray-400 mb-1">{item.title}</h3>
-                  <p className="text-white font-semibold">{item.info}</p>
+                  <h3 className="text-xs sm:text-sm text-gray-400 mb-1">{item.title}</h3>
+                  <p className="text-white font-semibold text-sm sm:text-base">{item.info}</p>
                 </div>
               </a>
             ))}
@@ -254,25 +259,25 @@ export default function ContactPage() {
       </section>
 
       {/* Map and Contact Form Section */}
-      <section className="py-24 px-4 bg-gradient-to-b from-black to-purple-950/20">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-12" data-animate id="contact-section">
+      <section className="py-8 sm:py-24 px-4 bg-gradient-to-b from-black to-purple-950/20">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-12" data-animate id="contact-section">
             {/* Map */}
-            <div className={`transition-all duration-1000 ${isVisible['contact-section'] ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'}`}>
-              <div className="mb-8">
-                <h2 className="text-4xl md:text-5xl font-bold mb-4">
+            <div className={`transition-all duration-800 ${isVisible['contact-section'] ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'}`}>
+              <div className="mb-4 sm:mb-8">
+                <h2 className="text-2xl sm:text-4xl md:text-5xl font-bold mb-2 sm:mb-4">
                   Visit Our <span className="bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">Studio</span>
                 </h2>
-                <p className="text-gray-400 text-lg">
+                <p className="text-gray-400 text-sm sm:text-lg">
                   Drop by our studio in Islamabad or reach out online. We're always excited to meet new clients and discuss creative projects.
                 </p>
               </div>
 
-              <div className="rounded-2xl overflow-hidden border-2 border-purple-500/20 hover:border-purple-500/50 transition-all duration-300 shadow-2xl shadow-purple-500/20" id="map">
+              <div className="rounded-lg sm:rounded-2xl overflow-hidden border-2 border-purple-500/20 hover:border-purple-500/50 transition-all duration-300 shadow-lg sm:shadow-2xl shadow-purple-500/20" id="map">
                 <iframe 
                   src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d26565.10740840091!2d73.05255576450394!3d33.666529509507775!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x38df9544389abb3f%3A0x8ea6e9c4c6afe851!2sI-8%2C%20Islamabad%2C%20Pakistan!5e0!3m2!1sen!2s!4v1759717562615!5m2!1sen!2s" 
                   width="100%" 
-                  height="500" 
+                  height="300" 
                   style={{ border: 0 }}
                   allowFullScreen
                   loading="lazy" 
@@ -283,20 +288,20 @@ export default function ContactPage() {
             </div>
 
             {/* Contact Form */}
-            <div className={`transition-all duration-1000 delay-200 ${isVisible['contact-section'] ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'}`}>
-              <div className="mb-8">
-                <h2 className="text-4xl md:text-5xl font-bold mb-4">
+            <div className={`transition-all duration-800 delay-200 ${isVisible['contact-section'] ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'}`}>
+              <div className="mb-4 sm:mb-8">
+                <h2 className="text-2xl sm:text-4xl md:text-5xl font-bold mb-2 sm:mb-4">
                   Send Us a <span className="bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">Message</span>
                 </h2>
-                <p className="text-gray-400 text-lg">
+                <p className="text-gray-400 text-sm sm:text-lg">
                   Fill out the form below and we'll get back to you within 24 hours.
                 </p>
               </div>
 
-              <div className="space-y-6">
+              <div className="space-y-3 sm:space-y-6">
                 <div className="group">
-                  <label className="flex items-center gap-2 text-sm font-semibold text-gray-300 mb-2">
-                    <User className="w-4 h-4 text-purple-400" />
+                  <label className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-gray-300 mb-1 sm:mb-2">
+                    <User className="w-3 h-3 sm:w-4 sm:h-4 text-purple-400" />
                     Full Name *
                   </label>
                   <input
@@ -304,14 +309,14 @@ export default function ContactPage() {
                     name="name"
                     value={formData.name}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 bg-black/50 border border-purple-500/20 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all duration-300"
+                    className="w-full px-2 sm:px-4 py-1.5 sm:py-3 bg-black/50 border border-purple-500/20 rounded-lg sm:rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all duration-300"
                     placeholder="John Doe"
                   />
                 </div>
 
                 <div className="group">
-                  <label className="flex items-center gap-2 text-sm font-semibold text-gray-300 mb-2">
-                    <AtSign className="w-4 h-4 text-purple-400" />
+                  <label className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-gray-300 mb-1 sm:mb-2">
+                    <AtSign className="w-3 h-3 sm:w-4 sm:h-4 text-purple-400" />
                     Email Address *
                   </label>
                   <input
@@ -319,14 +324,14 @@ export default function ContactPage() {
                     name="email"
                     value={formData.email}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 bg-black/50 border border-purple-500/20 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all duration-300"
+                    className="w-full px-2 sm:px-4 py-1.5 sm:py-3 bg-black/50 border border-purple-500/20 rounded-lg sm:rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all duration-300"
                     placeholder="john@example.com"
                   />
                 </div>
 
                 <div className="group">
-                  <label className="flex items-center gap-2 text-sm font-semibold text-gray-300 mb-2">
-                    <Phone className="w-4 h-4 text-purple-400" />
+                  <label className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-gray-300 mb-1 sm:mb-2">
+                    <Phone className="w-3 h-3 sm:w-4 sm:h-4 text-purple-400" />
                     WhatsApp Number *
                   </label>
                   <input
@@ -334,14 +339,14 @@ export default function ContactPage() {
                     name="whatsapp"
                     value={formData.whatsapp}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 bg-black/50 border border-purple-500/20 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all duration-300"
+                    className="w-full px-2 sm:px-4 py-1.5 sm:py-3 bg-black/50 border border-purple-500/20 rounded-lg sm:rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all duration-300"
                     placeholder="+92 300 1234567"
                   />
                 </div>
 
                 <div className="group">
-                  <label className="flex items-center gap-2 text-sm font-semibold text-gray-300 mb-2">
-                    <Hash className="w-4 h-4 text-purple-400" />
+                  <label className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-gray-300 mb-1 sm:mb-2">
+                    <Hash className="w-3 h-3 sm:w-4 sm:h-4 text-purple-400" />
                     Subject *
                   </label>
                   <input
@@ -349,37 +354,37 @@ export default function ContactPage() {
                     name="subject"
                     value={formData.subject}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 bg-black/50 border border-purple-500/20 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all duration-300"
+                    className="w-full px-2 sm:px-4 py-1.5 sm:py-3 bg-black/50 border border-purple-500/20 rounded-lg sm:rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all duration-300"
                     placeholder="Wedding Videography Inquiry"
                   />
                 </div>
 
                 <div className="group">
-                  <label className="flex items-center gap-2 text-sm font-semibold text-gray-300 mb-2">
-                    <FileText className="w-4 h-4 text-purple-400" />
+                  <label className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-gray-300 mb-1 sm:mb-2">
+                    <FileText className="w-3 h-3 sm:w-4 sm:h-4 text-purple-400" />
                     Message *
                   </label>
                   <textarea
                     name="message"
                     value={formData.message}
                     onChange={handleInputChange}
-                    rows={5}
-                    className="w-full px-4 py-3 bg-black/50 border border-purple-500/20 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all duration-300 resize-none"
+                    rows={4}
+                    className="w-full px-2 sm:px-4 py-1.5 sm:py-3 bg-black/50 border border-purple-500/20 rounded-lg sm:rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all duration-300 resize-none"
                     placeholder="Tell us about your project..."
                   />
                 </div>
 
                 {isSubmitted ? (
-                  <div className="flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-green-600 to-emerald-600 rounded-full animate-pulse-glow">
-                    <CheckCircle className="w-6 h-6" />
-                    <span className="text-lg font-semibold">Message Sent Successfully!</span>
+                  <div className="flex items-center justify-center gap-2 sm:gap-3 px-4 sm:px-8 py-2 sm:py-4 bg-gradient-to-r from-green-600 to-emerald-600 rounded-full animate-pulse-glow">
+                    <CheckCircle className="w-4 h-4 sm:w-6 sm:h-6" />
+                    <span className="text-sm sm:text-lg font-semibold">Message Sent Successfully!</span>
                   </div>
                 ) : (
                   <button
                     onClick={handleSubmit}
-                    className="w-full flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full font-semibold text-lg hover:scale-105 transition-all duration-300 shadow-lg shadow-purple-500/50 group cursor-pointer"
+                    className="w-full flex items-center justify-center gap-2 sm:gap-3 px-4 sm:px-8 py-2 sm:py-4 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full font-semibold text-sm sm:text-lg hover:scale-103 sm:hover:scale-105 transition-all duration-300 shadow-md sm:shadow-lg shadow-purple-500/50 group cursor-pointer"
                   >
-                    <Send className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                    <Send className="w-3 h-3 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
                     Send Message
                   </button>
                 )}
@@ -390,54 +395,54 @@ export default function ContactPage() {
       </section>
 
       {/* Why Choose Us Section */}
-      <section className="py-24 px-4 bg-black">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16" data-animate id="reasons-title">
-            <h2 className={`text-5xl md:text-6xl font-bold mb-6 transition-all duration-1000 ${isVisible['reasons-title'] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+      <section className="py-8 sm:py-24 px-4 bg-black">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-8 sm:mb-16" data-animate id="reasons-title">
+            <h2 className={`text-3xl sm:text-5xl md:text-6xl font-bold mb-3 sm:mb-6 transition-all duration-800 ${isVisible['reasons-title'] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
               Why <span className="bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">Choose Us</span>
             </h2>
-            <p className={`text-xl text-gray-400 max-w-3xl mx-auto transition-all duration-1000 delay-200 ${isVisible['reasons-title'] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+            <p className={`text-sm sm:text-xl text-gray-400 max-w-xl sm:max-w-3xl mx-auto transition-all duration-800 delay-200 ${isVisible['reasons-title'] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
               We don't just capture moments, we create cinematic experiences that last forever
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8">
             {reasons.map((reason, index: number) => (
               <div
                 key={index}
                 data-animate
                 id={`reason-${index}`}
-                className={`text-center p-8 rounded-2xl bg-gradient-to-br from-purple-900/20 to-pink-900/20 backdrop-blur-sm border border-purple-500/20 hover:border-purple-500/50 transition-all duration-700 hover:scale-105 ${isVisible[`reason-${index}`] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+                className={`text-center p-4 sm:p-8 rounded-lg sm:rounded-2xl bg-gradient-to-br from-purple-900/20 to-pink-900/20 backdrop-blur-sm border border-purple-500/20 hover:border-purple-500/50 transition-all duration-600 hover:scale-103 sm:hover:scale-105 ${isVisible[`reason-${index}`] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
                 style={{ transitionDelay: `${index * 100}ms` }}
               >
-                <div className="flex justify-center mb-6">
-                  <div className="p-4 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white">
+                <div className="flex justify-center mb-3 sm:mb-6">
+                  <div className="p-2 sm:p-4 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white">
                     {reason.icon}
                   </div>
                 </div>
-                <h3 className="text-2xl font-bold mb-3 text-white">{reason.title}</h3>
-                <p className="text-gray-400">{reason.description}</p>
+                <h3 className="text-lg sm:text-2xl font-bold mb-2 sm:mb-3 text-white">{reason.title}</h3>
+                <p className="text-gray-400 text-xs sm:text-base">{reason.description}</p>
               </div>
             ))}
           </div>
 
-          <div className="mt-20 text-center" data-animate id="final-cta">
-            <div className={`transition-all duration-1000 ${isVisible['final-cta'] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-              <p className="text-2xl text-gray-300 mb-8">
+          <div className="mt-8 sm:mt-20 text-center" data-animate id="final-cta">
+            <div className={`transition-all duration-800 ${isVisible['final-cta'] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+              <p className="text-base sm:text-2xl text-gray-300 mb-4 sm:mb-8">
                 Ready to start your project? Let's make it happen!
               </p>
               <a
                 href="#contact-section"
-                className="inline-flex items-center gap-3 bg-gradient-to-r from-purple-600 to-pink-600 px-12 py-6 rounded-full hover:scale-105 transition-all duration-300 shadow-2xl shadow-purple-500/50 cursor-pointer text-xl font-semibold"
+                className="inline-flex items-center gap-2 sm:gap-3 bg-gradient-to-r from-purple-600 to-pink-600 px-6 sm:px-12 py-3 sm:py-6 rounded-full hover:scale-103 sm:hover:scale-105 transition-all duration-300 shadow-lg sm:shadow-2xl shadow-purple-500/50 cursor-pointer text-sm sm:text-xl font-semibold"
               >
-                <Heart className="w-6 h-6 animate-pulse" />
+                <Heart className="w-4 h-4 sm:w-6 sm:h-6 animate-pulse" />
                 Book a Free Consultation
               </a>
             </div>
           </div>
         </div>
       </section>
-        <Footer />
+      <Footer />
     </div>
   );
 }
