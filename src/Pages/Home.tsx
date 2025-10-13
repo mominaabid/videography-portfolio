@@ -229,7 +229,7 @@ const Home = () => {
       <section className="intro-section py-0 sm:py-12 px-0 bg-gray-900 opacity-0 animate-fadeIn overflow-visible">
         <div className="max-w-7xl pb-6 sm:pb-8 mx-auto w-full bg-gray-900 rounded-3xl shadow-2xl transition-all duration-500 ease-in-out">
           <div className="flex flex-col md:flex-row gap-0">
-            <div className="md:w-1/2 pl-4 sm:pl-8 md:pl-32 pr-0 md:pr-0 pt-4 sm:pt-6 md:pt-4 pb-4 flex flex-col items-center">
+            <div className="md:w-1/2 pl-1 sm:pl-8 md:pl-32 pr-0 md:pr-0 pt-4 sm:pt-6 md:pt-4 pb-4 flex flex-col items-center">
               <div className="relative slide-in-left opacity-0 transition-all duration-700 ease-out md:-translate-x-10 translate-x-0 mx-auto">
                 <img
                   src="/videographerman.jpg"
