@@ -1,10 +1,10 @@
-import { useState, useEffect, useRef } from 'react';
-import { 
+import { useState, useEffect, useRef } from "react";
+import {
   Camera,
-  Award, 
-  Heart, 
-  Users, 
-  Briefcase, 
+  Award,
+  Heart,
+  Users,
+  Briefcase,
   Globe,
   CheckCircle,
   PlayCircle,
@@ -14,27 +14,139 @@ import {
   Eye,
   Lightbulb,
   Zap,
-  Target
-} from 'lucide-react';
-import Footer from '../Components/footer';
+  Target,
+} from "lucide-react";
+import Footer from "../Components/footer";
 
-interface CounterState {
-  projects: number;
-  clients: number;
-  awards: number;
-  years: number;
+interface Stat {
+  id: number;
+  name: string;
+  value: number;
+}
+interface CoreValue {
+  id: number;
+  title: string;
+  description: string;
+}
+interface TimelineEvent {
+  id: number;
+  year: string;
+  title: string;
+  description: string;
+}
+interface Skill {
+  id: number;
+  name: string;
+  level: number;
+}
+interface CTA {
+  id: number;
+  title: string;
+  description: string;
+  button_text: string;
+}
+interface TabContent {
+  id: number;
+  tab_name: string;
+  title: string;
+  content: string;
+  image?: string;
+}
+interface Hero {
+  id: number;
+  title: string;
+  subtitle: string;
+  video_url: string;
+  button_text: string;
 }
 
 const About = () => {
-  const [activeTab, setActiveTab] = useState<'story' | 'philosophy' | 'approach'>('story');
-  const [counters, setCounters] = useState<CounterState>({ projects: 0, clients: 0, awards: 0, years: 0 });
+  const [hero, setHero] = useState<Hero | null>(null);
+  const [stats, setStats] = useState<Stat[]>([]);
+  const [coreValues, setCoreValues] = useState<CoreValue[]>([]);
+  const [timeline, setTimeline] = useState<TimelineEvent[]>([]);
+  const [skills, setSkills] = useState<Skill[]>([]);
+  const [cta, setCTA] = useState<CTA | null>(null);
+  const [tabContent, setTabContent] = useState<TabContent[]>([]);
+  const [activeTab, setActiveTab] = useState<"story" | "philosophy" | "approach">("story");
+  const [counters, setCounters] = useState<Record<string, number>>({});
   const statsRef = useRef<HTMLDivElement>(null);
 
+  // Fetch all about page data
+  useEffect(() => {
+    const fetchAll = async () => {
+      try {
+        const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
+
+        const endpoints = {
+          hero: `${BASE_URL}/about/hero/`,
+          stats: `${BASE_URL}/about/stats/`,
+          core: `${BASE_URL}/about/core-values/`,
+          timeline: `${BASE_URL}/about/timeline/`,
+          skills: `${BASE_URL}/about/skills/`,
+          cta: `${BASE_URL}/about/cta/`,
+          tabs: `${BASE_URL}/about/tab-content/`,
+        };
+
+        const [
+          heroRes,
+          statsRes,
+          coreRes,
+          timelineRes,
+          skillsRes,
+          ctaRes,
+          tabsRes,
+        ] = await Promise.all([
+          fetch(endpoints.hero),
+          fetch(endpoints.stats),
+          fetch(endpoints.core),
+          fetch(endpoints.timeline),
+          fetch(endpoints.skills),
+          fetch(endpoints.cta),
+          fetch(endpoints.tabs),
+        ]);
+
+        const [
+          heroJson,
+          statsJson,
+          coreJson,
+          timelineJson,
+          skillsJson,
+          ctaJson,
+          tabsJson,
+        ] = await Promise.all([
+          heroRes.json(),
+          statsRes.json(),
+          coreRes.json(),
+          timelineRes.json(),
+          skillsRes.json(),
+          ctaRes.json(),
+          tabsRes.json(),
+        ]);
+
+        const getResults = (data) =>
+          Array.isArray(data) ? data : data?.results || [];
+
+        setHero(getResults(heroJson)[0] || null);
+        setStats(getResults(statsJson));
+        setCoreValues(getResults(coreJson));
+        setTimeline(getResults(timelineJson));
+        setSkills(getResults(skillsJson));
+        setCTA(getResults(ctaJson)[0] || null);
+        setTabContent(getResults(tabsJson));
+      } catch (err) {
+        console.error("❌ Failed to fetch about page data:", err);
+      }
+    };
+
+    fetchAll();
+  }, []);
+
+  // Animate counters when in view
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
-          const targets = { projects: 500, clients: 200, awards: 25, years: 8 };
+        if (entry.isIntersecting && stats.length > 0) {
           const duration = 2000;
           const startTime = Date.now();
 
@@ -42,13 +154,12 @@ const About = () => {
             const elapsed = Date.now() - startTime;
             const progress = Math.min(elapsed / duration, 1);
 
-            setCounters({
-              projects: Math.floor(targets.projects * progress),
-              clients: Math.floor(targets.clients * progress),
-              awards: Math.floor(targets.awards * progress),
-              years: Math.floor(targets.years * progress)
-            });
+            const updated = stats.reduce((acc, stat) => {
+              acc[stat.name] = Math.floor(stat.value * progress);
+              return acc;
+            }, {} as Record<string, number>);
 
+            setCounters(updated);
             if (progress >= 1) clearInterval(interval);
           }, 30);
         }
@@ -58,446 +169,269 @@ const About = () => {
 
     if (statsRef.current) observer.observe(statsRef.current);
     return () => observer.disconnect();
-  }, []);
+  }, [stats]);
 
+  // Scroll reveal animation
   useEffect(() => {
-    const sections = document.querySelectorAll('.scroll-reveal');
-    
+    const sections = document.querySelectorAll(".scroll-reveal");
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('revealed');
-          }
+          if (entry.isIntersecting) entry.target.classList.add("revealed");
         });
       },
       { threshold: 0.1 }
     );
-
     sections.forEach((section) => observer.observe(section));
     return () => observer.disconnect();
   }, []);
 
-  const values = [
-    {
-      title: "Passion-Driven",
-      description: "Every project is approached with genuine enthusiasm and dedication to excellence."
-    },
-    {
-      title: "Attention to Detail",
-      description: "Meticulous focus on every frame, ensuring nothing is overlooked in the storytelling process."
-    },
-    {
-      title: "Creative Innovation",
-      description: "Constantly pushing boundaries with fresh perspectives and cutting-edge techniques."
-    },
-    {
-      title: "Client-Centered",
-      description: "Your vision guides the creative process, with collaboration at every step."
-    }
-  ];
-
   const valueIcons = [Heart, Eye, Lightbulb, Users];
-
-  const timeline = [
-    { year: "2016", title: "The Beginning", description: "Started freelance videography with a passion for storytelling" },
-    { year: "2018", title: "First Award", description: "Won Best Wedding Film at Regional Film Festival" },
-    { year: "2020", title: "Studio Launch", description: "Established professional studio with state-of-the-art equipment" },
-    { year: "2022", title: "International Recognition", description: "Featured in Vimeo Staff Picks and Canon Creator Showcase" },
-    { year: "2024", title: "Continued Excellence", description: "Serving clients globally with 500+ successful projects" }
-  ];
-
   const timelineIcons = [PlayCircle, Award, Briefcase, Globe, Sparkles];
-
-  const skills = [
-    { name: "Cinematography", level: 95 },
-    { name: "Color Grading", level: 90 },
-    { name: "Storytelling", level: 98 },
-    { name: "Drone Operation", level: 85 },
-    { name: "Audio Design", level: 88 },
-    { name: "Motion Graphics", level: 82 }
-  ];
-
   const skillIcons = [Camera, Sparkles, Film, Zap, Target, Eye];
+
+  const getTab = (name: string) => tabContent.find((t) => t.tab_name === name);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-900 to-black text-white">
-      <style>{`
-        @keyframes fadeInUp {
-          from {
-            opacity: 0;
-            transform: translateY(30px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        @keyframes fadeInLeft {
-          from {
-            opacity: 0;
-            transform: translateX(-30px);
-          }
-          to {
-            opacity: 1;
-            transform: translateX(0);
-          }
-        }
-
-        @keyframes fadeInRight {
-          from {
-            opacity: 0;
-            transform: translateX(30px);
-          }
-          to {
-            opacity: 1;
-            transform: translateX(0);
-          }
-        }
-
-        .animate-fadeInUp {
-          animation: fadeInUp 0.6s ease-out forwards;
-        }
-
-        .animate-fadeInLeft {
-          animation: fadeInLeft 0.6s ease-out forwards;
-        }
-
-        .animate-fadeInRight {
-          animation: fadeInRight 0.6s ease-out forwards;
-        }
-
-        .scroll-reveal {
-          opacity: 0;
-          transform: translateY(50px);
-          transition: opacity 0.5s ease, transform 0.5s ease;
-        }
-
-        .scroll-reveal.revealed {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      `}</style>
-
       {/* Hero Section */}
-      <section className="relative overflow-hidden min-h-[60vh] sm:min-h-[70vh] md:min-h-[80vh] lg:min-h-screen">
-        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent z-10"></div>
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="absolute top-0 left-0 w-full h-full object-cover opacity-50"
-        >
-          <source src="/aboutvideo.mp4" type="video/mp4" />
-        </video>
-        <div className="relative z-20 flex items-center justify-center min-h-[60vh] sm:min-h-[70vh] md:min-h-[80vh] lg:min-h-screen px-4 sm:px-6 lg:px-8 py-12 sm:py-16 md:py-20">
-          <div className="max-w-3xl text-center mx-auto scroll-reveal opacity-0 translate-y-10 w-full">
-            <div className="inline-flex items-center gap-2 bg-purple-600/20 backdrop-blur-sm border border-purple-500/30 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full mb-3 sm:mb-4 md:mb-6">
-              <Sparkles className="text-purple-400" size={14} />
-              <span className="text-purple-300 text-xs sm:text-sm font-medium">About Me</span>
+      {hero && (
+        <section className="relative overflow-hidden min-h-screen">
+          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent z-10"></div>
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="absolute top-0 left-0 w-full h-full object-cover opacity-50"
+          >
+            <source src={hero.video_url} type="video/mp4" />
+          </video>
+          <div className="relative z-20 flex items-center justify-center min-h-screen px-8">
+            <div className="max-w-3xl text-center mx-auto scroll-reveal">
+              <div className="inline-flex items-center gap-2 bg-purple-600/20 backdrop-blur-sm border border-purple-500/30 px-4 py-2 rounded-full mb-6">
+                <Sparkles className="text-purple-400" size={14} />
+                <span className="text-purple-300 font-medium">About Me</span>
+              </div>
+              <h1 className="text-5xl font-bold mb-6 leading-tight">
+                {hero.title.split(" ").slice(0, -2).join(" ")}
+                <span className="block bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 bg-clip-text text-transparent mt-2">
+                  {hero.title.split(" ").slice(-2).join(" ")}
+                </span>
+              </h1>
+              <p className="text-lg text-gray-300 mb-8">{hero.subtitle}</p>
+              <button className="group bg-gradient-to-r from-purple-600 to-pink-600 hover:scale-105 transition-transform px-6 py-3 rounded-lg font-semibold flex items-center gap-2 mx-auto">
+                <PlayCircle size={18} />
+                {hero.button_text}
+              </button>
             </div>
-            <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl font-bold mb-3 sm:mb-4 md:mb-6 leading-tight px-2">
-              Turning Moments Into
-              <span className="block bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 bg-clip-text text-transparent mt-1 sm:mt-2">
-                Timeless Art
-              </span>
-            </h1>
-            <p className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl text-gray-300 leading-relaxed mb-4 sm:mb-6 md:mb-8 px-4">
-              I'm Alex Rodriguez, a passionate videographer dedicated to capturing the essence of your story through cinematic excellence and creative vision.
-            </p>
-            <button className="group bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-4 py-2 sm:px-5 sm:py-2.5 md:px-6 md:py-3 rounded-lg font-semibold text-xs sm:text-sm md:text-base lg:text-lg transition-all duration-300 transform hover:scale-105 inline-flex items-center gap-2 shadow-lg hover:shadow-purple-500/50">
-              <PlayCircle size={16} className="group-hover:scale-110 transition-transform" />
-              Watch My Story
-            </button>
           </div>
-        </div>
-        <div className="absolute bottom-0 left-0 right-0 h-16 sm:h-20 md:h-24 lg:h-32 bg-gradient-to-t from-gray-900 to-transparent z-10"></div>
-      </section>
+          <div className="absolute bottom-0 h-24 bg-gradient-to-t from-gray-900 to-transparent w-full z-10"></div>
+        </section>
+      )}
 
       {/* Stats Section */}
-      <section ref={statsRef} className="py-6 sm:py-8 md:py-12 lg:py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-900 to-[#1A0D2A]">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4 lg:gap-6">
-            {[
-              { icon: Briefcase, value: counters.projects, label: "Projects", suffix: "+" },
-              { icon: Users, value: counters.clients, label: "Happy Clients", suffix: "+" },
-              { icon: Award, value: counters.awards, label: "Awards Won", suffix: "+" },
-              { icon: Globe, value: counters.years, label: "Years Experience", suffix: "+" }
-            ].map((stat, index) => {
-              const IconComponent = stat.icon;
+      {stats.length > 0 && (
+        <section ref={statsRef} className="py-16 px-8 bg-gradient-to-br from-gray-900 to-[#1A0D2A]">
+          <div className="max-w-7xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-6">
+            {stats.map((stat, i) => {
+              const Icon = [Briefcase, Users, Award, Globe][i % 4];
               return (
                 <div
-                  key={index}
-                  className="scroll-reveal opacity-0 translate-y-10 bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm p-3 sm:p-4 md:p-5 lg:p-6 rounded-lg sm:rounded-xl md:rounded-2xl border border-gray-700/50 hover:border-purple-500/50 transition-all duration-500 text-center group hover:scale-105 transform"
-                  style={{ transitionDelay: `${index * 100}ms` }}
+                  key={stat.id}
+                  className="scroll-reveal bg-gray-800/50 p-6 rounded-2xl border border-gray-700/50 text-center hover:scale-105 transition-transform"
                 >
-                  <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 mx-auto bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center mb-2 sm:mb-3 md:mb-4 group-hover:rotate-12 transition-transform duration-500">
-                    <IconComponent size={16} className="sm:w-5 sm:h-5" />
+                  <div className="w-14 h-14 mx-auto bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center mb-4">
+                    <Icon size={22} />
                   </div>
-                  <div className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mb-1">
-                    {stat.value}{stat.suffix}
+                  <div className="text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                    {counters[stat.name] || 0}+
                   </div>
-                  <div className="text-gray-400 font-medium text-xs sm:text-sm md:text-base">{stat.label}</div>
+                  <div className="text-gray-400 mt-2">{stat.name}</div>
                 </div>
               );
             })}
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
-      {/* Tab Section */}
-      <section className="py-6 sm:py-8 md:py-12 lg:py-16 px-4 sm:px-6 lg:px-8 bg-gray-900">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-6 sm:mb-8 md:mb-12">
-            {['story', 'philosophy', 'approach'].map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab as 'story' | 'philosophy' | 'approach')}
-                className={`px-3 py-1.5 sm:px-4 sm:py-2 md:px-5 md:py-2.5 lg:px-6 lg:py-3 rounded-lg font-semibold text-xs sm:text-sm md:text-base lg:text-lg transition-all duration-300 ${
-                  activeTab === tab
-                    ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-500/50 scale-105'
-                    : 'bg-gray-800 text-gray-400 hover:bg-gray-700 hover:scale-105'
-                }`}
-              >
-                {tab.charAt(0).toUpperCase() + tab.slice(1)}
-              </button>
-            ))}
-          </div>
-
-          <div className="flex flex-col lg:flex-row gap-6 sm:gap-8 md:gap-10 lg:gap-12 items-center justify-center">
-            <div className="w-full lg:w-5/12 flex justify-center animate-fadeInLeft">
-              <div className="w-full max-w-[250px] sm:max-w-[300px] md:max-w-[400px] lg:max-w-[500px]">
-                <img
-                  src="/videographerman.jpg"
-                  alt="Alex Rodriguez with camera"
-                  className="w-full h-auto object-cover rounded-xl sm:rounded-2xl md:rounded-3xl shadow-2xl border-2 border-purple-500/30 hover:border-purple-500/60 transition-all duration-500 hover:scale-105 transform"
-                />
-              </div>
+      {/* Tabs Section */}
+      {tabContent.length > 0 && (
+        <section className="py-16 px-8 bg-gray-900">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex justify-center gap-4 mb-12">
+              {["story", "philosophy", "approach"].map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab as any)}
+                  className={`px-6 py-3 rounded-lg font-semibold transition-all duration-300 ${
+                    activeTab === tab
+                      ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white"
+                      : "bg-gray-800 text-gray-400 hover:bg-gray-700"
+                  }`}
+                >
+                  {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                </button>
+              ))}
             </div>
 
-            <div className="w-full lg:w-7/12 flex justify-center">
-              <div className="w-full max-w-[600px] px-2 sm:px-4">
-                {activeTab === 'story' && (
-                  <div className="space-y-3 sm:space-y-4 md:space-y-5 lg:space-y-6 animate-fadeInRight">
-                    <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-center lg:text-left">
-                      My <span className="bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 bg-clip-text text-transparent">Journey</span>
-                    </h2>
-                    <div className="h-0.5 sm:h-1 w-16 sm:w-20 md:w-24 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full mx-auto lg:mx-0"></div>
-                    <p className="text-gray-300 text-xs sm:text-sm md:text-base lg:text-lg leading-relaxed text-center lg:text-left">
-                      My love affair with videography began over 8 years ago with a simple camera and an unquenchable thirst for capturing life's beautiful moments. What started as a hobby quickly evolved into a passionate career.
-                    </p>
-                    <p className="text-gray-300 text-xs sm:text-sm md:text-base lg:text-lg leading-relaxed text-center lg:text-left">
-                      From humble beginnings shooting local events, I've had the privilege of documenting weddings across continents, creating compelling brand stories for Fortune 500 companies, and producing award-winning documentaries.
-                    </p>
-                    <p className="text-gray-300 text-xs sm:text-sm md:text-base lg:text-lg leading-relaxed text-center lg:text-left">
-                      Each project teaches me something new, and every client's story becomes a part of my own journey. This constant growth and evolution is what keeps my passion burning bright.
-                    </p>
-                  </div>
-                )}
-
-                {activeTab === 'philosophy' && (
-                  <div className="space-y-3 sm:space-y-4 md:space-y-5 lg:space-y-6 animate-fadeInRight">
-                    <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-center lg:text-left">
-                      My <span className="bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 bg-clip-text text-transparent">Philosophy</span>
-                    </h2>
-                    <div className="h-0.5 sm:h-1 w-16 sm:w-20 md:w-24 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full mx-auto lg:mx-0"></div>
-                    <p className="text-gray-300 text-xs sm:text-sm md:text-base lg:text-lg leading-relaxed text-center lg:text-left">
-                      I believe that great videography is not just about technical perfection—it's about emotion, authenticity, and connection. Every frame should tell a story, evoke a feeling, and create a lasting memory.
-                    </p>
-                    <p className="text-gray-300 text-xs sm:text-sm md:text-base lg:text-lg leading-relaxed text-center lg:text-left">
-                      My approach is rooted in three principles: Listen deeply to understand your vision, capture authentically without forcing moments, and craft meticulously in post-production to bring the story to life.
-                    </p>
-                    <div className="space-y-2 sm:space-y-3 pt-3 sm:pt-4">
-                      {[
-                        "Authenticity over perfection",
-                        "Emotion over aesthetics",
-                        "Story over spectacle"
-                      ].map((item, i) => (
-                        <div key={i} className="flex items-center gap-2 sm:gap-3 justify-center lg:justify-start">
-                          <CheckCircle className="text-purple-400 flex-shrink-0" size={16} />
-                          <span className="text-xs sm:text-sm md:text-base lg:text-lg">{item}</span>
-                        </div>
-                      ))}
+            <div className="flex flex-col lg:flex-row gap-10 items-center justify-center">
+              {/* Image Column */}
+              <div className="w-full lg:w-5/12 flex justify-center animate-fadeInLeft">
+                <div className="w-full max-w-[500px]">
+                  {getTab(activeTab)?.image ? (
+                    <img
+                      src={getTab(activeTab)?.image}
+                      alt={getTab(activeTab)?.title || "Tab Image"}
+                      className="w-full h-auto object-cover rounded-3xl shadow-2xl border-2 border-purple-500/30 hover:border-purple-500/60 transition-all duration-500 hover:scale-105 transform"
+                      key={activeTab} // Ensure image re-renders on tab change
+                    />
+                  ) : (
+                    <div className="w-full h-64 bg-gray-800 rounded-3xl flex items-center justify-center text-gray-400">
+                      No Image Available
                     </div>
-                  </div>
-                )}
+                  )}
+                </div>
+              </div>
 
-                {activeTab === 'approach' && (
-                  <div className="space-y-3 sm:space-y-4 md:space-y-5 lg:space-y-6 animate-fadeInRight">
-                    <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-center lg:text-left">
-                      My <span className="bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 bg-clip-text text-transparent">Approach</span>
-                    </h2>
-                    <div className="h-0.5 sm:h-1 w-16 sm:w-20 md:w-24 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full mx-auto lg:mx-0"></div>
-                    <p className="text-gray-300 text-xs sm:text-sm md:text-base lg:text-lg leading-relaxed text-center lg:text-left">
-                      Every project begins with a conversation. I take the time to understand your goals, vision, and the story you want to tell. This collaborative process ensures the final product exceeds your expectations.
-                    </p>
-                    <div className="space-y-3 sm:space-y-4 pt-3 sm:pt-4">
-                      {[
-                        { step: "01", title: "Discovery", desc: "Understanding your vision and objectives" },
-                        { step: "02", title: "Planning", desc: "Crafting the perfect creative strategy" },
-                        { step: "03", title: "Production", desc: "Capturing stunning footage with precision" },
-                        { step: "04", title: "Post-Production", desc: "Editing magic to bring it all together" }
-                      ].map((item, i) => (
-                        <div key={i} className="flex gap-2 sm:gap-3 md:gap-4 items-start group justify-center lg:justify-start">
-                          <div className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-purple-400/30 group-hover:text-purple-400/60 transition-colors flex-shrink-0">
-                            {item.step}
-                          </div>
-                          <div className="text-center lg:text-left">
-                            <h4 className="text-sm sm:text-base md:text-lg lg:text-xl font-semibold mb-0.5 sm:mb-1">{item.title}</h4>
-                            <p className="text-gray-400 text-xs sm:text-sm md:text-base">{item.desc}</p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
+              {/* Content Column */}
+              <div className="w-full lg:w-7/12 flex justify-center">
+                <div className="max-w-3xl text-center lg:text-left space-y-6 animate-fadeInRight">
+                  <h2 className="text-4xl font-bold bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 bg-clip-text text-transparent">
+                    {getTab(activeTab)?.title || "No Title"}
+                  </h2>
+                  <div className="h-1 w-24 mx-auto lg:mx-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"></div>
+                  {getTab(activeTab)?.content
+                    ?.split("\n")
+                    .filter((p) => p.trim())
+                    .map((para, i) => (
+                      <p key={i} className="text-gray-300 text-lg leading-relaxed">
+                        {para}
+                      </p>
+                    )) || <p>No content available</p>}
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Core Values */}
-      <section className="py-6 sm:py-8 md:py-12 lg:py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-[#1A0D2A] to-gray-900">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-6 sm:mb-8 md:mb-12 lg:mb-16 scroll-reveal opacity-0 translate-y-10">
-            <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-2 sm:mb-3 md:mb-4">Core Values</h2>
-            <div className="w-16 sm:w-20 md:w-24 h-0.5 sm:h-1 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full mx-auto mb-3 sm:mb-4 md:mb-6"></div>
-            <p className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl text-gray-300 max-w-3xl mx-auto px-4">
-              The principles that guide every decision and frame
-            </p>
+      {coreValues.length > 0 && (
+        <section className="py-16 px-8 bg-gradient-to-br from-[#1A0D2A] to-gray-900">
+          <div className="max-w-7xl mx-auto text-center mb-12">
+            <h2 className="text-5xl font-bold mb-4">Core Values</h2>
+            <div className="w-24 h-1 mx-auto bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"></div>
           </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
-            {values.map((value, index) => {
-              const IconComponent = valueIcons[index];
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+            {coreValues.map((val, i) => {
+              const Icon = valueIcons[i % valueIcons.length];
               return (
                 <div
-                  key={index}
-                  className="scroll-reveal opacity-0 translate-y-10 relative group"
-                  style={{ transitionDelay: `${index * 100}ms` }}
+                  key={val.id}
+                  className="scroll-reveal bg-gray-800/80 p-6 rounded-2xl border border-gray-700/50 hover:border-purple-500/80 transition-all duration-500 hover:scale-105"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg sm:rounded-xl md:rounded-2xl blur opacity-0 group-hover:opacity-20 transition-opacity duration-500"></div>
-                  <div className="relative bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-sm p-4 sm:p-5 md:p-6 lg:p-8 rounded-lg sm:rounded-xl md:rounded-2xl border border-gray-700/50 hover:border-purple-500/80 transition-all duration-500 group hover:scale-105 transform h-full">
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg sm:rounded-xl md:rounded-2xl flex items-center justify-center mb-3 sm:mb-4 md:mb-6 group-hover:scale-110 group-hover:rotate-12 transition-all duration-300 shadow-lg">
-                      <IconComponent size={18} className="sm:w-5 sm:h-5 md:w-6 md:h-6" />
-                    </div>
-                    <h3 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold mb-2 sm:mb-3 md:mb-4 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">{value.title}</h3>
-                    <p className="text-gray-400 leading-relaxed text-xs sm:text-sm md:text-base">{value.description}</p>
-                    <div className="absolute bottom-0 left-0 right-0 h-0.5 sm:h-1 bg-gradient-to-r from-purple-500 to-pink-500 rounded-b-lg sm:rounded-b-xl md:rounded-b-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="w-14 h-14 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mb-4 mx-auto">
+                    <Icon size={20} />
                   </div>
+                  <h3 className="text-2xl font-bold mb-2">{val.title}</h3>
+                  <p className="text-gray-400">{val.description}</p>
                 </div>
               );
             })}
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
-      {/* Skills & Expertise */}
-      <section className="py-6 sm:py-8 md:py-12 lg:py-16 px-4 sm:px-6 lg:px-8 bg-gray-900">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-6 sm:mb-8 md:mb-12 lg:mb-16 scroll-reveal opacity-0 translate-y-10">
-            <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-2 sm:mb-3 md:mb-4">Skills & Expertise</h2>
-            <div className="w-16 sm:w-20 md:w-24 h-0.5 sm:h-1 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full mx-auto mb-3 sm:mb-4 md:mb-6"></div>
+      {/* Skills */}
+      {skills.length > 0 && (
+        <section className="py-16 px-8 bg-gray-900">
+          <div className="max-w-4xl mx-auto text-center mb-12">
+            <h2 className="text-5xl font-bold mb-4">Skills & Expertise</h2>
+            <div className="w-24 h-1 mx-auto bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"></div>
           </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5 md:gap-6 lg:gap-8">
-            {skills.map((skill, index) => {
-              const IconComponent = skillIcons[index];
+          <div className="grid sm:grid-cols-2 gap-6 max-w-4xl mx-auto">
+            {skills.map((s, i) => {
+              const Icon = skillIcons[i % skillIcons.length];
               return (
-                <div
-                  key={index}
-                  className="scroll-reveal opacity-0 translate-y-10 group"
-                  style={{ transitionDelay: `${index * 100}ms` }}
-                >
-                  <div className="flex items-center justify-between gap-2 sm:gap-3 mb-2 sm:mb-3">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 lg:w-12 lg:h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
-                        <IconComponent size={16} className="sm:w-5 sm:h-5" />
+                <div key={s.id}>
+                  <div className="flex justify-between mb-3 items-center">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+                        <Icon size={18} />
                       </div>
-                      <span className="text-xs sm:text-sm md:text-base lg:text-lg font-semibold">{skill.name}</span>
+                      <span className="font-semibold text-lg">{s.name}</span>
                     </div>
-                    <span className="text-purple-400 font-bold text-xs sm:text-sm md:text-base lg:text-xl flex-shrink-0">{skill.level}%</span>
+                    <span className="text-purple-400 font-bold">{s.level}%</span>
                   </div>
-                  <div className="h-2 sm:h-2.5 md:h-3 lg:h-4 bg-gray-800 rounded-full overflow-hidden">
+                  <div className="h-3 bg-gray-800 rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-gradient-to-r from-purple-500 via-pink-500 to-purple-600 rounded-full transition-all duration-1000 ease-out"
-                      style={{ width: `${skill.level}%` }}
+                      className="h-full bg-gradient-to-r from-purple-500 via-pink-500 to-purple-600 rounded-full"
+                      style={{ width: `${s.level}%` }}
                     ></div>
                   </div>
                 </div>
               );
             })}
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Timeline */}
-      <section className="py-6 sm:py-8 md:py-12 lg:py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-900 to-[#1A0D2A]">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-6 sm:mb-8 md:mb-12 lg:mb-16 scroll-reveal opacity-0 translate-y-10">
-            <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-2 sm:mb-3 md:mb-4">The Journey</h2>
-            <div className="w-16 sm:w-20 md:w-24 h-0.5 sm:h-1 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full mx-auto mb-3 sm:mb-4 md:mb-6"></div>
+      {timeline.length > 0 && (
+        <section className="py-16 px-8 bg-gradient-to-br from-gray-900 to-[#1A0D2A]">
+          <div className="max-w-5xl mx-auto text-center mb-12">
+            <h2 className="text-5xl font-bold mb-4">The Journey</h2>
+            <div className="w-24 h-1 mx-auto bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"></div>
           </div>
 
           <div className="relative">
-            <div className="hidden sm:block absolute left-1/2 transform -translate-x-1/2 w-0.5 sm:w-1 h-full bg-gradient-to-b from-purple-500 to-pink-500"></div>
-
-            {timeline.map((item, index) => {
-              const IconComponent = timelineIcons[index];
+            <div className="hidden sm:block absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-gradient-to-b from-purple-500 to-pink-500"></div>
+            {timeline.map((item, i) => {
+              const Icon = timelineIcons[i % timelineIcons.length];
               return (
                 <div
-                  key={index}
-                  className={`scroll-reveal opacity-0 mb-4 sm:mb-6 md:mb-8 lg:mb-12 flex flex-col sm:flex-row items-center ${
-                    index % 2 === 0 ? '' : 'sm:flex-row-reverse'
-                  }`}
-                  style={{ transitionDelay: `${index * 200}ms` }}
+                  key={item.id}
+                  className={`scroll-reveal mb-12 flex flex-col sm:flex-row ${
+                    i % 2 === 0 ? "" : "sm:flex-row-reverse"
+                  } items-center`}
                 >
-                  <div className="w-full sm:w-5/12 text-center sm:text-left sm:pr-4 md:pr-6 lg:pr-8 sm:pl-0 mb-3 sm:mb-0">
-                    <div className="relative group max-w-md mx-auto">
-                      <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg sm:rounded-xl md:rounded-2xl blur-lg opacity-0 group-hover:opacity-30 transition-opacity duration-500"></div>
-                      <div className="relative bg-gradient-to-br from-gray-800/90 to-gray-900/90 backdrop-blur-sm p-3 sm:p-4 md:p-5 lg:p-6 xl:p-8 rounded-lg sm:rounded-xl md:rounded-2xl border border-gray-700/50 hover:border-purple-500/80 transition-all duration-300 hover:scale-105 transform">
-                        <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3 md:mb-4 justify-center sm:justify-start">
-                          <div className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 lg:w-12 lg:h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg sm:rounded-xl flex items-center justify-center group-hover:rotate-12 transition-transform duration-300 flex-shrink-0">
-                            <IconComponent size={16} className="sm:w-5 sm:h-5" />
-                          </div>
-                          <div className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">{item.year}</div>
-                        </div>
-                        <h3 className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl font-bold mb-1 sm:mb-2 md:mb-3">{item.title}</h3>
-                        <p className="text-gray-400 leading-relaxed text-xs sm:text-sm md:text-base">{item.description}</p>
-                        <div className="absolute bottom-0 left-0 right-0 h-0.5 sm:h-1 bg-gradient-to-r from-purple-500 to-pink-500 rounded-b-lg sm:rounded-b-xl md:rounded-b-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="w-full sm:w-5/12 p-4 bg-gray-800/80 rounded-2xl border border-gray-700/50 hover:border-purple-500/80 transition-all duration-500">
+                    <div className="flex items-center gap-3 mb-4 justify-center sm:justify-start">
+                      <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+                        <Icon size={18} />
+                      </div>
+                      <div className="text-3xl font-bold text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text">
+                        {item.year}
                       </div>
                     </div>
+                    <h3 className="text-2xl font-bold mb-2">{item.title}</h3>
+                    <p className="text-gray-400">{item.description}</p>
                   </div>
-
-                  <div className="w-full sm:w-2/12 flex justify-center my-0 sm:my-0">
-                    <div className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full border-2 sm:border-3 md:border-4 border-gray-900 z-10"></div>
+                  <div className="w-full sm:w-2/12 flex justify-center py-4">
+                    <div className="w-6 h-6 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full border-4 border-gray-900"></div>
                   </div>
-
                   <div className="w-full sm:w-5/12"></div>
                 </div>
               );
             })}
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
-      {/* CTA Section */}
-      <section className="py-8 sm:py-10 md:py-14 lg:py-18 xl:py-20 px-4 sm:px-6 lg:px-8 bg-gray-900">
-        <div className="max-w-4xl pb-8 sm:pb-10 mx-auto text-center scroll-reveal opacity-0 translate-y-10">
-          <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-3 sm:mb-4 md:mb-6 px-2">Let's Create Together</h2>
-          <p className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl text-gray-300 mb-5 sm:mb-6 md:mb-8 lg:mb-10 leading-relaxed px-4 max-w-2xl mx-auto">
-            Ready to turn your vision into a cinematic masterpiece? Let's start a conversation about your next project.
-          </p>
-          <button className="group bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-4 py-2 sm:px-5 sm:py-2.5 md:px-6 md:py-3 lg:px-8 lg:py-4 rounded-lg font-semibold text-xs sm:text-sm md:text-base lg:text-lg transition-all duration-300 transform hover:scale-105 inline-flex items-center gap-2 shadow-lg hover:shadow-purple-500/50">
-            Get In Touch
-            <ArrowRight size={16} className="sm:w-5 sm:h-5 group-hover:translate-x-2 transition-transform" />
+      {/* CTA */}
+      {cta && (
+        <section className="py-20 px-8 bg-gray-900 text-center">
+          <h2 className="text-5xl font-bold mb-6">{cta.title}</h2>
+          <p className="text-gray-300 text-lg mb-10 max-w-2xl mx-auto">{cta.description}</p>
+          <button className="group bg-gradient-to-r from-purple-600 to-pink-600 hover:scale-105 transition-transform px-8 py-4 rounded-lg font-semibold flex items-center gap-2 mx-auto">
+            {cta.button_text}
+            <ArrowRight className="group-hover:translate-x-2 transition-transform" />
           </button>
-        </div>
-      </section>
-      <Footer/>
+        </section>
+      )}
+
+      <Footer />
     </div>
   );
 };
