@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import Footer from '../Components/footer';
+import Header from '../Components/Header';
 import {
   Play,
   Heart,
@@ -11,6 +13,8 @@ import {
   ChevronRight,
   ChevronLeft,
 } from 'lucide-react';
+
+import '../styles/Portfolio.css';
 
 interface HeroSlide {
   id: number;
@@ -127,6 +131,7 @@ const Portfolio = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-900 to-black text-white overflow-x-hidden">
+      <Header/>
       {/* Hero Section - Optimized heights */}
       <section className="relative h-[85vh] sm:h-[75vh] md:h-[80vh] lg:h-[85vh] overflow-hidden">
         {/* Background Slides */}
@@ -405,6 +410,7 @@ const Portfolio = () => {
           </button>
         </div>
       </section>
+      <Footer/>
 
       {/* Video Modal - Fully responsive */}
       {videoPopup && (
