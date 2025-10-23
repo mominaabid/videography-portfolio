@@ -262,40 +262,41 @@ const Portfolio = () => {
           </div>
 
           {/* Category Filters - Horizontally scrollable on mobile */}
-          <div className="mb-6 sm:mb-8">
-            <div className="overflow-x-auto scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
-              <div className="flex sm:flex-wrap sm:justify-center gap-2 sm:gap-3 min-w-max sm:min-w-0">
-                <button
-                  onClick={() => handleCategoryChange('all')}
-                  className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition whitespace-nowrap ${
-                    selectedCategory === 'all'
-                      ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg'
-                      : 'bg-gray-800 hover:bg-gray-700 text-gray-300'
-                  }`}
-                >
-                  <Sparkles size={14} className="sm:w-4 sm:h-4" />
-                  <span>All Projects</span>
-                </button>
-                {categories.map((cat) => {
-                  const Icon = iconMap[cat.icon] || Sparkles;
-                  return (
-                    <button
-                      key={cat.id}
-                      onClick={() => handleCategoryChange(cat.id)}
-                      className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition whitespace-nowrap ${
-                        selectedCategory === cat.id
-                          ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg'
-                          : 'bg-gray-800 hover:bg-gray-700 text-gray-300'
-                      }`}
-                    >
-                      <Icon size={14} className="sm:w-4 sm:h-4" />
-                      <span>{cat.name}</span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
+          {/* Category Filters - Centered on all screens */}
+<div className="mb-6 sm:mb-8">
+  <div className="flex flex-wrap justify-center items-center gap-2 sm:gap-3 px-4">
+    <button
+      onClick={() => handleCategoryChange('all')}
+      className={`flex items-center gap-1.5 sm:gap-2 px-4 sm:px-5 py-2 rounded-lg text-xs sm:text-sm font-semibold transition ${
+        selectedCategory === 'all'
+          ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg'
+          : 'bg-gray-800 hover:bg-gray-700 text-gray-300'
+      }`}
+    >
+      <Sparkles size={14} className="sm:w-4 sm:h-4" />
+      <span>All Projects</span>
+    </button>
+
+    {categories.map((cat) => {
+      const Icon = iconMap[cat.icon] || Sparkles;
+      return (
+        <button
+          key={cat.id}
+          onClick={() => handleCategoryChange(cat.id)}
+          className={`flex items-center gap-1.5 sm:gap-2 px-4 sm:px-5 py-2 rounded-lg text-xs sm:text-sm font-semibold transition ${
+            selectedCategory === cat.id
+              ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg'
+              : 'bg-gray-800 hover:bg-gray-700 text-gray-300'
+          }`}
+        >
+          <Icon size={14} className="sm:w-4 sm:h-4" />
+          <span>{cat.name}</span>
+        </button>
+      );
+    })}
+  </div>
+</div>
+
 
           {/* Projects Grid - Responsive */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">

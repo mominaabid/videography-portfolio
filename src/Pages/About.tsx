@@ -6,7 +6,6 @@ import {
   Users,
   Briefcase,
   Globe,
-  CheckCircle,
   PlayCircle,
   ArrowRight,
   Sparkles,
@@ -72,12 +71,10 @@ const About = () => {
   const [counters, setCounters] = useState<Record<string, number>>({});
   const statsRef = useRef<HTMLDivElement>(null);
 
-  // Fetch all about page data
   useEffect(() => {
     const fetchAll = async () => {
       try {
         const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
-
         const endpoints = {
           hero: `${BASE_URL}/about/hero/`,
           stats: `${BASE_URL}/about/stats/`,
@@ -124,8 +121,7 @@ const About = () => {
           tabsRes.json(),
         ]);
 
-        const getResults = (data) =>
-          Array.isArray(data) ? data : data?.results || [];
+        const getResults = (data: any) => (Array.isArray(data) ? data : data?.results || []);
 
         setHero(getResults(heroJson)[0] || null);
         setStats(getResults(statsJson));
@@ -142,7 +138,7 @@ const About = () => {
     fetchAll();
   }, []);
 
-  // Animate counters when in view
+  // Counter Animation
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -171,7 +167,7 @@ const About = () => {
     return () => observer.disconnect();
   }, [stats]);
 
-  // Scroll reveal animation
+  // Simple reveal for scroll sections
   useEffect(() => {
     const sections = document.querySelectorAll(".scroll-reveal");
     const observer = new IntersectionObserver(
@@ -182,72 +178,64 @@ const About = () => {
       },
       { threshold: 0.1 }
     );
-    sections.forEach((section) => observer.observe(section));
+    sections.forEach((s) => observer.observe(s));
     return () => observer.disconnect();
   }, []);
 
   const valueIcons = [Heart, Eye, Lightbulb, Users];
   const timelineIcons = [PlayCircle, Award, Briefcase, Globe, Sparkles];
   const skillIcons = [Camera, Sparkles, Film, Zap, Target, Eye];
-
   const getTab = (name: string) => tabContent.find((t) => t.tab_name === name);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-900 to-black text-white">
-      {/* Hero Section */}
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-900 to-black text-white overflow-x-hidden">
+      {/* HERO */}
       {hero && (
-        <section className="relative overflow-hidden min-h-screen">
-          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent z-10"></div>
-          <video
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="absolute top-0 left-0 w-full h-full object-cover opacity-50"
-          >
+        <section className="relative overflow-hidden min-h-[80vh] sm:min-h-screen">
+          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-transparent z-10"></div>
+          <video autoPlay loop muted playsInline className="absolute top-0 left-0 w-full h-full object-cover opacity-50">
             <source src={hero.video_url} type="video/mp4" />
           </video>
-          <div className="relative z-20 flex items-center justify-center min-h-screen px-8">
-            <div className="max-w-3xl text-center mx-auto scroll-reveal">
-              <div className="inline-flex items-center gap-2 bg-purple-600/20 backdrop-blur-sm border border-purple-500/30 px-4 py-2 rounded-full mb-6">
-                <Sparkles className="text-purple-400" size={14} />
-                <span className="text-purple-300 font-medium">About Me</span>
+
+          <div className="relative z-20 flex items-center justify-center text-center px-4 sm:px-8 py-20 sm:py-32">
+            <div className="max-w-2xl sm:max-w-3xl scroll-reveal">
+              <div className="inline-flex items-center gap-2 bg-purple-600/20 border border-purple-500/30 px-3 py-1 rounded-full mb-4 sm:mb-6 text-sm sm:text-base">
+                <Sparkles size={14} className="text-purple-400" />
+                <span>About Me</span>
               </div>
-              <h1 className="text-5xl font-bold mb-6 leading-tight">
+              <h1 className="text-3xl sm:text-5xl font-bold mb-4 leading-snug">
                 {hero.title.split(" ").slice(0, -2).join(" ")}
-                <span className="block bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 bg-clip-text text-transparent mt-2">
+                <span className="block bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 bg-clip-text text-transparent mt-1">
                   {hero.title.split(" ").slice(-2).join(" ")}
                 </span>
               </h1>
-              <p className="text-lg text-gray-300 mb-8">{hero.subtitle}</p>
-              <button className="group bg-gradient-to-r from-purple-600 to-pink-600 hover:scale-105 transition-transform px-6 py-3 rounded-lg font-semibold flex items-center gap-2 mx-auto">
+              <p className="text-gray-300 text-base sm:text-lg mb-6">{hero.subtitle}</p>
+              <button className="group bg-gradient-to-r from-purple-600 to-pink-600 hover:scale-105 transition-transform px-6 py-3 rounded-lg font-semibold flex items-center gap-2 mx-auto text-sm sm:text-base">
                 <PlayCircle size={18} />
                 {hero.button_text}
               </button>
             </div>
           </div>
-          <div className="absolute bottom-0 h-24 bg-gradient-to-t from-gray-900 to-transparent w-full z-10"></div>
+
+          <div className="absolute bottom-0 h-16 bg-gradient-to-t from-gray-900 to-transparent w-full z-10"></div>
         </section>
       )}
 
-      {/* Stats Section */}
+      {/* STATS */}
       {stats.length > 0 && (
-        <section ref={statsRef} className="py-16 px-8 bg-gradient-to-br from-gray-900 to-[#1A0D2A]">
-          <div className="max-w-7xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-6">
+        <section ref={statsRef} className="py-12 sm:py-16 px-4 sm:px-8 bg-gradient-to-br from-gray-900 to-[#1A0D2A]">
+          <div className="max-w-6xl mx-auto grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
             {stats.map((stat, i) => {
               const Icon = [Briefcase, Users, Award, Globe][i % 4];
               return (
-                <div
-                  key={stat.id}
-                  className="scroll-reveal bg-gray-800/50 p-6 rounded-2xl border border-gray-700/50 text-center hover:scale-105 transition-transform"
-                >
-                  <div className="w-14 h-14 mx-auto bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center mb-4">
-                    <Icon size={22} />
+                <div key={stat.id} className="bg-gray-800/50 p-4 sm:p-6 rounded-2xl border border-gray-700/50 text-center hover:scale-105 transition-transform scroll-reveal">
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 mx-auto bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center mb-3 sm:mb-4">
+                    <Icon size={20} />
                   </div>
-                  <div className="text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                  <div className="text-2xl sm:text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
                     {counters[stat.name] || 0}+
                   </div>
-                  <div className="text-gray-400 mt-2">{stat.name}</div>
+                  <div className="text-gray-400 mt-1 sm:mt-2 text-sm sm:text-base">{stat.name}</div>
                 </div>
               );
             })}
@@ -255,19 +243,19 @@ const About = () => {
         </section>
       )}
 
-      {/* Tabs Section */}
+      {/* TABS */}
       {tabContent.length > 0 && (
-        <section className="py-16 px-8 bg-gray-900">
+        <section className="py-12 sm:py-16 px-4 sm:px-8 bg-gray-900">
           <div className="max-w-7xl mx-auto">
-            <div className="flex justify-center gap-4 mb-12">
-              {["story", "philosophy", "approach"].map((tab) => (
+            <div className="flex flex-wrap justify-center gap-3 sm:gap-4 mb-8 sm:mb-12">
+              {['story', 'philosophy', 'approach'].map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab as any)}
-                  className={`px-6 py-3 rounded-lg font-semibold transition-all duration-300 ${
+                  className={`px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-semibold text-sm sm:text-base transition-all ${
                     activeTab === tab
-                      ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white"
-                      : "bg-gray-800 text-gray-400 hover:bg-gray-700"
+                      ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white'
+                      : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
                   }`}
                 >
                   {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -275,67 +263,59 @@ const About = () => {
               ))}
             </div>
 
-            <div className="flex flex-col lg:flex-row gap-10 items-center justify-center">
-              {/* Image Column */}
-              <div className="w-full lg:w-5/12 flex justify-center animate-fadeInLeft">
-                <div className="w-full max-w-[500px]">
+            <div className="flex flex-col lg:flex-row gap-8 lg:gap-10 items-center justify-center">
+              <div className="w-full lg:w-5/12 flex justify-center">
+                <div className="w-full max-w-[400px] sm:max-w-[500px]">
                   {getTab(activeTab)?.image ? (
                     <img
                       src={getTab(activeTab)?.image}
-                      alt={getTab(activeTab)?.title || "Tab Image"}
-                      className="w-full h-auto object-cover rounded-3xl shadow-2xl border-2 border-purple-500/30 hover:border-purple-500/60 transition-all duration-500 hover:scale-105 transform"
-                      key={activeTab} // Ensure image re-renders on tab change
+                      alt={getTab(activeTab)?.title || 'Tab Image'}
+                      className="w-full h-auto object-cover rounded-3xl shadow-xl border-2 border-purple-500/30 hover:border-purple-500/60 transition-all duration-500 hover:scale-105"
                     />
                   ) : (
-                    <div className="w-full h-64 bg-gray-800 rounded-3xl flex items-center justify-center text-gray-400">
+                    <div className="w-full h-48 sm:h-64 bg-gray-800 rounded-3xl flex items-center justify-center text-gray-400 text-sm">
                       No Image Available
                     </div>
                   )}
                 </div>
               </div>
 
-              {/* Content Column */}
-              <div className="w-full lg:w-7/12 flex justify-center">
-                <div className="max-w-3xl text-center lg:text-left space-y-6 animate-fadeInRight">
-                  <h2 className="text-4xl font-bold bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 bg-clip-text text-transparent">
-                    {getTab(activeTab)?.title || "No Title"}
-                  </h2>
-                  <div className="h-1 w-24 mx-auto lg:mx-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"></div>
-                  {getTab(activeTab)?.content
-                    ?.split("\n")
-                    .filter((p) => p.trim())
-                    .map((para, i) => (
-                      <p key={i} className="text-gray-300 text-lg leading-relaxed">
-                        {para}
-                      </p>
-                    )) || <p>No content available</p>}
-                </div>
+              <div className="w-full lg:w-7/12 text-center lg:text-left space-y-4 sm:space-y-6">
+                <h2 className="text-2xl sm:text-4xl font-bold bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 bg-clip-text text-transparent">
+                  {getTab(activeTab)?.title || 'No Title'}
+                </h2>
+                <div className="h-1 w-20 sm:w-24 mx-auto lg:mx-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"></div>
+                {getTab(activeTab)?.content
+                  ?.split('\n')
+                  .filter((p) => p.trim())
+                  .map((para, i) => (
+                    <p key={i} className="text-gray-300 text-base sm:text-lg leading-relaxed">
+                      {para}
+                    </p>
+                  )) || <p>No content available</p>}
               </div>
             </div>
           </div>
         </section>
       )}
 
-      {/* Core Values */}
+      {/* CORE VALUES */}
       {coreValues.length > 0 && (
-        <section className="py-16 px-8 bg-gradient-to-br from-[#1A0D2A] to-gray-900">
-          <div className="max-w-7xl mx-auto text-center mb-12">
-            <h2 className="text-5xl font-bold mb-4">Core Values</h2>
-            <div className="w-24 h-1 mx-auto bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"></div>
+        <section className="py-12 sm:py-16 px-4 sm:px-8 bg-gradient-to-br from-[#1A0D2A] to-gray-900">
+          <div className="max-w-7xl mx-auto text-center mb-8 sm:mb-12">
+            <h2 className="text-3xl sm:text-5xl font-bold mb-3 sm:mb-4">Core Values</h2>
+            <div className="w-20 sm:w-24 h-1 mx-auto bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"></div>
           </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 max-w-7xl mx-auto">
             {coreValues.map((val, i) => {
               const Icon = valueIcons[i % valueIcons.length];
               return (
-                <div
-                  key={val.id}
-                  className="scroll-reveal bg-gray-800/80 p-6 rounded-2xl border border-gray-700/50 hover:border-purple-500/80 transition-all duration-500 hover:scale-105"
-                >
-                  <div className="w-14 h-14 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mb-4 mx-auto">
+                <div key={val.id} className="bg-gray-800/80 p-4 sm:p-6 rounded-2xl border border-gray-700/50 hover:border-purple-500/80 transition-all hover:scale-105 scroll-reveal">
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mb-3 sm:mb-4 mx-auto">
                     <Icon size={20} />
                   </div>
-                  <h3 className="text-2xl font-bold mb-2">{val.title}</h3>
-                  <p className="text-gray-400">{val.description}</p>
+                  <h3 className="text-xl sm:text-2xl font-bold mb-1 sm:mb-2">{val.title}</h3>
+                  <p className="text-gray-400 text-sm sm:text-base">{val.description}</p>
                 </div>
               );
             })}
@@ -343,32 +323,29 @@ const About = () => {
         </section>
       )}
 
-      {/* Skills */}
+      {/* SKILLS */}
       {skills.length > 0 && (
-        <section className="py-16 px-8 bg-gray-900">
-          <div className="max-w-4xl mx-auto text-center mb-12">
-            <h2 className="text-5xl font-bold mb-4">Skills & Expertise</h2>
-            <div className="w-24 h-1 mx-auto bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"></div>
+        <section className="py-12 sm:py-16 px-4 sm:px-8 bg-gray-900">
+          <div className="max-w-4xl mx-auto text-center mb-8 sm:mb-12">
+            <h2 className="text-3xl sm:text-5xl font-bold mb-3 sm:mb-4">Skills & Expertise</h2>
+            <div className="w-20 sm:w-24 h-1 mx-auto bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"></div>
           </div>
-          <div className="grid sm:grid-cols-2 gap-6 max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 max-w-4xl mx-auto">
             {skills.map((s, i) => {
               const Icon = skillIcons[i % skillIcons.length];
               return (
-                <div key={s.id}>
-                  <div className="flex justify-between mb-3 items-center">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
-                        <Icon size={18} />
+                <div key={s.id} className="scroll-reveal">
+                  <div className="flex justify-between mb-2 sm:mb-3 items-center flex-wrap gap-2">
+                    <div className="flex items-center gap-2 sm:gap-3">
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+                        <Icon size={16} />
                       </div>
-                      <span className="font-semibold text-lg">{s.name}</span>
+                      <span className="font-semibold text-base sm:text-lg">{s.name}</span>
                     </div>
-                    <span className="text-purple-400 font-bold">{s.level}%</span>
+                    <span className="text-purple-400 font-bold text-sm sm:text-base">{s.level}%</span>
                   </div>
-                  <div className="h-3 bg-gray-800 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-gradient-to-r from-purple-500 via-pink-500 to-purple-600 rounded-full"
-                      style={{ width: `${s.level}%` }}
-                    ></div>
+                  <div className="h-2 sm:h-3 bg-gray-800 rounded-full overflow-hidden">
+                    <div className="h-full bg-gradient-to-r from-purple-500 via-pink-500 to-purple-600 rounded-full" style={{ width: `${s.level}%` }}></div>
                   </div>
                 </div>
               );
@@ -377,12 +354,12 @@ const About = () => {
         </section>
       )}
 
-      {/* Timeline */}
+      {/* TIMELINE */}
       {timeline.length > 0 && (
-        <section className="py-16 px-8 bg-gradient-to-br from-gray-900 to-[#1A0D2A]">
-          <div className="max-w-5xl mx-auto text-center mb-12">
-            <h2 className="text-5xl font-bold mb-4">The Journey</h2>
-            <div className="w-24 h-1 mx-auto bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"></div>
+        <section className="py-12 sm:py-16 px-4 sm:px-8 bg-gradient-to-br from-gray-900 to-[#1A0D2A]">
+          <div className="max-w-5xl mx-auto text-center mb-8 sm:mb-12">
+            <h2 className="text-3xl sm:text-5xl font-bold mb-3 sm:mb-4">The Journey</h2>
+            <div className="w-20 sm:w-24 h-1 mx-auto bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"></div>
           </div>
 
           <div className="relative">
@@ -390,27 +367,22 @@ const About = () => {
             {timeline.map((item, i) => {
               const Icon = timelineIcons[i % timelineIcons.length];
               return (
-                <div
-                  key={item.id}
-                  className={`scroll-reveal mb-12 flex flex-col sm:flex-row ${
-                    i % 2 === 0 ? "" : "sm:flex-row-reverse"
-                  } items-center`}
-                >
-                  <div className="w-full sm:w-5/12 p-4 bg-gray-800/80 rounded-2xl border border-gray-700/50 hover:border-purple-500/80 transition-all duration-500">
-                    <div className="flex items-center gap-3 mb-4 justify-center sm:justify-start">
-                      <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
-                        <Icon size={18} />
+                <div key={item.id} className={`mb-10 flex flex-col sm:flex-row ${i % 2 === 0 ? '' : 'sm:flex-row-reverse'} items-center scroll-reveal`}>
+                  <div className="w-full sm:w-5/12 p-4 bg-gray-800/80 rounded-2xl border border-gray-700/50 hover:border-purple-500/80 transition-all">
+                    <div className="flex items-center gap-3 mb-3 justify-center sm:justify-start">
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+                        <Icon size={16} />
                       </div>
-                      <div className="text-3xl font-bold text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text">
-                        {item.year}
-                      </div>
+                      <div className="text-2xl sm:text-3xl font-bold text-transparent bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text">{item.year}</div>
                     </div>
-                    <h3 className="text-2xl font-bold mb-2">{item.title}</h3>
-                    <p className="text-gray-400">{item.description}</p>
+                    <h3 className="text-xl sm:text-2xl font-bold mb-2">{item.title}</h3>
+                    <p className="text-gray-400 text-sm sm:text-base">{item.description}</p>
                   </div>
+
                   <div className="w-full sm:w-2/12 flex justify-center py-4">
                     <div className="w-6 h-6 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full border-4 border-gray-900"></div>
                   </div>
+
                   <div className="w-full sm:w-5/12"></div>
                 </div>
               );
@@ -421,13 +393,15 @@ const About = () => {
 
       {/* CTA */}
       {cta && (
-        <section className="py-20 px-8 bg-gray-900 text-center">
-          <h2 className="text-5xl font-bold mb-6">{cta.title}</h2>
-          <p className="text-gray-300 text-lg mb-10 max-w-2xl mx-auto">{cta.description}</p>
-          <button className="group bg-gradient-to-r from-purple-600 to-pink-600 hover:scale-105 transition-transform px-8 py-4 rounded-lg font-semibold flex items-center gap-2 mx-auto">
-            {cta.button_text}
-            <ArrowRight className="group-hover:translate-x-2 transition-transform" />
-          </button>
+        <section className="py-12 sm:py-20 px-4 sm:px-8 bg-gray-900 text-center">
+          <div className="max-w-3xl mx-auto">
+            <h2 className="text-2xl sm:text-5xl font-bold mb-4">{cta.title}</h2>
+            <p className="text-gray-300 text-base sm:text-lg mb-6">{cta.description}</p>
+            <button className="group inline-flex items-center gap-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:scale-105 transition-transform px-6 sm:px-8 py-3 sm:py-4 rounded-lg font-semibold">
+              <span className="text-sm sm:text-base">{cta.button_text}</span>
+              <ArrowRight className="group-hover:translate-x-2 transition-transform" />
+            </button>
+          </div>
         </section>
       )}
 
