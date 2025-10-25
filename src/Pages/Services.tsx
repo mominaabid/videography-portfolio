@@ -17,7 +17,7 @@ import Header from '../Components/Header';
 import Footer from '../Components/footer';
 
 // API Base URL - Change this to your backend URL
-const API_BASE_URL = 'http://127.0.0.1:8000/api';
+const API_BASE_URL = 'https://backendvideography.vercel.app/api';
 
 interface ServiceFeature {
   id: number;

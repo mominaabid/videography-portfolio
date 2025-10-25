@@ -111,7 +111,7 @@ interface Counts {
 //   results: T[];
 // }
 
-const BASE_URL = 'http://localhost:8000';
+const BASE_URL = 'https://backendvideography.vercel.app';
 
 // Helper function to extract data from paginated response
 const extractData = <T,>(response: any): T[] => {

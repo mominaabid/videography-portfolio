@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import Header from '../Components/Header';
 import Footer from '../Components/footer';
 
-const API_BASE_URL = 'http://localhost:8000/api';
+const API_BASE_URL = 'https://backendvideography.vercel.app/api';
 
 interface HeroSection {
   id: number;
@@ -226,7 +226,9 @@ const Projects: React.FC = () => {
           )}
         </div>
       </div>
-      <Footer />
+      <div className="bg-[#0b0d17] text-white">
+  <Footer />
+</div>
     </>
   );
 };

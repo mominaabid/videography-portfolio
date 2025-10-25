@@ -66,9 +66,9 @@ const Portfolio = () => {
     const fetchData = async () => {
       try {
         const [heroRes, catRes, projRes] = await Promise.all([
-          fetch('http://127.0.0.1:8000/portfolio/hero-slides/'),
-          fetch('http://127.0.0.1:8000/portfolio/categories/'),
-          fetch('http://127.0.0.1:8000/portfolio/projects/'),
+          fetch('https://backendvideography.vercel.app/portfolio/hero-slides/'),
+          fetch('https://backendvideography.vercel.app/portfolio/categories/'),
+          fetch('https://backendvideography.vercel.app/portfolio/projects/'),
         ]);
 
         const heroData = await heroRes.json();

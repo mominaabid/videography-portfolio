@@ -74,7 +74,7 @@ const About = () => {
   useEffect(() => {
     const fetchAll = async () => {
       try {
-        const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
+        const BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://backendvideography.vercel.app";
         const endpoints = {
           hero: `${BASE_URL}/about/hero/`,
           stats: `${BASE_URL}/about/stats/`,

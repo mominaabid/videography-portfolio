@@ -85,9 +85,9 @@ export default function ContactPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const contactInfoRes = await fetch('http://localhost:8000/api/contact/info/');
-        const reasonsRes = await fetch('http://localhost:8000/api/contact/reasons/');
-        const heroRes = await fetch('http://localhost:8000/api/contact/hero/contact/');
+        const contactInfoRes = await fetch('https://backendvideography.vercel.app/api/contact/info/');
+        const reasonsRes = await fetch('https://backendvideography.vercel.app/api/contact/reasons/');
+        const heroRes = await fetch('https://backendvideography.vercel.app/api/contact/hero/contact/');
 
         if (!contactInfoRes.ok || !reasonsRes.ok || !heroRes.ok) {
           throw new Error('Failed to fetch data from one or more endpoints');
@@ -166,7 +166,7 @@ export default function ContactPage() {
 
   const handleSubmit = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/contact/submit/', {
+      const response = await fetch('https://backendvideography.vercel.app/api/contact/submit/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

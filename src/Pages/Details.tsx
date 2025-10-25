@@ -4,7 +4,7 @@ import { useParams, Link } from 'react-router-dom';
 import Header from '../Components/Header';
 import Footer from '../Components/footer';
 
-const API_BASE_URL = 'http://localhost:8000/api';
+const API_BASE_URL = 'https://backendvideography.vercel.app/api';
 
 interface ProjectDetail {
   id: number;
