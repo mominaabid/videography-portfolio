@@ -104,12 +104,12 @@ interface Counts {
   citiesCov: number;
 }
 
-interface PaginatedResponse<T> {
-  count: number;
-  next: string | null;
-  previous: string | null;
-  results: T[];
-}
+// interface PaginatedResponse<T> {
+//   count: number;
+//   next: string | null;
+//   previous: string | null;
+//   results: T[];
+// }
 
 const BASE_URL = 'http://localhost:8000';
 

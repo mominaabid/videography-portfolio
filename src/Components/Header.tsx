@@ -34,7 +34,8 @@ const Header = () => {
     { name: 'About', href: '/about' },
     { name: 'Portfolio', href: '/portfolio' },
     { name: 'Services', href: '/services' },
-    { name: 'Contact', href: '/contact' }
+    { name: 'Contact', href: '/contact' },
+    { name: 'Projects', href: '/projects' }
   ];
 
   const whatsappNumber = '1234567890';
