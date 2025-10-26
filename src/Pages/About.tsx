@@ -50,6 +50,7 @@ interface TabContent {
   title: string;
   content: string;
   image?: string;
+  image_url?: string;
 }
 interface Hero {
   id: number;
@@ -244,7 +245,7 @@ const About = () => {
       )}
 
       {/* TABS */}
-      {tabContent.length > 0 && (
+      {/* {tabContent.length > 0 && (
         <section className="py-12 sm:py-16 px-4 sm:px-8 bg-gray-900">
           <div className="max-w-7xl mx-auto">
             <div className="flex flex-wrap justify-center gap-3 sm:gap-4 mb-8 sm:mb-12">
@@ -268,10 +269,10 @@ const About = () => {
                 <div className="w-full max-w-[400px] sm:max-w-[500px]">
                   {getTab(activeTab)?.image ? (
                     <img
-                      src={getTab(activeTab)?.image}
-                      alt={getTab(activeTab)?.title || 'Tab Image'}
-                      className="w-full h-auto object-cover rounded-3xl shadow-xl border-2 border-purple-500/30 hover:border-purple-500/60 transition-all duration-500 hover:scale-105"
-                    />
+  src={getTab(activeTab)?.image_url || getTab(activeTab)?.image}
+  alt={getTab(activeTab)?.title || 'Tab Image'}
+  className="w-full h-auto object-cover rounded-3xl shadow-xl border-2 border-purple-500/30 hover:border-purple-500/60 transition-all duration-500 hover:scale-105"
+/>
                   ) : (
                     <div className="w-full h-48 sm:h-64 bg-gray-800 rounded-3xl flex items-center justify-center text-gray-400 text-sm">
                       No Image Available
@@ -297,7 +298,66 @@ const About = () => {
             </div>
           </div>
         </section>
-      )}
+      )} */}
+      {/* TABS */}
+{tabContent.length > 0 && (
+  <section className="py-12 sm:py-16 px-4 sm:px-8 bg-gray-900">
+    <div className="max-w-7xl mx-auto">
+      <div className="flex flex-wrap justify-center gap-3 sm:gap-4 mb-8 sm:mb-12">
+        {['story', 'philosophy', 'approach'].map((tab) => (
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab as any)}
+            className={`px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-semibold text-sm sm:text-base transition-all ${
+              activeTab === tab
+                ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white'
+                : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+            }`}
+          >
+            {tab.charAt(0).toUpperCase() + tab.slice(1)}
+          </button>
+        ))}
+      </div>
+
+      <div className="flex flex-col lg:flex-row gap-8 lg:gap-10 items-center justify-center">
+        <div className="w-full lg:w-5/12 flex justify-center">
+          <div className="w-full max-w-[400px] sm:max-w-[500px]">
+            {getTab(activeTab)?.image_url ? (
+              <img
+                src={getTab(activeTab)?.image_url}
+                alt={getTab(activeTab)?.title || 'Tab Image'}
+                className="w-full h-auto object-cover rounded-3xl shadow-xl border-2 border-purple-500/30 hover:border-purple-500/60 transition-all duration-500 hover:scale-105"
+                onError={() => {
+                  console.error('❌ Image failed to load:', getTab(activeTab)?.image_url);
+                }}
+              />
+            ) : (
+              <div className="w-full h-48 sm:h-64 bg-gray-800 rounded-3xl flex flex-col items-center justify-center text-gray-400 text-sm gap-2">
+                <Camera size={48} className="text-gray-600" />
+                <p>No Image Available</p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="w-full lg:w-7/12 text-center lg:text-left space-y-4 sm:space-y-6">
+          <h2 className="text-2xl sm:text-4xl font-bold bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 bg-clip-text text-transparent">
+            {getTab(activeTab)?.title || 'No Title'}
+          </h2>
+          <div className="h-1 w-20 sm:w-24 mx-auto lg:mx-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"></div>
+          {getTab(activeTab)?.content
+            ?.split('\n')
+            .filter((p) => p.trim())
+            .map((para, i) => (
+              <p key={i} className="text-gray-300 text-base sm:text-lg leading-relaxed">
+                {para}
+              </p>
+            )) || <p className="text-gray-400">No content available</p>}
+        </div>
+      </div>
+    </div>
+  </section>
+)}
 
       {/* CORE VALUES */}
       {coreValues.length > 0 && (

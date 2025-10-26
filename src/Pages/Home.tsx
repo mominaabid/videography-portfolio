@@ -37,6 +37,7 @@ interface Intro {
   title: string;
   subtitle: string;
   image: string;
+  image_url?: string;
   achievements: string | string[] | null;
   primary_button_text: string;
   secondary_button_text: string;
@@ -125,7 +126,7 @@ const extractData = <T,>(response: any): T[] => {
 };
 
 const Home = () => {
-  const [hero, setHero] = useState<Hero | null>(null);
+  // const [hero, setHero] = useState<Hero | null>(null);
   const [stats, setStats] = useState<Stat[]>([]);
   const [intro, setIntro] = useState<Intro | null>(null);
   const [skills, setSkills] = useState<Skill[]>([]);
@@ -213,7 +214,7 @@ const Home = () => {
         // Extract hero data
         const heroData = extractData<Hero>(heroRes.data);
         const heroItem = heroData.length > 0 ? heroData[0] : null;
-        setHero(heroItem);
+        // setHero(heroItem);
 
         // Extract and set typewriter phrases
         if (heroItem && heroItem.typewriter_phrases) {
@@ -408,67 +409,7 @@ const Home = () => {
       <Header />
 
       {/* Hero Section */}
-      {hero && (
-        <section className="relative h-screen w-full overflow-hidden">
-          <video
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="absolute top-0 left-0 w-full h-full object-cover"
-          >
-            <source src={hero.video_url || hero.video} type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
-          <div className="absolute inset-0 bg-black/50"></div>
-          <div className="relative z-10 h-full flex items-center justify-center">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-              <div className="inline-flex items-center gap-2 bg-purple-600/20 backdrop-blur-sm border border-purple-500/30 px-4 py-2 rounded-full mb-6">
-                <Award className="text-purple-400" size={20} />
-                <span className="text-purple-300 text-sm font-medium">Award-Winning Videographer</span>
-              </div>
-              <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-6">
-                <span className="text-white block mb-2">{hero.title}</span>
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 block min-h-[1.2em]">
-                  {typewriterText}
-                  <span className="animate-pulse">|</span>
-                </span>
-              </h1>
-              <p className="text-gray-300 text-lg md:text-xl lg:text-2xl max-w-3xl mx-auto mb-8 leading-relaxed">
-                {hero.subtitle}
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <button className="group bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 sm:px-8 sm:py-4 rounded-lg font-semibold text-base sm:text-lg transition-all duration-300 transform hover:scale-105 flex items-center gap-2 shadow-lg hover:shadow-purple-500/50">
-                  <Play size={20} className="group-hover:scale-110 transition-transform" />
-                  {hero.primary_button_text}
-                </button>
-                <button className="bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white px-6 py-3 sm:px-8 sm:py-4 rounded-lg font-semibold text-base sm:text-lg transition-all duration-300 border border-white/30 hover:border-white/50">
-                  {hero.secondary_button_text}
-                </button>
-              </div>
-              {stats.length > 0 && (
-                <div className="grid grid-cols-3 gap-8 mt-16 max-w-3xl mx-auto">
-                  {stats.slice(0, 3).map((stat, index) => (
-                    <div key={index} className="text-center">
-                      <div className="text-3xl sm:text-4xl md:text-5xl font-bold text-purple-400 mb-2">
-                        {stat.value}{stat.suffix}
-                      </div>
-                      <div className="text-gray-400 text-xs sm:text-sm md:text-base">{stat.name}</div>
-                    </div>
-                  ))}
-                </div>
-              )}
-              <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">
-                <div className="w-6 h-10 border-2 border-white/50 rounded-full flex items-start justify-center p-2">
-                  <div className="w-1.5 h-3 bg-white rounded-full animate-pulse"></div>
-                </div>
-                <p className="text-white/70 text-xs mt-2">Scroll Down</p>
-              </div>
-            </div>
-          </div>
-          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-gray-900 to-transparent"></div>
-        </section>
-      )}
+    
 
       {/* Intro Section */}
       {intro && (
@@ -478,7 +419,7 @@ const Home = () => {
               <div className="md:w-1/2 pl-1 sm:pl-8 md:pl-32 pr-0 md:pr-0 pt-4 sm:pt-6 md:pt-4 pb-4 flex flex-col items-center">
                 <div className="relative slide-in-left opacity-0 transition-all duration-700 ease-out md:-translate-x-10 translate-x-0 mx-auto">
                   <img
-                    src={intro.image.startsWith('http') ? intro.image : `${BASE_URL}/media/${intro.image}`}
+                    src={intro.image_url || intro.image}
                     alt="Videographer"
                     className="w-full max-w-[90%] h-[300px] sm:h-[400px] md:h-[500px] lg:h-[600px] object-cover border-2 sm:border-4 border-gray-700 rounded-xl sm:rounded-2xl shadow-[0_0_20px_rgba(147,112,219,0.8)] mx-auto"
                   />

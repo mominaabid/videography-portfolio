@@ -103,39 +103,39 @@ const Projects: React.FC = () => {
       <div className="bg-gray-900 text-white min-h-screen">
         {/* Hero Section */}
         <div className="relative h-96 bg-black">
-          {heroData && (
-            <>
-              {heroData.media_type === 'video' ? (
-                <video
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  className="absolute inset-0 w-full h-full object-cover"
-                >
-                  <source src={heroData.media_url} type="video/mp4" />
-                </video>
-              ) : (
-                <div
-                  className="absolute inset-0 bg-cover bg-center"
-                  style={{ backgroundImage: `url('${heroData.media_url}')` }}
-                />
-              )}
-              <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                <div className="text-center px-4">
-                  <h1 className="text-4xl md:text-5xl font-bold mb-4">
-                    {heroData.title}
-                  </h1>
-                  <p className="text-lg md:text-xl mb-6">
-                    {heroData.subtitle}
-                  </p>
-                  <button className="px-6 py-3 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition">
-                    {heroData.button_text}
-                  </button>
-                </div>
-              </div>
-            </>
-          )}
+      {heroData && (
+  <>
+    {heroData.media_type === 'video' ? (
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover"
+      >
+        <source src="/wedding.mp4" type="video/mp4" />
+      </video>
+    ) : (
+      <div
+        className="absolute inset-0 bg-cover bg-center h-full"
+        style={{ backgroundImage: `url('/pentpic.jpg')` }}
+      />
+    )}
+
+    <div className="absolute inset-0 h-full flex items-center justify-center">
+      <div className="text-center px-4">
+        <h1 className="text-4xl md:text-5xl font-bold mb-4">
+          {heroData.title}
+        </h1>
+        <p className="text-lg md:text-xl mb-6">{heroData.subtitle}</p>
+        <button className="px-6 py-3 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition">
+          {heroData.button_text}
+        </button>
+      </div>
+    </div>
+  </>
+)}
+
         </div>
 
         {/* Projects Section */}
@@ -159,9 +159,10 @@ const Projects: React.FC = () => {
                   <div className="relative h-48 bg-gray-700">
                     {project.media_type === 'video' ? (
                       <>
-                        {project.thumbnail_url ? (
+                        {/* {project.thumbnail_url ? (
                           <img
-                            src={project.thumbnail_url}
+                            // src={project.thumbnail_url}
+                            src={'/wedding.mp4'}
                             alt={project.title}
                             className="w-full h-full object-cover"
                           />
@@ -169,7 +170,13 @@ const Projects: React.FC = () => {
                           <video className="w-full h-full object-cover" muted>
                             <source src={project.media_url} type="video/mp4" />
                           </video>
-                        )}
+                        )} */}
+                        <img
+  src="/wedpic2.jpg"
+  alt={project.title}
+  className="w-full h-full object-cover"
+/>
+
                         <div className="absolute inset-0 flex items-center justify-center">
                           <div className="bg-black bg-opacity-50 rounded-full p-3">
                             <svg

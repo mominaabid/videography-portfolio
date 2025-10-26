@@ -23,6 +23,8 @@ interface HeroSlide {
   video: string;
   category: string;
   views: string;
+  image_url?: string;
+  video_url?: string;
 }
 
 interface Category {
@@ -41,6 +43,8 @@ interface Project {
   description: string;
   views: string;
   likes: string;
+  video_url?: string;
+  thumbnail_url?: string;
 }
 
 const iconMap: Record<string, any> = {
@@ -144,7 +148,7 @@ const Portfolio = () => {
               }`}
             >
               <img
-                src={slide.image}
+                src={slide.image_url || slide.image}
                 alt={slide.title}
                 className="w-full h-full object-cover object-center"
                 loading={index === 0 ? 'eager' : 'lazy'}
@@ -183,7 +187,7 @@ const Portfolio = () => {
                 
                 <div className="pt-2">
                   <button
-                    onClick={() => setVideoPopup(heroSlides[currentSlide]?.video)}
+                    onClick={() => setVideoPopup(heroSlides[currentSlide]?.video_url || heroSlides[currentSlide]?.video)}
                     className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 sm:px-8 py-2.5 sm:py-3.5 rounded-lg font-semibold text-sm sm:text-base hover:scale-105 active:scale-95 transition-all inline-flex items-center gap-2 shadow-lg shadow-purple-500/30"
                   >
                     <Play size={18} />
@@ -196,7 +200,7 @@ const Portfolio = () => {
               <div className="hidden md:block relative">
                 <div className="overflow-hidden rounded-xl border-2 sm:border-4 border-purple-500/50 shadow-2xl shadow-purple-500/20 aspect-video">
                   <video
-                    src={heroSlides[currentSlide]?.video}
+                    src={heroSlides[currentSlide]?.video_url || heroSlides[currentSlide]?.video}
                     muted
                     loop
                     autoPlay
@@ -261,42 +265,40 @@ const Portfolio = () => {
             <div className="w-12 sm:w-16 h-1 bg-gradient-to-r from-purple-500 to-pink-500 mx-auto"></div>
           </div>
 
-          {/* Category Filters - Horizontally scrollable on mobile */}
           {/* Category Filters - Centered on all screens */}
-<div className="mb-6 sm:mb-8">
-  <div className="flex flex-wrap justify-center items-center gap-2 sm:gap-3 px-4">
-    <button
-      onClick={() => handleCategoryChange('all')}
-      className={`flex items-center gap-1.5 sm:gap-2 px-4 sm:px-5 py-2 rounded-lg text-xs sm:text-sm font-semibold transition ${
-        selectedCategory === 'all'
-          ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg'
-          : 'bg-gray-800 hover:bg-gray-700 text-gray-300'
-      }`}
-    >
-      <Sparkles size={14} className="sm:w-4 sm:h-4" />
-      <span>All Projects</span>
-    </button>
+          <div className="mb-6 sm:mb-8">
+            <div className="flex flex-wrap justify-center items-center gap-2 sm:gap-3 px-4">
+              <button
+                onClick={() => handleCategoryChange('all')}
+                className={`flex items-center gap-1.5 sm:gap-2 px-4 sm:px-5 py-2 rounded-lg text-xs sm:text-sm font-semibold transition ${
+                  selectedCategory === 'all'
+                    ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg'
+                    : 'bg-gray-800 hover:bg-gray-700 text-gray-300'
+                }`}
+              >
+                <Sparkles size={14} className="sm:w-4 sm:h-4" />
+                <span>All Projects</span>
+              </button>
 
-    {categories.map((cat) => {
-      const Icon = iconMap[cat.icon] || Sparkles;
-      return (
-        <button
-          key={cat.id}
-          onClick={() => handleCategoryChange(cat.id)}
-          className={`flex items-center gap-1.5 sm:gap-2 px-4 sm:px-5 py-2 rounded-lg text-xs sm:text-sm font-semibold transition ${
-            selectedCategory === cat.id
-              ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg'
-              : 'bg-gray-800 hover:bg-gray-700 text-gray-300'
-          }`}
-        >
-          <Icon size={14} className="sm:w-4 sm:h-4" />
-          <span>{cat.name}</span>
-        </button>
-      );
-    })}
-  </div>
-</div>
-
+              {categories.map((cat) => {
+                const Icon = iconMap[cat.icon] || Sparkles;
+                return (
+                  <button
+                    key={cat.id}
+                    onClick={() => handleCategoryChange(cat.id)}
+                    className={`flex items-center gap-1.5 sm:gap-2 px-4 sm:px-5 py-2 rounded-lg text-xs sm:text-sm font-semibold transition ${
+                      selectedCategory === cat.id
+                        ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg'
+                        : 'bg-gray-800 hover:bg-gray-700 text-gray-300'
+                    }`}
+                  >
+                    <Icon size={14} className="sm:w-4 sm:h-4" />
+                    <span>{cat.name}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
 
           {/* Projects Grid - Responsive */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
@@ -308,14 +310,14 @@ const Portfolio = () => {
                 {/* Thumbnail with Play Button */}
                 <div className="relative aspect-video overflow-hidden bg-gray-800">
                   <img
-                    src={p.thumbnail}
+                    src={p.thumbnail_url || p.thumbnail}
                     alt={p.title}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                     loading="lazy"
                   />
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                   <button
-                    onClick={() => setVideoPopup(p.video)}
+                    onClick={() => setVideoPopup(p.video_url || p.video)}
                     className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                     aria-label={`Play ${p.title}`}
                   >
