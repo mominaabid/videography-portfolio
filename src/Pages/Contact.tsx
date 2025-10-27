@@ -39,7 +39,7 @@ interface HeroSection {
   badge_text: string;
   badge_icon: string;
   media_type: 'video' | 'image';
-  media_url: string | null;
+  media_url: string ;
 }
 
 export default function ContactPage() {
@@ -244,9 +244,7 @@ export default function ContactPage() {
       {/* Hero Section with Background Video */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
         {loading || error ? (
-          <video autoPlay loop muted playsInline className="absolute top-0 left-0 w-full h-full object-cover">
-            <source src="/talking2.mp4" type="video/mp4" />
-          </video>
+          <div className="absolute inset-0 w-full h-full bg-gray-900" />    
         ) : hero?.media_type === 'video' && hero?.media_url ? (
           <video autoPlay loop muted playsInline className="absolute top-0 left-0 w-full h-full object-cover">
             <source src={hero.media_url} type="video/mp4" />
