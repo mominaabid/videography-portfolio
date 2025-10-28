@@ -40,24 +40,25 @@ const Projects: React.FC = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      
-      // Fetch hero section
+
+      // Fetch hero section data
       const heroResponse = await fetch(`${API_BASE_URL}/portfolio-hero/active/`);
       if (heroResponse.ok) {
-        const heroData = await heroResponse.json();
-        setHeroData(heroData);
+        const heroJson = await heroResponse.json();
+        setHeroData(heroJson);
       }
 
-      // Fetch projects
+      // Fetch projects data
       const projectsResponse = await fetch(`${API_BASE_URL}/projects/`);
       if (projectsResponse.ok) {
-        const projectsData = await projectsResponse.json();
-        setProjects(projectsData.results || projectsData);
+        const projectsJson = await projectsResponse.json();
+        setProjects(projectsJson.results || projectsJson);
       }
-      
+
       setLoading(false);
     } catch (err) {
-      setError('Failed to fetch data');
+      console.error('Error fetching data:', err);
+      setError('Failed to fetch data from backend.');
       setLoading(false);
     }
   };
@@ -100,50 +101,48 @@ const Projects: React.FC = () => {
   return (
     <>
       <Header />
+
       <div className="bg-gray-900 text-white min-h-screen">
-        {/* Hero Section */}
-        <div className="relative h-96 bg-black">
-      {heroData && (
-  <>
-    {heroData.media_type === 'video' ? (
-      <video
-        autoPlay
-        loop
-        muted
-        playsInline
-        className="absolute inset-0 w-full h-full object-cover"
-      >
-        <source src="/wedding.mp4" type="video/mp4" />
-      </video>
-    ) : (
-      <div
-        className="absolute inset-0 bg-cover bg-center h-full"
-        style={{ backgroundImage: `url('/pentpic.jpg')` }}
-      />
-    )}
+        {/* ---------------- HERO SECTION ---------------- */}
+        {heroData && (
+          <div className="relative h-96 bg-black overflow-hidden">
+            {heroData.media_type === 'video' ? (
+              <video
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="absolute inset-0 w-full h-full object-cover"
+              >
+                <source src={heroData.media_url} type="video/mp4" />
+              </video>
+            ) : (
+              <div
+                className="absolute inset-0 bg-cover bg-center"
+                style={{ backgroundImage: `url(${heroData.media_url})` }}
+              />
+            )}
 
-    <div className="absolute inset-0 h-full flex items-center justify-center">
-      <div className="text-center px-4">
-        <h1 className="text-4xl md:text-5xl font-bold mb-4">
-          {heroData.title}
-        </h1>
-        <p className="text-lg md:text-xl mb-6">{heroData.subtitle}</p>
-        <button className="px-6 py-3 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition">
-          {heroData.button_text}
-        </button>
-      </div>
-    </div>
-  </>
-)}
+            <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+              <div className="text-center px-4">
+                <h1 className="text-4xl md:text-5xl font-bold mb-4">
+                  {heroData.title}
+                </h1>
+                <p className="text-lg md:text-xl mb-6">{heroData.subtitle}</p>
+                <button className="px-6 py-3 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition">
+                  {heroData.button_text}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
-        </div>
-
-        {/* Projects Section */}
+        {/* ---------------- PROJECTS SECTION ---------------- */}
         <div className="container mx-auto py-12 px-4">
           <h2 className="text-3xl font-bold text-center mb-8 text-white">
             Projects
           </h2>
-          
+
           {projects.length === 0 ? (
             <div className="text-center text-gray-400 py-12">
               <p>No projects available.</p>
@@ -158,37 +157,14 @@ const Projects: React.FC = () => {
                 >
                   <div className="relative h-48 bg-gray-700">
                     {project.media_type === 'video' ? (
-                      <>
-                        {/* {project.thumbnail_url ? (
-                          <img
-                            // src={project.thumbnail_url}
-                            src={'/wedding.mp4'}
-                            alt={project.title}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <video className="w-full h-full object-cover" muted>
-                            <source src={project.media_url} type="video/mp4" />
-                          </video>
-                        )} */}
-                        <img
-  src="/wedpic2.jpg"
-  alt={project.title}
-  className="w-full h-full object-cover"
-/>
-
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <div className="bg-black bg-opacity-50 rounded-full p-3">
-                            <svg
-                              className="w-8 h-8 text-white"
-                              fill="currentColor"
-                              viewBox="0 0 20 20"
-                            >
-                              <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
-                            </svg>
-                          </div>
-                        </div>
-                      </>
+                      <video
+                        className="w-full h-full object-cover"
+                        muted
+                        playsInline
+                        loop
+                      >
+                        <source src={project.media_url} type="video/mp4" />
+                      </video>
                     ) : (
                       <img
                         src={project.media_url}
@@ -196,12 +172,14 @@ const Projects: React.FC = () => {
                         className="w-full h-full object-cover"
                       />
                     )}
+
                     {project.is_featured && (
                       <span className="absolute top-2 right-2 bg-purple-600 text-white text-xs px-2 py-1 rounded">
                         Featured
                       </span>
                     )}
                   </div>
+
                   <div className="p-6">
                     <h3 className="text-xl font-bold mb-2 text-white">
                       {project.title}
@@ -233,9 +211,10 @@ const Projects: React.FC = () => {
           )}
         </div>
       </div>
+
       <div className="bg-[#0b0d17] text-white">
-  <Footer />
-</div>
+        <Footer />
+      </div>
     </>
   );
 };

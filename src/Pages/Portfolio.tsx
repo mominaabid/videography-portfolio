@@ -66,31 +66,31 @@ const Portfolio = () => {
   const [videoPopup, setVideoPopup] = useState<string | null>(null);
   const projectsPerPage = 6;
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [heroRes, catRes, projRes] = await Promise.all([
-          fetch('https://backendvideography.vercel.app/portfolio/hero-slides/'),
-          fetch('https://backendvideography.vercel.app/portfolio/categories/'),
-          fetch('https://backendvideography.vercel.app/portfolio/projects/'),
-        ]);
+ useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const [heroRes, catRes, projRes] = await Promise.all([
+        fetch('https://backendvideography.vercel.app/api/portfolio/hero-slides/'),
+        fetch('https://backendvideography.vercel.app/api/portfolio/categories/'),
+        fetch('https://backendvideography.vercel.app/api/portfolio/projects/'),
+      ]);
 
-        const heroData = await heroRes.json();
-        const catData = await catRes.json();
-        const projData = await projRes.json();
+      const heroData = await heroRes.json();
+      const catData = await catRes.json();
+      const projData = await projRes.json();
 
-        setHeroSlides(heroData.results || heroData);
-        setCategories(catData.results || catData);
-        setProjects(projData.results || projData);
-      } catch (error) {
-        console.error('Error fetching portfolio data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+      setHeroSlides(heroData.results || heroData);
+      setCategories(catData.results || catData);
+      setProjects(projData.results || projData);
+    } catch (error) {
+      console.error('Error fetching portfolio data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchData();
-  }, []);
+  fetchData();
+}, []);
 
   useEffect(() => {
     if (heroSlides.length === 0) return;
