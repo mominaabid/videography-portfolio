@@ -223,7 +223,9 @@ const Details: React.FC = () => {
           </div>
         </div>
       </div>
-      <Footer />
+   <div className="bg-[#0b0d17] text-white">
+           <Footer />
+         </div>
     </>
   );
 };
