@@ -2,12 +2,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import { MapPin, Phone, Mail, Send, Clock, Award, MessageSquare, User, AtSign, Hash, FileText, CheckCircle, Star, Heart, Camera } from 'lucide-react';
 import Header from '../Components/Header';
 import Footer from '../Components/footer';
+import emailjs from 'emailjs-com';
 
 interface VisibilityState {
   [key: string]: boolean;
 }
 
 interface FormData {
+  [key: string]: string;
   name: string;
   email: string;
   whatsapp: string;
@@ -164,32 +166,56 @@ export default function ContactPage() {
     setFormError(null);
   };
 
-  const handleSubmit = async () => {
-    try {
-      const response = await fetch('https://backendvideography.vercel.app/api/contact/submit/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
+const handleSubmit = async (e?: React.FormEvent) => {
+  e?.preventDefault();
 
-      const result = await response.json();
+  if (!formData.name || !formData.email || !formData.subject || !formData.message) {
+    setFormError("Please fill in all required fields.");
+    return;
+  }
 
-      if (response.ok) {
-        setIsSubmitted(true);
-        setFormError(null);
-        setTimeout(() => {
-          setIsSubmitted(false);
-          setFormData({ name: '', email: '', whatsapp: '', subject: '', message: '' });
-        }, 3000);
-      } else {
-        setFormError(result.message || 'Failed to send message. Please check your input.');
-      }
-    } catch (err) {
-      setFormError('An error occurred. Please try again later.');
-    }
-  };
+  try {
+    // 1️⃣ Send main email to you (admin)
+    await emailjs.send(
+      "service_62k6n0x",        // e.g., service_abc123
+      "template_feji55x",       // your first template
+      formData,
+      "qU_ljJITgXTBKHwWp"
+    );
+
+    // 2️⃣ Send auto-reply to the user
+    await emailjs.send(
+      "service_62k6n0x",
+      "template_hcg887f",     // your second template
+      {
+        name: formData.name,
+        email: formData.email,
+        whatsapp: formData.whatsapp,
+  subject: formData.subject,
+  message: formData.message
+      },
+      "qU_ljJITgXTBKHwWp"
+    );
+
+    console.log("Emails sent successfully!");
+    setIsSubmitted(true);
+    setFormError(null);
+    setFormData({
+      name: "",
+      email: "",
+      whatsapp: "",
+      subject: "",
+      message: "",
+    });
+
+    setTimeout(() => setIsSubmitted(false), 3000);
+  } catch (error) {
+    console.error("Error sending email:", error);
+    setFormError("Something went wrong. Please try again later.");
+  }
+};
+
+
 
   return (
     <div className="bg-black text-white min-h-screen overflow-hidden">
