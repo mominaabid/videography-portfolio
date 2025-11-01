@@ -540,7 +540,7 @@ const About = () => {
                       initial={{ width: 0 }}
                       whileInView={{ width: `${s.level}%` }}
                       transition={{ duration: 1.2, delay: i * 0.06, ease: smoothEase }}
-                      viewport={{ once: true, margin: "-50px" }}
+                      viewport={{ once: true, margin: "0px", amount: 0.3 }}
                       className="h-full bg-gradient-to-r from-purple-500 via-pink-500 to-purple-600 rounded-full will-change-transform"
                     />
                   </div>
