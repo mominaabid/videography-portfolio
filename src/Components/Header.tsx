@@ -4,30 +4,48 @@ import { Menu, X } from 'lucide-react';
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [siteConfig, setSiteConfig] = useState({ logo_url: null, site_name: 'Alex Rodriguez' });
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
-    window.addEventListener('scroll', handleScroll as () => void);
-    return () => window.removeEventListener('scroll', handleScroll as () => void);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Fetch site configuration from Django API
+  useEffect(() => {
+    const fetchSiteConfig = async () => {
+      try {
+        const response = await fetch('https://backendvideography.vercel.app/api/site-config/');
+        if (response.ok) {
+          const data = await response.json();
+          setSiteConfig(data);
+        }
+      } catch (error) {
+        console.error('Error fetching site config:', error);
+      }
+    };
+    
+    fetchSiteConfig();
   }, []);
 
   useEffect(() => {
-  const handleClickOutside = (event: MouseEvent) => {
-    const target = event.target as HTMLElement;
-    if (isMobileMenuOpen && target.closest('nav') === null) {
-      setIsMobileMenuOpen(false);
-    }
-  };
-
-  if (isMobileMenuOpen) {
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (isMobileMenuOpen && target.closest('nav') === null) {
+        setIsMobileMenuOpen(false);
+      }
     };
-  }
-}, [isMobileMenuOpen]);
+
+    if (isMobileMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }
+  }, [isMobileMenuOpen]);
 
   const navItems = [
     { name: 'Home', href: '/' },
@@ -60,10 +78,17 @@ const Header = () => {
           <div className="flex items-center justify-between h-20">
             {/* Logo */}
             <div className="flex-shrink-0">
-              <h1 className="text-2xl font-bold">
-                <span className="text-white">Alex Rodriguez</span>
-              </h1>
-              <p className="text-xs text-purple-400">Award-Winning Videographer</p>
+              {siteConfig.logo_url ? (
+                <img 
+                  src={siteConfig.logo_url} 
+                  alt={siteConfig.site_name}
+                  className="h-12 w-auto object-contain"
+                />
+              ) : (
+                <h1 className="text-2xl font-bold">
+                  <span className="text-white">{siteConfig.site_name}</span>
+                </h1>
+              )}
             </div>
 
             {/* Desktop Navigation */}
