@@ -105,13 +105,6 @@ interface Counts {
   citiesCov: number;
 }
 
-// interface PaginatedResponse<T> {
-//   count: number;
-//   next: string | null;
-//   previous: string | null;
-//   results: T[];
-// }
-
 const BASE_URL = 'https://backendvideography.vercel.app';
 
 // Helper function to extract data from paginated response
@@ -126,7 +119,6 @@ const extractData = <T,>(response: any): T[] => {
 };
 
 const Home = () => {
-  // const [hero, setHero] = useState<Hero | null>(null);
   const [stats, setStats] = useState<Stat[]>([]);
   const [intro, setIntro] = useState<Intro | null>(null);
   const [skills, setSkills] = useState<Skill[]>([]);
@@ -214,7 +206,6 @@ const Home = () => {
         // Extract hero data
         const heroData = extractData<Hero>(heroRes.data);
         const heroItem = heroData.length > 0 ? heroData[0] : null;
-        // setHero(heroItem);
 
         // Extract and set typewriter phrases
         if (heroItem && heroItem.typewriter_phrases) {
@@ -413,51 +404,105 @@ const Home = () => {
 
       {/* Intro Section */}
       {intro && (
-        <section className="intro-section py-0 sm:py-12 px-0 bg-gray-900 opacity-0 animate-fadeIn overflow-visible">
-          <div className="max-w-7xl pb-6 sm:pb-8 mx-auto w-full bg-gray-900 rounded-3xl shadow-2xl transition-all duration-500 ease-in-out">
+        <section className="intro-section py-0 sm:py-12 px-0 bg-gray-900 overflow-visible">
+          <motion.div 
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="max-w-7xl pb-6 sm:pb-8 mx-auto w-full bg-gray-900 rounded-3xl shadow-2xl transition-all duration-500 ease-in-out"
+          >
             <div className="flex flex-col md:flex-row gap-0">
-              <div className="md:w-1/2 pl-1 sm:pl-8 md:pl-32 pr-0 md:pr-0 pt-4 sm:pt-6 md:pt-4 pb-4 flex flex-col items-center">
-                <div className="relative slide-in-left opacity-0 transition-all duration-700 ease-out md:-translate-x-10 translate-x-0 mx-auto">
-                  <img
+              <motion.div 
+                initial={{ opacity: 0, x: -100 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.9, delay: 0.2 }}
+                viewport={{ once: true }}
+                className="md:w-1/2 pl-1 sm:pl-8 md:pl-32 pr-0 md:pr-0 pt-4 sm:pt-6 md:pt-4 pb-4 flex flex-col items-center"
+              >
+                <div className="relative mx-auto">
+                  <motion.img
+                    initial={{ opacity: 0, scale: 0.8, rotateY: -20 }}
+                    whileInView={{ opacity: 1, scale: 1, rotateY: 0 }}
+                    transition={{ duration: 1, delay: 0.3 }}
+                    viewport={{ once: true }}
                     src={intro.image_url || intro.image}
                     alt="Videographer"
                     className="w-full max-w-[90%] h-[300px] sm:h-[400px] md:h-[500px] lg:h-[600px] object-cover border-2 sm:border-4 border-gray-700 rounded-xl sm:rounded-2xl shadow-[0_0_20px_rgba(147,112,219,0.8)] mx-auto"
                   />
                 </div>
                 {stats.length > 0 && (
-                  <div ref={statsRef} className="grid grid-cols-2 gap-3 sm:gap-6 pt-6 sm:pt-8 slide-in-left opacity-0 transition-all duration-700 ease-out md:-translate-x-10 translate-x-0 delay-200">
+                  <div ref={statsRef} className="grid grid-cols-2 gap-3 sm:gap-6 pt-6 sm:pt-8">
                     {stats.map((stat, index) => {
                       const Icon = iconMap[stat.icon] || Calendar;
                       return (
-                        <div key={index} className="bg-gradient-to-br from-gray-800 to-gray-950 p-3 sm:p-4 rounded-xl sm:rounded-2xl max-w-xs min-h-24 sm:min-h-32 text-center flex flex-col items-center justify-center shadow-[0_4px_8px_rgba(0,0,0,0.5)]">
+                        <motion.div 
+                          key={index}
+                          initial={{ opacity: 0, y: 30, scale: 0.8 }}
+                          whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                          transition={{ duration: 0.6, delay: 0.4 + index * 0.1 }}
+                          viewport={{ once: true }}
+                          className="bg-gradient-to-br from-gray-800 to-gray-950 p-3 sm:p-4 rounded-xl sm:rounded-2xl max-w-xs min-h-24 sm:min-h-32 text-center flex flex-col items-center justify-center shadow-[0_4px_8px_rgba(0,0,0,0.5)]"
+                        >
                           <Icon className="text-purple-500" size={18} />
                           <p className="text-lg sm:text-xl md:text-2xl font-bold px-2">
                             {counts[stat.name.toLowerCase().includes('years') ? 'yearsExp' : stat.name.toLowerCase().includes('clients') ? 'happyClients' : stat.name.toLowerCase().includes('awards') ? 'awardsWon' : 'citiesCov']}{stat.suffix}
                           </p>
                           <p className="text-xs sm:text-sm text-gray-400 px-2">{stat.name}</p>
-                        </div>
+                        </motion.div>
                       );
                     })}
                   </div>
                 )}
-              </div>
-              <div className="w-full lg:w-1/2 px-4 sm:px-8 lg:px-16 py-4 sm:py-6 md:py-4 flex items-center justify-center">
+              </motion.div>
+              <motion.div 
+                initial={{ opacity: 0, x: 100 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.9, delay: 0.3 }}
+                viewport={{ once: true }}
+                className="w-full lg:w-1/2 px-4 sm:px-8 lg:px-16 py-4 sm:py-6 md:py-4 flex items-center justify-center"
+              >
                 <div className="max-w-[550px] text-center">
-                  <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold pt-0 sm:pt-4 mb-3 sm:mb-4 text-white leading-tight">
+                  <motion.h1 
+                    initial={{ opacity: 0, y: -30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.7, delay: 0.4 }}
+                    viewport={{ once: true }}
+                    className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold pt-0 sm:pt-4 mb-3 sm:mb-4 text-white leading-tight"
+                  >
                     {intro.title}
-                  </h1>
-                  <div className="w-12 sm:w-15 h-0.5 sm:h-1 bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 rounded-full mb-4 sm:mb-6 mx-auto"></div>
+                  </motion.h1>
+                  <motion.div 
+                    initial={{ scaleX: 0 }}
+                    whileInView={{ scaleX: 1 }}
+                    transition={{ duration: 0.8, delay: 0.5 }}
+                    viewport={{ once: true }}
+                    className="w-12 sm:w-15 h-0.5 sm:h-1 bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 rounded-full mb-4 sm:mb-6 mx-auto"
+                  ></motion.div>
                   {intro.subtitle.split('\n').map((para, index) => (
-                    <p key={index} className="text-gray-300 text-xs sm:text-sm md:text-base lg:text-lg mb-3 sm:mb-4">
+                    <motion.p 
+                      key={index}
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.6, delay: 0.6 + index * 0.1 }}
+                      viewport={{ once: true }}
+                      className="text-gray-300 text-xs sm:text-sm md:text-base lg:text-lg mb-3 sm:mb-4"
+                    >
                       {para}
-                    </p>
+                    </motion.p>
                   ))}
                   {intro.achievements && (
                     <>
-                      <div className="flex items-center justify-center mb-4 sm:mb-6">
+                      <motion.div 
+                        initial={{ opacity: 0, x: -20 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.6, delay: 0.8 }}
+                        viewport={{ once: true }}
+                        className="flex items-center justify-center mb-4 sm:mb-6"
+                      >
                         <ArrowUpRight className="text-purple-500 mr-2" size={16} />
                         <h2 className="text-sm sm:text-base md:text-lg font-semibold text-purple-400">Recent Achievements</h2>
-                      </div>
+                      </motion.div>
                       <ul className="space-y-1.5 sm:space-y-2 inline-block text-left">
                         {(() => {
                           const achievements = intro.achievements;
@@ -467,16 +512,29 @@ const Home = () => {
                             ? achievements.split(',')
                             : ['No achievements available'];
                           return achievementList.map((achievement, index) => (
-                            <li key={index} className="flex items-center text-gray-300 text-xs sm:text-sm md:text-base">
+                            <motion.li 
+                              key={index}
+                              initial={{ opacity: 0, x: -30 }}
+                              whileInView={{ opacity: 1, x: 0 }}
+                              transition={{ duration: 0.5, delay: 0.9 + index * 0.1 }}
+                              viewport={{ once: true }}
+                              className="flex items-center text-gray-300 text-xs sm:text-sm md:text-base"
+                            >
                               <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-purple-500 rounded-full mr-2 sm:mr-3"></div>
                               {achievement.trim()}
-                            </li>
+                            </motion.li>
                           ));
                         })()}
                       </ul>
                     </>
                   )}
-                  <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center pt-4 sm:pt-6 mt-4 sm:mt-8">
+                  <motion.div 
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 1.1 }}
+                    viewport={{ once: true }}
+                    className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center pt-4 sm:pt-6 mt-4 sm:mt-8"
+                  >
                     <button className="group bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 sm:px-5 sm:py-2.5 rounded-lg font-semibold text-sm sm:text-base transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2 shadow-lg hover:shadow-purple-500/50 w-fit mx-auto sm:mx-0">
                       <Play size={16} className="group-hover:scale-110 transition-transform" />
                       {intro.primary_button_text}
@@ -484,11 +542,11 @@ const Home = () => {
                     <button className="bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white px-3 py-2 sm:px-5 sm:py-2.5 rounded-lg font-semibold text-sm sm:text-base transition-all duration-300 border border-white/30 hover:border-white/50 w-fit mx-auto sm:mx-0">
                       {intro.secondary_button_text}
                     </button>
-                  </div>
+                  </motion.div>
                 </div>
-              </div>
+              </motion.div>
             </div>
-          </div>
+          </motion.div>
         </section>
       )}
 
@@ -496,19 +554,48 @@ const Home = () => {
       {skills.length > 0 && (
         <section className="skills-section bg-gray-900 py-20 px-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto text-center">
-            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">Our Key Skills</h2>
-            <p className="text-gray-400 text-base sm:text-lg max-w-2xl mx-auto mb-12">
+            <motion.h2 
+              initial={{ opacity: 0, y: -30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7 }}
+              viewport={{ once: true }}
+              className="text-3xl sm:text-4xl font-bold text-white mb-4"
+            >
+              Our Key Skills
+            </motion.h2>
+            <motion.p 
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              viewport={{ once: true }}
+              className="text-gray-400 text-base sm:text-lg max-w-2xl mx-auto mb-12"
+            >
               The foundation of our work lies in combining creativity with technical expertise.
-            </p>
-            <div className="grid md:grid-cols-3 gap-8">
+            </motion.p>
+            <div className="grid md:grid-cols-4 gap-8">
               {skills.map((skill, index) => {
                 const Icon = iconMap[skill.icon] || PenTool;
                 return (
-                  <div key={index} className="bg-gray-800/50 p-8 rounded-2xl border border-gray-700 hover:border-purple-500 transition-all group">
-                    <Icon className="text-purple-400 mb-4 w-12 h-12 mx-auto" />
+                  <motion.div 
+                    key={index}
+                    initial={{ opacity: 0, y: 50, rotateX: -15 }}
+                    whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
+                    transition={{ duration: 0.6, delay: index * 0.15 }}
+                    viewport={{ once: true }}
+                    whileHover={{ scale: 1.05, y: -10 }}
+                    className="bg-gray-800/50 p-8 rounded-2xl border border-gray-700 hover:border-purple-500 transition-all group"
+                  >
+                    <motion.div
+                      initial={{ scale: 0, rotate: -180 }}
+                      whileInView={{ scale: 1, rotate: 0 }}
+                      transition={{ duration: 0.6, delay: index * 0.15 + 0.2 }}
+                      viewport={{ once: true }}
+                    >
+                      <Icon className="text-purple-400 mb-4 w-12 h-12 mx-auto" />
+                    </motion.div>
                     <h3 className="text-xl sm:text-2xl font-bold mb-2">{skill.title}</h3>
                     <p className="text-gray-400 text-sm sm:text-base">{skill.description}</p>
-                  </div>
+                  </motion.div>
                 );
               })}
             </div>
@@ -521,24 +608,50 @@ const Home = () => {
         <section className="bg-gray-900 py-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center">
-              <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
+              <motion.h2 
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.7 }}
+                viewport={{ once: true }}
+                className="text-3xl sm:text-4xl font-bold text-white mb-4"
+              >
                 Your Story, Beautifully Told
-              </h2>
-              <p className="text-gray-400 text-base sm:text-lg max-w-2xl mx-auto">
+              </motion.h2>
+              <motion.p 
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.2 }}
+                viewport={{ once: true }}
+                className="text-gray-400 text-base sm:text-lg max-w-2xl mx-auto"
+              >
                 Every frame matters. We blend artistry with cutting-edge technology to create videos that resonate and inspire.
-              </p>
+              </motion.p>
             </div>
             <div className="grid md:grid-cols-3 gap-8 mt-16">
               {services.map((service, index) => {
                 const Icon = iconMap[service.icon] || PenTool;
                 return (
-                  <div key={index} className="bg-gray-800/50 backdrop-blur-sm p-8 rounded-2xl border border-gray-700 hover:border-purple-500 transition-all duration-300 group">
-                    <div className="w-16 h-16 bg-purple-600/20 rounded-xl flex items-center justify-center mb-6 group-hover:bg-purple-600/30 transition-colors">
+                  <motion.div 
+                    key={index}
+                    initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50, rotateY: index % 2 === 0 ? -20 : 20 }}
+                    whileInView={{ opacity: 1, x: 0, rotateY: 0 }}
+                    transition={{ duration: 0.8, delay: index * 0.2 }}
+                    viewport={{ once: true }}
+                    whileHover={{ y: -15, scale: 1.03 }}
+                    className="bg-gray-800/50 backdrop-blur-sm p-8 rounded-2xl border border-gray-700 hover:border-purple-500 transition-all duration-300 group"
+                  >
+                    <motion.div 
+                      initial={{ scale: 0, rotate: -180 }}
+                      whileInView={{ scale: 1, rotate: 0 }}
+                      transition={{ duration: 0.7, delay: index * 0.2 + 0.3 }}
+                      viewport={{ once: true }}
+                      className="w-16 h-16 bg-purple-600/20 rounded-xl flex items-center justify-center mb-6 group-hover:bg-purple-600/30 transition-colors"
+                    >
                       <Icon className="text-purple-400" size={32} />
-                    </div>
+                    </motion.div>
                     <h3 className="text-xl sm:text-2xl font-bold text-white mb-4">{service.title}</h3>
                     <p className="text-gray-400 text-sm sm:text-base">{service.description}</p>
-                  </div>
+                  </motion.div>
                 );
               })}
             </div>
@@ -555,6 +668,7 @@ const Home = () => {
                 initial={{ opacity: 0, y: -30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8 }}
+                viewport={{ once: true }}
                 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4"
               >
                 Process &{" "}
@@ -566,6 +680,7 @@ const Home = () => {
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 transition={{ duration: 1, delay: 0.2 }}
+                viewport={{ once: true }}
                 className="text-gray-400 max-w-2xl mx-auto text-base sm:text-lg"
               >
                 From concept to final cut, we combine creativity with the latest
@@ -578,6 +693,7 @@ const Home = () => {
                   initial={{ opacity: 0, x: -50 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   transition={{ duration: 1 }}
+                  viewport={{ once: true }}
                   className="space-y-8"
                 >
                   {processes.map((step, index) => {
@@ -588,6 +704,7 @@ const Home = () => {
                         initial={{ opacity: 0, x: -30 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.6, delay: index * 0.3 }}
+                        viewport={{ once: true }}
                         className="flex items-start gap-4"
                       >
                         <div className="w-12 h-12 flex items-center justify-center rounded-xl bg-purple-600/20 border border-purple-500/40 text-purple-400">
@@ -609,6 +726,7 @@ const Home = () => {
                   initial={{ opacity: 0, x: 50 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   transition={{ duration: 1 }}
+                  viewport={{ once: true }}
                   className="grid grid-cols-2 gap-8"
                 >
                   {tools.map((tool, index) => {
@@ -619,6 +737,8 @@ const Home = () => {
                         initial={{ opacity: 0, scale: 0.9 }}
                         whileInView={{ opacity: 1, scale: 1 }}
                         transition={{ duration: 0.6, delay: index * 0.2 }}
+                        viewport={{ once: true }}
+                        whileHover={{ scale: 1.05, y: -5 }}
                         className="p-6 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:border-purple-500/50 transition"
                       >
                         <Icon size={32} className="text-purple-400 mb-3" />
@@ -640,19 +760,36 @@ const Home = () => {
 
       {/* FAQ Section */}
       {faqs.length > 0 && (
-        <section className="faq-section pt-6 sm:pt-10 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-900 via-gray-900 to-[#1A0D2A] opacity-0 animate-fadeIn">
+        <section className="faq-section pt-6 sm:pt-10 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-900 via-gray-900 to-[#1A0D2A]">
           <div className="max-w-7xl mx-auto">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 text-white text-center leading-tight slide-in-right">
+            <motion.h2 
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.7 }}
+              viewport={{ once: true }}
+              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 text-white text-center leading-tight"
+            >
               Frequently Asked<br />{' '}
               <span className="bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 bg-clip-text text-transparent">Questions</span>
-            </h2>
-            <p className="text-gray-300 text-xs sm:text-sm md:text-base lg:text-lg text-center max-w-3xl mx-auto mb-6 sm:mb-8 md:mb-12 slide-in-right">
+            </motion.h2>
+            <motion.p 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.2 }}
+              viewport={{ once: true }}
+              className="text-gray-300 text-xs sm:text-sm md:text-base lg:text-lg text-center max-w-3xl mx-auto mb-6 sm:mb-8 md:mb-12"
+            >
               Get clarity on how I can bring your vision to life with professional videography services.
-            </p>
+            </motion.p>
             <div className="grid grid-cols-1 gap-3 sm:gap-4 md:gap-6">
               {faqs.map((faq, index) => (
-                <div
+                <motion.div
                   key={index}
+                  initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                  whileHover={{ scale: 1.02 }}
                   className="bg-gradient-to-br from-gray-800 to-gray-950 p-4 sm:p-5 md:p-6 rounded-xl sm:rounded-2xl shadow-[0_4px_8px_rgba(0,0,0,0.5)] hover:border-purple-500 transition-all duration-300 ease-in-out cursor-pointer max-w-[50rem] mx-auto w-full"
                   onClick={() => setOpenFAQ(openFAQ === index ? null : index)}
                 >
@@ -670,15 +807,21 @@ const Home = () => {
                   >
                     {faq.answer}
                   </p>
-                </div>
+                </motion.div>
               ))}
             </div>
-            <div className="py-8 sm:py-10 md:py-14 px-4 sm:px-4 lg:px-8 max-w-7xl mx-auto">
-              <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-3 sm:mb-4 text-white text-center leading-tight slide-in-right">Still have questions?</h2>
-              <p className="text-gray-300 text-xs sm:text-sm md:text-base lg:text-lg text-center max-w-3xl mx-auto mb-6 sm:mb-8 md:mb-12 slide-in-right">
+            <motion.div 
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7 }}
+              viewport={{ once: true }}
+              className="py-8 sm:py-10 md:py-14 px-4 sm:px-4 lg:px-8 max-w-7xl mx-auto"
+            >
+              <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-3 sm:mb-4 text-white text-center leading-tight">Still have questions?</h2>
+              <p className="text-gray-300 text-xs sm:text-sm md:text-base lg:text-lg text-center max-w-3xl mx-auto mb-6 sm:mb-8 md:mb-12">
                 Don't hesitate to reach out. I'm here to help clarify anything about the process.
               </p>
-            </div>
+            </motion.div>
           </div>
         </section>
       )}
@@ -692,6 +835,7 @@ const Home = () => {
               initial={{ opacity: 0, y: -30 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
               className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-6"
             >
               {cta.title.split(' ').slice(0, -1).join(' ')}{' '}
@@ -703,6 +847,7 @@ const Home = () => {
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               transition={{ duration: 1, delay: 0.2 }}
+              viewport={{ once: true }}
               className="text-gray-300 text-base sm:text-lg md:text-xl mb-10"
             >
               {cta.description}
@@ -711,6 +856,8 @@ const Home = () => {
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, delay: 0.4 }}
+              viewport={{ once: true }}
+              whileHover={{ scale: 1.1, boxShadow: "0 20px 40px rgba(168, 85, 247, 0.4)" }}
               href="/contact"
               className="inline-block px-8 py-3 sm:px-10 sm:py-4 text-base sm:text-lg font-semibold rounded-xl bg-white/10 border border-purple-400/50 backdrop-blur-sm
               text-white hover:bg-white/20 hover:border-purple-400/80 transition-all duration-300 shadow-lg hover:shadow-purple-500/40"
