@@ -1,5 +1,7 @@
+'use client';
+
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence, type Transition, type Easing } from 'framer-motion';
 import Footer from '../Components/footer';
 import Header from '../Components/Header';
 import {
@@ -25,14 +27,12 @@ interface HeroSlide {
   image_url?: string;
   video_url?: string;
 }
-
 interface Category {
   id: number;
   name: string;
   icon: string;
   count: number;
 }
-
 interface Project {
   id: number;
   title: string;
@@ -54,7 +54,13 @@ const iconMap: Record<string, any> = {
   Film,
 };
 
-const Portfolio = () => {
+/* --------------------------------------------------------------
+   Spring & easing presets – typed correctly
+   -------------------------------------------------------------- */
+const spring: Transition = { type: 'spring', stiffness: 180, damping: 22 };
+const easeOutExpo: Easing = [0.16, 1, 0.3, 1] as const;
+
+export default function Portfolio() {
   const [heroSlides, setHeroSlides] = useState<HeroSlide[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
@@ -65,214 +71,234 @@ const Portfolio = () => {
   const [videoPopup, setVideoPopup] = useState<string | null>(null);
   const projectsPerPage = 6;
 
- useEffect(() => {
-  const fetchData = async () => {
-    try {
-      const [heroRes, catRes, projRes] = await Promise.all([
-        fetch('https://backendvideography.vercel.app/api/portfolio/hero-slides/'),
-        fetch('https://backendvideography.vercel.app/api/portfolio/categories/'),
-        fetch('https://backendvideography.vercel.app/api/portfolio/projects/'),
-      ]);
-
-      const heroData = await heroRes.json();
-      const catData = await catRes.json();
-      const projData = await projRes.json();
-
-      setHeroSlides(heroData.results || heroData);
-      setCategories(catData.results || catData);
-      setProjects(projData.results || projData);
-    } catch (error) {
-      console.error('Error fetching portfolio data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  fetchData();
-}, []);
-
+  /* --------------------------------------------------------------
+     Data fetch
+     -------------------------------------------------------------- */
   useEffect(() => {
-    if (heroSlides.length === 0) return;
-    const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
-    }, 5000);
-    return () => clearInterval(interval);
+    const fetchData = async () => {
+      try {
+        const [heroRes, catRes, projRes] = await Promise.all([
+          fetch('https://backendvideography.vercel.app/api/portfolio/hero-slides/'),
+          fetch('https://backendvideography.vercel.app/api/portfolio/categories/'),
+          fetch('https://backendvideography.vercel.app/api/portfolio/projects/'),
+        ]);
+
+        const [heroData, catData, projData] = await Promise.all([
+          heroRes.json(),
+          catRes.json(),
+          projRes.json(),
+        ]);
+
+        setHeroSlides(heroData.results || heroData);
+        setCategories(catData.results || catData);
+        setProjects(projData.results || projData);
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  /* --------------------------------------------------------------
+     Auto-advance hero
+     -------------------------------------------------------------- */
+  useEffect(() => {
+    if (!heroSlides.length) return;
+    const id = setInterval(
+      () => setCurrentSlide((p) => (p + 1) % heroSlides.length),
+      6000
+    );
+    return () => clearInterval(id);
   }, [heroSlides]);
 
+  /* --------------------------------------------------------------
+     Filtering & pagination
+     -------------------------------------------------------------- */
   const filteredProjects =
     selectedCategory === 'all'
       ? projects
       : projects.filter((p) => p.category === selectedCategory);
 
   const totalPages = Math.ceil(filteredProjects.length / projectsPerPage);
-  const startIndex = (currentPage - 1) * projectsPerPage;
-  const currentProjects = filteredProjects.slice(
-    startIndex,
-    startIndex + projectsPerPage
-  );
+  const start = (currentPage - 1) * projectsPerPage;
+  const currentProjects = filteredProjects.slice(start, start + projectsPerPage);
 
-  const handleCategoryChange = (categoryId: number | 'all') => {
-    setSelectedCategory(categoryId);
+  const changeCategory = (id: number | 'all') => {
+    setSelectedCategory(id);
     setCurrentPage(1);
   };
-
   const nextSlide = () =>
-    setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
+    setCurrentSlide((p) => (p + 1) % heroSlides.length);
   const prevSlide = () =>
-    setCurrentSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length);
+    setCurrentSlide((p) => (p - 1 + heroSlides.length) % heroSlides.length);
 
+  /* --------------------------------------------------------------
+     Loading screen
+     -------------------------------------------------------------- */
   if (loading) {
     return (
-      <div className="min-h-screen flex justify-center items-center bg-black text-white">
-        <div className="text-center">
-          <div className="w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-sm sm:text-base">Loading portfolio...</p>
-        </div>
+      <div className="min-h-screen flex items-center justify-center bg-black">
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 1.2, repeat: Infinity, ease: 'linear' }}
+          className="w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full"
+        />
+        <p className="ml-4 text-sm">Loading portfolio…</p>
       </div>
     );
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-900 to-black text-white overflow-x-hidden">
-      <Header/>
-      {/* Hero Section */}
-      <section className="relative h-[85vh] sm:h-[75vh] md:h-[80vh] lg:h-[85vh] overflow-hidden">
-        {/* Background Slides */}
+      <Header />
+
+      {/* ==================== HERO ==================== */}
+      <section className="relative h-[85vh] overflow-hidden">
+        {/* Slides */}
         <div className="absolute inset-0">
-          {heroSlides.map((slide, index) => (
-            <div
-              key={slide.id}
-              className={`absolute inset-0 transition-opacity duration-1000 ${
-                index === currentSlide ? 'opacity-100' : 'opacity-0'
-              }`}
-            >
-              <img
-                src={slide.image_url || slide.image}
-                alt={slide.title}
-                className="w-full h-full object-cover object-center"
-                loading={index === 0 ? 'eager' : 'lazy'}
-              />
-              <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/80"></div>
-            </div>
-          ))}
+          <AnimatePresence initial={false}>
+            {heroSlides.map(
+              (s, i) =>
+                i === currentSlide && (
+                  <motion.div
+                    key={s.id}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 1.4, ease: easeOutExpo }}
+                    className="absolute inset-0"
+                  >
+                    <img
+                      src={s.image_url || s.image}
+                      alt={s.title}
+                      className="w-full h-full object-cover"
+                      loading={i === 0 ? 'eager' : 'lazy'}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/80" />
+                  </motion.div>
+                )
+            )}
+          </AnimatePresence>
         </div>
 
         {/* Content */}
-        <div className="relative z-10 h-full flex items-center px-4 sm:px-6 lg:px-8">
-          <div className="max-w-7xl mx-auto w-full">
-            <div className="grid md:grid-cols-2 gap-6 md:gap-10 lg:gap-12 items-center">
-              {/* Left Content */}
-              <motion.div 
-                initial={{ opacity: 0, x: -80 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 1, ease: "easeOut" }}
-                className="text-center md:text-left space-y-3 sm:space-y-4 md:space-y-5"
+        <div className="relative h-full flex items-center px-4 lg:px-8">
+          <div className="max-w-7xl mx-auto w-full grid md:grid-cols-2 gap-8 items-center">
+            {/* Left */}
+            <motion.div
+              initial={{ opacity: 0, x: -120 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ ...spring, delay: 0.2 }}
+              className="space-y-5 text-center md:text-left"
+            >
+              <motion.div
+                initial={{ scale: 0.7, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ ...spring, delay: 0.4 }}
+                className="inline-flex items-center gap-2 bg-purple-600/20 border border-purple-500/30 px-4 py-2 rounded-full"
               >
-                <motion.div 
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
-                  className="inline-flex items-center gap-2 bg-purple-600/20 border border-purple-500/30 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full"
-                >
-                  <Film className="text-purple-400" size={16} />
-                  <span className="text-purple-300 text-xs sm:text-sm font-medium">
-                    Featured Project
-                  </span>
-                </motion.div>
-                
-                <motion.h1 
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.9, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                  className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold leading-tight px-2 sm:px-0"
-                >
-                  {heroSlides[currentSlide]?.title || 'Amazing Project'}
-                </motion.h1>
-                
-                <motion.div 
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: 0.5, ease: "easeOut" }}
-                  className="flex items-center justify-center md:justify-start flex-wrap gap-2 sm:gap-3"
-                >
-                  <span className="px-3 sm:px-4 py-1 sm:py-1.5 bg-purple-600/30 rounded-full text-xs sm:text-sm">
-                    {heroSlides[currentSlide]?.category || 'Category'}
-                  </span>
-                  <div className="flex items-center gap-1.5 sm:gap-2 text-gray-300 text-xs sm:text-sm">
-                    <Eye size={16} />
-                    <span>{heroSlides[currentSlide]?.views || '0'} views</span>
-                  </div>
-                </motion.div>
-                
-                <motion.div 
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.8, delay: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                  className="pt-2"
-                >
-                  <button
-                    onClick={() => setVideoPopup(heroSlides[currentSlide]?.video_url || heroSlides[currentSlide]?.video)}
-                    className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 sm:px-8 py-2.5 sm:py-3.5 rounded-lg font-semibold text-sm sm:text-base hover:scale-105 active:scale-95 transition-all inline-flex items-center gap-2 shadow-lg shadow-purple-500/30"
-                  >
-                    <Play size={18} />
-                    <span>Watch Full Video</span>
-                  </button>
-                </motion.div>
+                <Film className="text-purple-400" size={16} />
+                <span className="text-purple-300 text-sm font-medium">
+                  Featured Project
+                </span>
               </motion.div>
 
-              {/* Right Video Preview - Desktop Only */}
-              <motion.div 
-                initial={{ opacity: 0, x: 80, rotateY: 15 }}
-                animate={{ opacity: 1, x: 0, rotateY: 0 }}
-                transition={{ duration: 1.2, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                className="hidden md:block relative"
+              <motion.h1
+                initial={{ y: 40, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 1.2, ease: easeOutExpo, delay: 0.5 }}
+                className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight"
               >
-                <div className="overflow-hidden rounded-xl border-2 sm:border-4 border-purple-500/50 shadow-2xl shadow-purple-500/20 aspect-video">
-                  <video
-                    src={heroSlides[currentSlide]?.video_url || heroSlides[currentSlide]?.video}
-                    muted
-                    loop
-                    autoPlay
-                    playsInline
-                    className="w-full h-full object-cover"
-                  />
+                {heroSlides[currentSlide]?.title ?? 'Amazing Project'}
+              </motion.h1>
+
+              <motion.div
+                initial={{ y: 30, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 1, ease: easeOutExpo, delay: 0.6 }}
+                className="flex flex-wrap items-center justify-center md:justify-start gap-3"
+              >
+                <span className="px-4 py-1.5 bg-purple-600/30 rounded-full text-sm">
+                  {heroSlides[currentSlide]?.category ?? 'Category'}
+                </span>
+                <div className="flex items-center gap-2 text-gray-300 text-sm">
+                  <Eye size={16} />
+                  <span>{heroSlides[currentSlide]?.views ?? '0'} views</span>
                 </div>
               </motion.div>
-            </div>
+
+              <motion.button
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ ...spring, delay: 0.7 }}
+                whileHover={{ scale: 1.08 }}
+                whileTap={{ scale: 0.94 }}
+                onClick={() =>
+                  setVideoPopup(
+                    heroSlides[currentSlide]?.video_url ||
+                      heroSlides[currentSlide]?.video
+                  )
+                }
+                className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-3.5 rounded-lg font-semibold flex items-center gap-2 shadow-lg shadow-purple-500/30"
+              >
+                <Play size={18} />
+                Watch Full Video
+              </motion.button>
+            </motion.div>
+
+            {/* Right – video preview (desktop) */}
+            <motion.div
+              initial={{ opacity: 0, x: 120, rotateY: 20 }}
+              animate={{ opacity: 1, x: 0, rotateY: 0 }}
+              transition={{ duration: 1.6, ease: easeOutExpo, delay: 0.6 }}
+              className="hidden md:block relative rounded-xl overflow-hidden border-4 border-purple-500/50 shadow-2xl shadow-purple-500/20 aspect-video"
+            >
+              <video
+                src={
+                  heroSlides[currentSlide]?.video_url ||
+                  heroSlides[currentSlide]?.video
+                }
+                muted
+                loop
+                autoPlay
+                playsInline
+                className="w-full h-full object-cover"
+              />
+            </motion.div>
           </div>
         </div>
 
-        {/* Navigation Controls */}
+        {/* Controls */}
         {heroSlides.length > 1 && (
           <>
-            {/* Arrow Buttons */}
-            <button
+            <motion.button
+              whileHover={{ scale: 1.15 }}
+              whileTap={{ scale: 0.9 }}
               onClick={prevSlide}
-              className="absolute left-2 sm:left-4 lg:left-6 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center transition-all"
-              aria-label="Previous slide"
+              className="absolute left-4 top-1/2 -translate-y-1/2 w-11 h-11 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center"
             >
-              <ChevronLeft size={20} className="sm:w-6 sm:h-6" />
-            </button>
-            <button
+              <ChevronLeft size={24} />
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.15 }}
+              whileTap={{ scale: 0.9 }}
               onClick={nextSlide}
-              className="absolute right-2 sm:right-4 lg:right-6 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center transition-all"
-              aria-label="Next slide"
+              className="absolute right-4 top-1/2 -translate-y-1/2 w-11 h-11 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center"
             >
-              <ChevronRight size={20} className="sm:w-6 sm:h-6" />
-            </button>
+              <ChevronRight size={24} />
+            </motion.button>
 
-            {/* Slide Indicators */}
-            <div className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-1.5 sm:gap-2">
-              {heroSlides.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentSlide(index)}
-                  className={`h-1.5 sm:h-2 rounded-full transition-all ${
-                    index === currentSlide
-                      ? 'bg-purple-500 w-6 sm:w-8'
-                      : 'bg-white/40 hover:bg-white/60 w-1.5 sm:w-2'
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
+              {heroSlides.map((_, i) => (
+                <motion.button
+                  key={i}
+                  whileHover={{ scale: 1.3 }}
+                  onClick={() => setCurrentSlide(i)}
+                  className={`h-2 rounded-full transition-all ${
+                    i === currentSlide ? 'bg-purple-500 w-8' : 'bg-white/40 w-2'
                   }`}
-                  aria-label={`Go to slide ${index + 1}`}
                 />
               ))}
             </div>
@@ -280,201 +306,195 @@ const Portfolio = () => {
         )}
       </section>
 
-      {/* Projects Section */}
-      <section className="py-10 sm:py-12 md:py-16 px-4 sm:px-6 lg:px-8 bg-gray-900">
+      {/* ==================== PROJECTS ==================== */}
+      <section className="py-16 px-4 lg:px-8 bg-gray-900">
         <div className="max-w-7xl mx-auto">
-          {/* Section Header */}
-          <div className="text-center mb-6 sm:mb-8 md:mb-10">
-            <motion.h2 
-              initial={{ opacity: 0, y: -30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-              viewport={{ once: true, margin: "-100px" }}
-              className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 sm:mb-3"
-            >
-              Explore Our{' '}
-              <span className="bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 bg-clip-text text-transparent">
-                Work
-              </span>
-            </motion.h2>
-            <motion.div 
-              initial={{ scaleX: 0 }}
-              whileInView={{ scaleX: 1 }}
-              transition={{ duration: 1, delay: 0.3, ease: "easeInOut" }}
-              viewport={{ once: true, margin: "-100px" }}
-              className="w-12 sm:w-16 h-1 bg-gradient-to-r from-purple-500 to-pink-500 mx-auto"
-            ></motion.div>
-          </div>
+          <motion.h2
+            initial={{ opacity: 0, y: -40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.2, ease: easeOutExpo }}
+            viewport={{ once: true, margin: '-120px' }}
+            className="text-center text-3xl md:text-4xl font-bold mb-4"
+          >
+            Explore Our{' '}
+            <span className="bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 bg-clip-text text-transparent">
+              Work
+            </span>
+          </motion.h2>
 
-          {/* Category Filters */}
-          <motion.div 
+          {/* Category filters */}
+          <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            viewport={{ once: true, margin: "-50px" }}
-            className="mb-6 sm:mb-8"
+            transition={{ duration: 1, ease: easeOutExpo }}
+            viewport={{ once: true }}
+            className="flex flex-wrap justify-center gap-3 mb-10"
           >
-            <div className="flex flex-wrap justify-center items-center gap-2 sm:gap-3 px-4">
-              <motion.button
-                initial={{ opacity: 0, scale: 0.8 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, delay: 0.1, ease: "easeOut" }}
-                viewport={{ once: true, margin: "-50px" }}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => handleCategoryChange('all')}
-                className={`flex items-center gap-1.5 sm:gap-2 px-4 sm:px-5 py-2 rounded-lg text-xs sm:text-sm font-semibold transition ${
-                  selectedCategory === 'all'
-                    ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg'
-                    : 'bg-gray-800 hover:bg-gray-700 text-gray-300'
-                }`}
-              >
-                <Sparkles size={14} className="sm:w-4 sm:h-4" />
-                <span>All Projects</span>
-              </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.06 }}
+              whileTap={{ scale: 0.96 }}
+              onClick={() => changeCategory('all')}
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-lg font-semibold transition ${
+                selectedCategory === 'all'
+                  ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg'
+                  : 'bg-gray-800 hover:bg-gray-700 text-gray-300'
+              }`}
+            >
+              <Sparkles size={16} />
+              All Projects
+            </motion.button>
 
-              {categories.map((cat, index) => {
-                const Icon = iconMap[cat.icon] || Sparkles;
-                return (
-                  <motion.button
-                    key={cat.id}
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.5, delay: 0.15 + index * 0.08, ease: "easeOut" }}
-                    viewport={{ once: true, margin: "-50px" }}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => handleCategoryChange(cat.id)}
-                    className={`flex items-center gap-1.5 sm:gap-2 px-4 sm:px-5 py-2 rounded-lg text-xs sm:text-sm font-semibold transition ${
-                      selectedCategory === cat.id
-                        ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg'
-                        : 'bg-gray-800 hover:bg-gray-700 text-gray-300'
-                    }`}
-                  >
-                    <Icon size={14} className="sm:w-4 sm:h-4" />
-                    <span>{cat.name}</span>
-                  </motion.button>
-                );
-              })}
-            </div>
+            {categories.map((c, i) => {
+              const Icon = iconMap[c.icon] ?? Sparkles;
+              return (
+                <motion.button
+                  key={c.id}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  transition={{
+                    duration: 0.6,
+                    delay: i * 0.08,
+                    ease: easeOutExpo,
+                  }}
+                  viewport={{ once: true }}
+                  whileHover={{ scale: 1.06 }}
+                  whileTap={{ scale: 0.96 }}
+                  onClick={() => changeCategory(c.id)}
+                  className={`flex items-center gap-2 px-5 py-2.5 rounded-lg font-semibold transition ${
+                    selectedCategory === c.id
+                      ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg'
+                      : 'bg-gray-800 hover:bg-gray-700 text-gray-300'
+                  }`}
+                >
+                  <Icon size={16} />
+                  {c.name}
+                </motion.button>
+              );
+            })}
           </motion.div>
 
-          {/* Projects Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
-            {currentProjects.map((p, index) => (
-              <motion.div
-                key={p.id}
-                initial={{ opacity: 0, y: 60, scale: 0.95 }}
-                whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{ 
-                  duration: 0.7, 
-                  delay: index * 0.08,
-                  ease: [0.22, 1, 0.36, 1]
-                }}
-                viewport={{ once: true, margin: "-50px" }}
-                whileHover={{ y: -10, scale: 1.02, transition: { duration: 0.3 } }}
-                className="group bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg overflow-hidden border border-gray-700 hover:border-purple-500 transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/10"
-              >
-                {/* Thumbnail with Play Button */}
-                <div className="relative aspect-video overflow-hidden bg-gray-800">
-                  <motion.img
-                    initial={{ scale: 1.15, opacity: 0 }}
-                    whileInView={{ scale: 1, opacity: 1 }}
-                    transition={{ duration: 1, ease: "easeOut" }}
-                    viewport={{ once: true, margin: "-50px" }}
-                    src={p.thumbnail_url || p.thumbnail}
-                    alt={p.title}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    loading="lazy"
-                  />
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                  <button
-                    onClick={() => setVideoPopup(p.video_url || p.video)}
-                    className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                    aria-label={`Play ${p.title}`}
-                  >
-                    <motion.div 
-                      whileHover={{ scale: 1.15, rotate: 90, transition: { duration: 0.4, ease: "easeOut" } }}
-                      className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center shadow-lg"
-                    >
-                      <Play size={18} className="sm:w-5 sm:h-5 fill-white ml-0.5" />
-                    </motion.div>
-                  </button>
-                </div>
-                
-                {/* Project Info */}
-                <motion.div 
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-                  viewport={{ once: true, margin: "-50px" }}
-                  className="p-4 sm:p-5"
+          {/* Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <AnimatePresence mode="wait">
+              {currentProjects.map((p, idx) => (
+                <motion.div
+                  key={p.id}
+                  layout
+                  initial={{ opacity: 0, y: 80, scale: 0.94 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.94 }}
+                  transition={{ ...spring, delay: idx * 0.07 }}
+                  whileHover={{
+                    y: -12,
+                    scale: 1.03,
+                    transition: { duration: 0.35 },
+                  }}
+                  className="group bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl overflow-hidden border border-gray-700 hover:border-purple-500 transition-all duration-400 shadow-lg hover:shadow-purple-500/20"
                 >
-                  <h3 className="text-base sm:text-lg font-semibold mb-2 line-clamp-1 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-purple-400 group-hover:to-pink-400 transition-all">
-                    {p.title}
-                  </h3>
-                  <p className="text-gray-400 text-xs sm:text-sm mb-3 line-clamp-2 leading-relaxed">
-                    {p.description}
-                  </p>
-                  <div className="flex items-center gap-1.5 text-gray-500 text-xs">
-                    <Eye size={14} />
-                    <span>{p.views}</span>
+                  {/* Thumbnail */}
+                  <div className="relative aspect-video overflow-hidden bg-gray-800">
+                    <motion.img
+                      initial={{ scale: 1.2 }}
+                      animate={{ scale: 1 }}
+                      transition={{ duration: 1.2, ease: 'easeOut' }}
+                      src={p.thumbnail_url || p.thumbnail}
+                      alt={p.title}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-400" />
+                    <button
+                      onClick={() =>
+                        setVideoPopup(p.video_url || p.video)
+                      }
+                      className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-400"
+                    >
+                      <motion.div
+                        whileHover={{ scale: 1.2, rotate: 90 }}
+                        className="w-14 h-14 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center shadow-xl"
+                      >
+                        <Play className="ml-0.5 fill-white" size={20} />
+                      </motion.div>
+                    </button>
                   </div>
+
+                  {/* Info */}
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.2, duration: 0.8 }}
+                    className="p-5"
+                  >
+                    <h3 className="text-lg font-semibold mb-2 line-clamp-1 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-purple-400 group-hover:to-pink-400 transition-all">
+                      {p.title}
+                    </h3>
+                    <p className="text-gray-400 text-sm mb-3 line-clamp-2">
+                      {p.description}
+                    </p>
+                    <div className="flex items-center gap-2 text-gray-500 text-xs">
+                      <Eye size={14} />
+                      <span>{p.views}</span>
+                    </div>
+                  </motion.div>
                 </motion.div>
-              </motion.div>
-            ))}
+              ))}
+            </AnimatePresence>
           </div>
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
-              viewport={{ once: true, margin: "-50px" }}
-              className="flex justify-center items-center gap-2 mt-8 sm:mt-10"
+              transition={{ duration: 0.9, ease: easeOutExpo }}
+              viewport={{ once: true }}
+              className="flex justify-center items-center gap-3 mt-12"
             >
               <button
-                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
                 disabled={currentPage === 1}
-                className="px-3 py-2 sm:px-4 rounded-lg bg-gray-800 hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed text-xs sm:text-sm transition"
+                className="px-4 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm transition"
               >
                 Previous
               </button>
-              
-              <div className="flex gap-1 sm:gap-2">
-                {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
-                  let pageNum;
-                  if (totalPages <= 5) {
-                    pageNum = i + 1;
-                  } else if (currentPage <= 3) {
-                    pageNum = i + 1;
-                  } else if (currentPage >= totalPages - 2) {
-                    pageNum = totalPages - 4 + i;
-                  } else {
-                    pageNum = currentPage - 2 + i;
+
+              <div className="flex gap-2">
+                {Array.from(
+                  { length: Math.min(totalPages, 5) },
+                  (_, i) => {
+                    const page =
+                      totalPages <= 5
+                        ? i + 1
+                        : currentPage <= 3
+                        ? i + 1
+                        : currentPage >= totalPages - 2
+                        ? totalPages - 4 + i
+                        : currentPage - 2 + i;
+                    return (
+                      <motion.button
+                        key={page}
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => setCurrentPage(page)}
+                        className={`w-10 h-10 rounded-lg text-sm font-medium transition ${
+                          currentPage === page
+                            ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg'
+                            : 'bg-gray-800 hover:bg-gray-700 text-gray-300'
+                        }`}
+                      >
+                        {page}
+                      </motion.button>
+                    );
                   }
-                  
-                  return (
-                    <button
-                      key={pageNum}
-                      onClick={() => setCurrentPage(pageNum)}
-                      className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg text-xs sm:text-sm font-medium transition ${
-                        currentPage === pageNum
-                          ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg'
-                          : 'bg-gray-800 hover:bg-gray-700 text-gray-300'
-                      }`}
-                    >
-                      {pageNum}
-                    </button>
-                  );
-                })}
+                )}
               </div>
-              
+
               <button
-                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                onClick={() =>
+                  setCurrentPage((p) => Math.min(p + 1, totalPages))
+                }
                 disabled={currentPage === totalPages}
-                className="px-3 py-2 sm:px-4 rounded-lg bg-gray-800 hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed text-xs sm:text-sm transition"
+                className="px-4 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm transition"
               >
                 Next
               </button>
@@ -483,79 +503,79 @@ const Portfolio = () => {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-10 sm:py-14 md:py-16 bg-gradient-to-br from-purple-900/20 to-gray-900 text-center px-4 sm:px-6">
-        <div className="max-w-3xl mx-auto">
-          <motion.h2 
-            initial={{ opacity: 0, scale: 0.95 }}
+      {/* ==================== CTA ==================== */}
+      <section className="py-16 bg-gradient-to-br from-purple-900/20 to-gray-900 text-center">
+        <div className="max-w-3xl mx-auto px-4">
+          <motion.h2
+            initial={{ opacity: 0, scale: 0.94 }}
             whileInView={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-            viewport={{ once: true, margin: "-100px" }}
-            className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-3 sm:mb-4 px-4"
+            transition={{ duration: 1.2, ease: easeOutExpo }}
+            viewport={{ once: true }}
+            className="text-2xl md:text-4xl font-bold mb-4"
           >
             Ready to Create Your Masterpiece?
           </motion.h2>
-          <motion.p 
+          <motion.p
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-            viewport={{ once: true, margin: "-100px" }}
-            className="text-gray-300 mb-5 sm:mb-7 text-sm sm:text-base max-w-xl mx-auto px-4 leading-relaxed"
+            transition={{ duration: 1, delay: 0.2, ease: easeOutExpo }}
+            viewport={{ once: true }}
+            className="text-gray-300 mb-6 max-w-xl mx-auto"
           >
             Let's bring your vision to life with cinematic excellence.
           </motion.p>
           <motion.button
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            viewport={{ once: true, margin: "-100px" }}
-            whileHover={{ scale: 1.05, transition: { duration: 0.3 } }}
-            whileTap={{ scale: 0.95 }}
+            whileHover={{ scale: 1.08 }}
+            whileTap={{ scale: 0.94 }}
             onClick={() => (window.location.href = '/contact')}
-            className="bg-gradient-to-r from-purple-600 to-pink-600 hover:scale-105 active:scale-95 text-white px-6 sm:px-8 py-2.5 sm:py-3.5 rounded-lg font-semibold text-sm sm:text-base transition-all shadow-lg shadow-purple-500/30"
+            className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-3.5 rounded-lg font-semibold shadow-lg shadow-purple-500/30"
           >
             Start Your Project
           </motion.button>
         </div>
       </section>
-      <Footer/>
 
-      {/* Video Modal */}
-      {videoPopup && (
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.4, ease: "easeInOut" }}
-          className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-3 sm:p-4 md:p-6"
-        >
-          <motion.button
-            initial={{ scale: 0, rotate: -90 }}
-            animate={{ scale: 1, rotate: 0 }}
-            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            onClick={() => setVideoPopup(null)}
-            className="absolute top-3 right-3 sm:top-4 sm:right-4 md:top-6 md:right-6 w-10 h-10 sm:w-12 sm:h-12 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center transition-all z-10"
-            aria-label="Close video"
+      <Footer />
+
+      {/* ==================== VIDEO MODAL ==================== */}
+      <AnimatePresence>
+        {videoPopup && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.35 }}
+            className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4"
           >
-            <X size={20} className="sm:w-6 sm:h-6" />
-          </motion.button>
-          <motion.div 
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-            className="max-w-5xl w-full"
-          >
-            <video
-              src={videoPopup}
-              controls
-              autoPlay
-              playsInline
-              className="w-full rounded-lg shadow-2xl aspect-video"
-            />
+            <motion.button
+              initial={{ scale: 0, rotate: -180 }}
+              animate={{ scale: 1, rotate: 0 }}
+              exit={{ scale: 0, rotate: 180 }}
+              transition={spring}
+              onClick={() => setVideoPopup(null)}
+              className="absolute top-4 right-4 w-12 h-12 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center"
+            >
+              <X size={24} />
+            </motion.button>
+
+            <motion.div
+              initial={{ scale: 0.88, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.88, opacity: 0 }}
+              transition={{ duration: 0.45, ease: easeOutExpo }}
+              className="max-w-5xl w-full"
+            >
+              <video
+                src={videoPopup}
+                controls
+                autoPlay
+                playsInline
+                className="w-full rounded-lg shadow-2xl aspect-video"
+              />
+            </motion.div>
           </motion.div>
-        </motion.div>
-      )}
+        )}
+      </AnimatePresence>
     </div>
   );
-};
-
-export default Portfolio;
+}
