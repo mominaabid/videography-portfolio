@@ -57,13 +57,6 @@ interface TabContent {
   image?: string;
   image_url?: string;
 }
-interface Hero {
-  id: number;
-  title: string;
-  subtitle: string;
-  video_url: string;
-  button_text: string;
-}
 
 // Use a named easing (string) for compatibility with Framer Motion TS types.
 const smoothEase = "easeInOut" as const;
@@ -98,7 +91,6 @@ const parseStatValue = (value: string): number => {
 };
 
 const About = () => {
-  const [hero, setHero] = useState<Hero | null>(null);
   const [stats, setStats] = useState<Stat[]>([]);
   const [coreValues, setCoreValues] = useState<CoreValue[]>([]);
   const [timeline, setTimeline] = useState<TimelineEvent[]>([]);
@@ -114,7 +106,6 @@ const About = () => {
       try {
         const BASE_URL = "https://backendvideography.vercel.app";
         const endpoints = {
-          hero: `${BASE_URL}/about/hero/`,
           stats: `${BASE_URL}/about/stats/`,
           core: `${BASE_URL}/about/core-values/`,
           timeline: `${BASE_URL}/about/timeline/`,
@@ -123,16 +114,7 @@ const About = () => {
           tabs: `${BASE_URL}/about/tab-content/`,
         };
 
-        const [
-          heroRes,
-          statsRes,
-          coreRes,
-          timelineRes,
-          skillsRes,
-          ctaRes,
-          tabsRes,
-        ] = await Promise.all([
-          fetch(endpoints.hero),
+        const [statsRes, coreRes, timelineRes, skillsRes, ctaRes, tabsRes] = await Promise.all([
           fetch(endpoints.stats),
           fetch(endpoints.core),
           fetch(endpoints.timeline),
@@ -141,27 +123,19 @@ const About = () => {
           fetch(endpoints.tabs),
         ]);
 
-        const [
-          heroJson,
-          statsJson,
-          coreJson,
-          timelineJson,
-          skillsJson,
-          ctaJson,
-          tabsJson,
-        ]: any[] = await Promise.all([
-          heroRes.json(),
-          statsRes.json(),
-          coreRes.json(),
-          timelineRes.json(),
-          skillsRes.json(),
-          ctaRes.json(),
-          tabsRes.json(),
-        ]);
+        const [statsJson, coreJson, timelineJson, skillsJson, ctaJson, tabsJson]: any[] =
+          await Promise.all([
+            statsRes.json(),
+            coreRes.json(),
+            timelineRes.json(),
+            skillsRes.json(),
+            ctaRes.json(),
+            tabsRes.json(),
+          ]);
 
-        const getResults = (data: any) => (Array.isArray(data) ? data : data?.results || []);
+        const getResults = (data: any) =>
+          Array.isArray(data) ? data : data?.results || data?.data || [];
 
-        setHero(getResults(heroJson)[0] || null);
         setStats(getResults(statsJson));
         setCoreValues(getResults(coreJson));
         setTimeline(getResults(timelineJson));
@@ -176,7 +150,7 @@ const About = () => {
     fetchAll();
   }, []);
 
-  // Counter Animation — parses string for animation but displays raw value
+  // Counter Animation
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -261,10 +235,7 @@ const About = () => {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: -10 }}
                         transition={{ duration: 0.9, ease: smoothEase }}
-                        className="w-full h-auto object-cover rounded-3xl shadow-xl border-2 border-purple-500/30 hover:border-purple-500/60 transition-all duration-400 will-change-transform"
-                        onError={() => {
-                          console.error("❌ Image failed to load:", getTab(activeTab)?.image_url);
-                        }}
+                        className="w-full h-auto object-cover rounded-3xl shadow-xl border-2 border-purple-500/30 hover:border-purple-500/60 transition-all duration-400"
                       />
                     ) : (
                       <motion.div
@@ -323,6 +294,7 @@ const About = () => {
           </div>
         </section>
       )}
+
       {/* STATS */}
       {stats.length > 0 && (
         <section ref={statsRef} className="py-16 px-6 bg-gradient-to-br from-gray-900 to-[#1A0D2A]">
@@ -343,10 +315,9 @@ const About = () => {
             >
               {stats.map((stat) => {
                 const iconIndex = ["Briefcase", "Users", "Award", "Globe"].indexOf(stat.icon);
-                const Icon = iconIndex !== -1 ? [Briefcase, Users, Award, Globe][iconIndex] : Briefcase;
-                const displayValue = counters[stat.name] !== undefined
-                  ? stat.value + stat.suffix
-                  : stat.value + stat.suffix;
+                const Icon =
+                  iconIndex !== -1 ? [Briefcase, Users, Award, Globe][iconIndex] : Briefcase;
+                const displayValue = stat.value + stat.suffix;
                 return (
                   <motion.div
                     key={stat.id}
