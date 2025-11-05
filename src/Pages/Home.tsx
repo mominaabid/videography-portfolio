@@ -1,15 +1,16 @@
 import { useState, useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
 import Header from '../Components/Header';
 import Footer from '../Components/footer';
 import Testimonials from '../Components/Testimonials';
 import {
   Play, Award, Calendar, Users, MapPin, ArrowUpRight, HelpCircle,
-  PenTool, Palette, Music, MessageCircle, Edit3, Cpu, Camera, Laptop, Workflow, Wifi
+  PenTool, Palette, Music, MessageCircle, Edit3, Cpu, Camera, Laptop, Workflow, Wifi,
+  Sparkles, Heart, Building2, Film, Eye, X
 } from 'lucide-react';
 
-// Define interfaces for API data based on backend models
+// Define interfaces for API data
 interface Hero {
   id?: number;
   title: string;
@@ -25,7 +26,7 @@ interface Hero {
 interface Stat {
   id?: number;
   name: string;
-  value: number;
+  value: string;
   suffix: string;
   icon: string;
   order: number;
@@ -98,6 +99,35 @@ interface CTA {
   updated_at?: string;
 }
 
+interface TabContent {
+  id: number;
+  tab_name: string;
+  title: string;
+  content: string;
+  image?: string;
+  image_url?: string;
+}
+
+interface Category {
+  id: number;
+  name: string;
+  icon: string;
+  count: number;
+}
+
+interface Project {
+  id: number;
+  title: string;
+  category: number;
+  thumbnail: string;
+  video: string;
+  description: string;
+  views: string;
+  likes: string;
+  video_url?: string;
+  thumbnail_url?: string;
+}
+
 interface Counts {
   yearsExp: number;
   happyClients: number;
@@ -109,6 +139,7 @@ const BASE_URL = 'https://backendvideography.vercel.app';
 
 // Helper function to extract data from paginated response
 const extractData = <T,>(response: any): T[] => {
+  console.log('Raw response:', response);
   if (response && response.results && Array.isArray(response.results)) {
     return response.results;
   }
@@ -116,6 +147,20 @@ const extractData = <T,>(response: any): T[] => {
     return response;
   }
   return [];
+};
+
+// Helper function to parse stat value to number for animation
+const parseStatValue = (value: string): number => {
+  const match = value.match(/^(\d+)([MK]?)$/);
+  if (!match) {
+    console.warn(`Invalid stat value format: ${value}`);
+    return 0;
+  }
+  const num = parseInt(match[1]);
+  const suffix = match[2];
+  if (suffix === 'M') return num * 1_000_000;
+  if (suffix === 'K') return num * 1_000;
+  return num;
 };
 
 const Home = () => {
@@ -129,7 +174,6 @@ const Home = () => {
   const [cta, setCta] = useState<CTA | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
   const [typewriterText, setTypewriterText] = useState('');
   const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -141,8 +185,16 @@ const Home = () => {
   });
   const statsRef = useRef<HTMLDivElement>(null);
   const [phrases, setPhrases] = useState<string[]>(['Cinematic Excellence']);
+  const [tabContent, setTabContent] = useState<TabContent[]>([]);
+  const [activeTab, setActiveTab] = useState<string>("story");
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<number | 'all'>('all');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [videoPopup, setVideoPopup] = useState<string | null>(null);
+  const projectsPerPage = 6;
 
-  // Fetch all API data
+  // Fetch all API data including portfolio data
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -158,7 +210,10 @@ const Home = () => {
           processesRes,
           toolsRes,
           faqsRes,
-          ctaRes
+          ctaRes,
+          tabsRes,
+          categoriesRes,
+          projectsRes
         ] = await Promise.all([
           axios.get(`${BASE_URL}/home/hero/`).catch(err => {
             console.error('Hero API Error:', err.response?.data || err.message);
@@ -195,19 +250,24 @@ const Home = () => {
           axios.get(`${BASE_URL}/home/cta/`).catch(err => {
             console.error('CTA API Error:', err.response?.data || err.message);
             return { data: null };
+          }),
+          axios.get(`${BASE_URL}/about/tab-content/`).catch(err => {
+            console.error('Tabs API Error:', err.response?.data || err.message);
+            return { data: [] };
+          }),
+          axios.get(`${BASE_URL}/api/portfolio/categories/`).catch(err => {
+            console.error('Categories API Error:', err.response?.data || err.message);
+            return { data: [] };
+          }),
+          axios.get(`${BASE_URL}/api/portfolio/projects/`).catch(err => {
+            console.error('Projects API Error:', err.response?.data || err.message);
+            return { data: [] };
           })
         ]);
-
-        // Log responses for debugging
-        console.log('Hero Response:', heroRes.data);
-        console.log('Stats Response:', statsRes.data);
-        console.log('Intro Response:', introRes.data);
 
         // Extract hero data
         const heroData = extractData<Hero>(heroRes.data);
         const heroItem = heroData.length > 0 ? heroData[0] : null;
-
-        // Extract and set typewriter phrases
         if (heroItem && heroItem.typewriter_phrases) {
           const phrasesData = Array.isArray(heroItem.typewriter_phrases)
             ? heroItem.typewriter_phrases
@@ -219,35 +279,31 @@ const Home = () => {
 
         // Extract stats data
         const statsData = extractData<Stat>(statsRes.data);
-        setStats(statsData.filter(stat => stat.is_active));
+        const activeStats = statsData.filter(stat => stat.is_active);
+        setStats(activeStats);
 
         // Extract intro data
         const introData = extractData<Intro>(introRes.data);
         setIntro(introData.length > 0 ? introData[0] : null);
 
-        // Extract skills data
-        const skillsData = extractData<Skill>(skillsRes.data);
-        setSkills(skillsData.filter(skill => skill.is_active));
-
-        // Extract services data
-        const servicesData = extractData<Service>(servicesRes.data);
-        setServices(servicesData.filter(service => service.is_active));
-
-        // Extract processes data
-        const processesData = extractData<Process>(processesRes.data);
-        setProcesses(processesData.filter(process => process.is_active));
-
-        // Extract tools data
-        const toolsData = extractData<Tool>(toolsRes.data);
-        setTools(toolsData.filter(tool => tool.is_active));
-
-        // Extract FAQs data
-        const faqsData = extractData<FAQ>(faqsRes.data);
-        setFaqs(faqsData.filter(faq => faq.is_active));
-
-        // Extract CTA data
+        // Extract skills, services, processes, tools, faqs, cta
+        setSkills(extractData<Skill>(skillsRes.data).filter(skill => skill.is_active));
+        setServices(extractData<Service>(servicesRes.data).filter(service => service.is_active));
+        setProcesses(extractData<Process>(processesRes.data).filter(process => process.is_active));
+        setTools(extractData<Tool>(toolsRes.data).filter(tool => tool.is_active));
+        setFaqs(extractData<FAQ>(faqsRes.data).filter(faq => faq.is_active));
         const ctaData = extractData<CTA>(ctaRes.data);
         setCta(ctaData.length > 0 ? ctaData[0] : null);
+
+        // Extract tab content
+        const tabsData = extractData<TabContent>(tabsRes.data);
+        setTabContent(tabsData);
+
+        // Extract portfolio data
+        const categoriesData = extractData<Category>(categoriesRes.data);
+        setCategories(categoriesData);
+        const projectsData = extractData<Project>(projectsRes.data);
+        setProjects(projectsData);
 
         setLoading(false);
       } catch (err: any) {
@@ -293,10 +349,10 @@ const Home = () => {
       ([entry]) => {
         if (entry.isIntersecting) {
           const targetCounts: Counts = {
-            yearsExp: stats.find(s => s.name.toLowerCase().includes('years'))?.value || 8,
-            happyClients: stats.find(s => s.name.toLowerCase().includes('clients'))?.value || 200,
-            awardsWon: stats.find(s => s.name.toLowerCase().includes('awards'))?.value || 15,
-            citiesCov: stats.find(s => s.name.toLowerCase().includes('cities'))?.value || 25,
+            yearsExp: parseStatValue(stats.find(s => s.name.toLowerCase().includes('years'))?.value || '8'),
+            happyClients: parseStatValue(stats.find(s => s.name.toLowerCase().includes('clients'))?.value || '200'),
+            awardsWon: parseStatValue(stats.find(s => s.name.toLowerCase().includes('awards'))?.value || '15'),
+            citiesCov: parseStatValue(stats.find(s => s.name.toLowerCase().includes('cities'))?.value || '25'),
           };
           const duration = 1000;
           const startTime = Date.now();
@@ -369,6 +425,29 @@ const Home = () => {
     Laptop,
     Workflow,
     Wifi,
+    Sparkles,
+    Heart,
+    Building2,
+    Film,
+  };
+
+  const getTab = (tabName: string) => tabContent.find((t) => t.tab_name === tabName);
+
+  const filteredProjects =
+    selectedCategory === 'all'
+      ? projects
+      : projects.filter((p) => p.category === selectedCategory);
+
+  const totalPages = Math.ceil(filteredProjects.length / projectsPerPage);
+  const startIndex = (currentPage - 1) * projectsPerPage;
+  const currentProjects = filteredProjects.slice(
+    startIndex,
+    startIndex + projectsPerPage
+  );
+
+  const handleCategoryChange = (categoryId: number | 'all') => {
+    setSelectedCategory(categoryId);
+    setCurrentPage(1);
   };
 
   if (loading) return (
@@ -399,10 +478,7 @@ const Home = () => {
     <div className="min-h-screen bg-gray-900 text-white">
       <Header />
 
-      {/* Hero Section */}
-    
-
-      {/* Intro Section */}
+      {/* Intro Section with Tabs Content and Buttons on Right Above Paragraphs */}
       {intro && (
         <section className="intro-section py-0 sm:py-12 px-0 bg-gray-900 overflow-visible">
           <motion.div 
@@ -413,6 +489,7 @@ const Home = () => {
             className="max-w-7xl pb-6 sm:pb-8 mx-auto w-full bg-gray-900 rounded-3xl shadow-2xl transition-all duration-500 ease-in-out"
           >
             <div className="flex flex-col md:flex-row gap-0">
+              {/* Left Side - Static Content */}
               <motion.div 
                 initial={{ opacity: 0, x: -100 }}
                 whileInView={{ opacity: 1, x: 0 }}
@@ -431,7 +508,7 @@ const Home = () => {
                     className="w-full max-w-[90%] h-[300px] sm:h-[400px] md:h-[500px] lg:h-[600px] object-cover border-2 sm:border-4 border-gray-700 rounded-xl sm:rounded-2xl shadow-[0_0_20px_rgba(147,112,219,0.8)] mx-auto"
                   />
                 </div>
-                {stats.length > 0 && (
+                {stats.length > 0 ? (
                   <div ref={statsRef} className="grid grid-cols-2 gap-3 sm:gap-6 pt-6 sm:pt-8">
                     {stats.map((stat, index) => {
                       const Icon = iconMap[stat.icon] || Calendar;
@@ -446,103 +523,153 @@ const Home = () => {
                         >
                           <Icon className="text-purple-500" size={18} />
                           <p className="text-lg sm:text-xl md:text-2xl font-bold px-2">
-                            {counts[stat.name.toLowerCase().includes('years') ? 'yearsExp' : stat.name.toLowerCase().includes('clients') ? 'happyClients' : stat.name.toLowerCase().includes('awards') ? 'awardsWon' : 'citiesCov']}{stat.suffix}
+                            {stat.value}{stat.suffix}
                           </p>
                           <p className="text-xs sm:text-sm text-gray-400 px-2">{stat.name}</p>
                         </motion.div>
                       );
                     })}
                   </div>
+                ) : (
+                  <div className="text-center text-gray-400 pt-6">
+                    No stats available. Check backend data or API connection.
+                  </div>
                 )}
               </motion.div>
+
+              {/* Right Side - Buttons in a Single Line Above Paragraphs */}
               <motion.div 
                 initial={{ opacity: 0, x: 100 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.9, delay: 0.3 }}
                 viewport={{ once: true }}
-                className="w-full lg:w-1/2 px-4 sm:px-8 lg:px-16 py-4 sm:py-6 md:py-4 flex items-center justify-center"
+                className="w-full lg:w-1/2 px-4 sm:px-8 lg:px-16 py-4 sm:py-6 md:py-4 flex flex-col items-center"
               >
-                <div className="max-w-[550px] text-center">
-                  <motion.h1 
-                    initial={{ opacity: 0, y: -30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.7, delay: 0.4 }}
-                    viewport={{ once: true }}
-                    className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold pt-0 sm:pt-4 mb-3 sm:mb-4 text-white leading-tight"
-                  >
-                    {intro.title}
-                  </motion.h1>
-                  <motion.div 
-                    initial={{ scaleX: 0 }}
-                    whileInView={{ scaleX: 1 }}
-                    transition={{ duration: 0.8, delay: 0.5 }}
-                    viewport={{ once: true }}
-                    className="w-12 sm:w-15 h-0.5 sm:h-1 bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 rounded-full mb-4 sm:mb-6 mx-auto"
-                  ></motion.div>
-                  {intro.subtitle.split('\n').map((para, index) => (
-                    <motion.p 
-                      key={index}
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.6, delay: 0.6 + index * 0.1 }}
-                      viewport={{ once: true }}
-                      className="text-gray-300 text-xs sm:text-sm md:text-base lg:text-lg mb-3 sm:mb-4"
+                {/* Tab Buttons in a Single Line with Spacing */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.4 }}
+                  viewport={{ once: true }}
+                  className="mb-6 sm:mb-8 flex flex-row gap-3 sm:gap-4"
+                >
+                  {["story", "philosophy", "approach"].map((tab, index) => (
+                    <motion.button
+                      key={tab}
+                      initial={{ opacity: 0, scale: 0.98 }}
+                      whileInView={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.6, delay: 0.5 + index * 0.08, ease: "easeInOut" }}
+                      viewport={{ once: true, margin: "-50px" }}
+                      whileHover={{ scale: 1.04 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => setActiveTab(tab)}
+                      className={`px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-semibold text-sm sm:text-base transition-all ${
+                        activeTab === tab
+                          ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white"
+                          : "bg-gray-800 text-gray-400 hover:bg-gray-700"
+                      }`}
                     >
-                      {para}
-                    </motion.p>
+                      {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                    </motion.button>
                   ))}
-                  {intro.achievements && (
-                    <>
-                      <motion.div 
-                        initial={{ opacity: 0, x: -20 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.6, delay: 0.8 }}
-                        viewport={{ once: true }}
-                        className="flex items-center justify-center mb-4 sm:mb-6"
+                </motion.div>
+
+                {/* Tab Content */}
+                <div className="max-w-[550px] text-center">
+                  <AnimatePresence mode="wait">
+                    {getTab(activeTab) && (
+                      <motion.div
+                        key={activeTab}
+                        initial={{ opacity: 0, x: 40 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -40 }}
+                        transition={{ duration: 0.9, ease: "easeInOut" }}
+                        className="space-y-4"
                       >
-                        <ArrowUpRight className="text-purple-500 mr-2" size={16} />
-                        <h2 className="text-sm sm:text-base md:text-lg font-semibold text-purple-400">Recent Achievements</h2>
-                      </motion.div>
-                      <ul className="space-y-1.5 sm:space-y-2 inline-block text-left">
-                        {(() => {
-                          const achievements = intro.achievements;
-                          const achievementList = Array.isArray(achievements)
-                            ? achievements
-                            : typeof achievements === 'string'
-                            ? achievements.split(',')
-                            : ['No achievements available'];
-                          return achievementList.map((achievement, index) => (
-                            <motion.li 
+                        <motion.h1
+                          initial={{ opacity: 0, y: -30 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.7, delay: 0.6 }}
+                          className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold pt-0 sm:pt-4 mb-3 sm:mb-4 text-white leading-tight"
+                        >
+                          {getTab(activeTab)?.title || "No Title"}
+                        </motion.h1>
+                        <motion.div 
+                          initial={{ scaleX: 0 }}
+                          animate={{ scaleX: 1 }}
+                          transition={{ duration: 0.8, delay: 0.7 }}
+                          className="w-12 sm:w-15 h-0.5 sm:h-1 bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 rounded-full mb-4 sm:mb-6 mx-auto"
+                        ></motion.div>
+                        {getTab(activeTab)?.content
+                          ?.split("\n")
+                          .filter((p) => p.trim())
+                          .map((para, index) => (
+                            <motion.p 
                               key={index}
-                              initial={{ opacity: 0, x: -30 }}
-                              whileInView={{ opacity: 1, x: 0 }}
-                              transition={{ duration: 0.5, delay: 0.9 + index * 0.1 }}
+                              initial={{ opacity: 0, y: 20 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ duration: 0.6, delay: 0.8 + index * 0.1 }}
                               viewport={{ once: true }}
-                              className="flex items-center text-gray-300 text-xs sm:text-sm md:text-base"
+                              className="text-gray-300 text-xs sm:text-sm md:text-base lg:text-lg mb-3 sm:mb-4"
                             >
-                              <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-purple-500 rounded-full mr-2 sm:mr-3"></div>
-                              {achievement.trim()}
-                            </motion.li>
-                          ));
-                        })()}
-                      </ul>
-                    </>
-                  )}
-                  <motion.div 
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: 1.1 }}
-                    viewport={{ once: true }}
-                    className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center pt-4 sm:pt-6 mt-4 sm:mt-8"
-                  >
-                    <button className="group bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 sm:px-5 sm:py-2.5 rounded-lg font-semibold text-sm sm:text-base transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2 shadow-lg hover:shadow-purple-500/50 w-fit mx-auto sm:mx-0">
-                      <Play size={16} className="group-hover:scale-110 transition-transform" />
-                      {intro.primary_button_text}
-                    </button>
-                    <button className="bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white px-3 py-2 sm:px-5 sm:py-2.5 rounded-lg font-semibold text-sm sm:text-base transition-all duration-300 border border-white/30 hover:border-white/50 w-fit mx-auto sm:mx-0">
-                      {intro.secondary_button_text}
-                    </button>
-                  </motion.div>
+                              {para}
+                            </motion.p>
+                          )) || <p className="text-gray-400">No content available</p>}
+                        {intro.achievements && (
+                          <>
+                            <motion.div 
+                              initial={{ opacity: 0, x: -20 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ duration: 0.6, delay: 1.0 }}
+                              viewport={{ once: true }}
+                              className="flex items-center justify-center mb-4 sm:mb-6"
+                            >
+                              <ArrowUpRight className="text-purple-500 mr-2" size={16} />
+                              <h2 className="text-sm sm:text-base md:text-lg font-semibold text-purple-400">Recent Achievements</h2>
+                            </motion.div>
+                            <ul className="space-y-1.5 sm:space-y-2 inline-block text-left">
+                              {(() => {
+                                const achievements = intro.achievements;
+                                const achievementList = Array.isArray(achievements)
+                                  ? achievements
+                                  : typeof achievements === 'string'
+                                  ? achievements.split(',')
+                                  : ['No achievements available'];
+                                return achievementList.map((achievement, index) => (
+                                  <motion.li 
+                                    key={index}
+                                    initial={{ opacity: 0, x: -30 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ duration: 0.5, delay: 1.1 + index * 0.1 }}
+                                    viewport={{ once: true }}
+                                    className="flex items-center text-gray-300 text-xs sm:text-sm md:text-base"
+                                  >
+                                    <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-purple-500 rounded-full mr-2 sm:mr-3"></div>
+                                    {achievement.trim()}
+                                  </motion.li>
+                                ));
+                              })()}
+                            </ul>
+                          </>
+                        )}
+                        <motion.div 
+                          initial={{ opacity: 0, y: 30 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.6, delay: 1.3 }}
+                          viewport={{ once: true }}
+                          className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center pt-4 sm:pt-6 mt-4 sm:mt-8"
+                        >
+                          <button className="group bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 sm:px-5 sm:py-2.5 rounded-lg font-semibold text-sm sm:text-base transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2 shadow-lg hover:shadow-purple-500/50 w-fit mx-auto sm:mx-0">
+                            <Play size={16} className="group-hover:scale-110 transition-transform" />
+                            {intro.primary_button_text}
+                          </button>
+                          <button className="bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white px-3 py-2 sm:px-5 sm:py-2.5 rounded-lg font-semibold text-sm sm:text-base transition-all duration-300 border border-white/30 hover:border-white/50 w-fit mx-auto sm:mx-0">
+                            {intro.secondary_button_text}
+                          </button>
+                        </motion.div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               </motion.div>
             </div>
@@ -550,113 +677,246 @@ const Home = () => {
         </section>
       )}
 
-      {/* Skills Section */}
-      {skills.length > 0 && (
-        <section className="skills-section bg-gray-900 py-20 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-7xl mx-auto text-center">
+      {/* Projects and Collection Section */}
+      <section className="py-10 sm:py-12 md:py-16 px-4 sm:px-6 lg:px-8 bg-gray-900">
+        <div className="max-w-7xl mx-auto">
+          {/* Section Header */}
+          <div className="text-center mb-6 sm:mb-8 md:mb-10">
             <motion.h2 
-              initial={{ opacity: 0, y: -30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7 }}
-              viewport={{ once: true }}
-              className="text-3xl sm:text-4xl font-bold text-white mb-4"
+              initial={{ opacity: 1, y: 0 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+              className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 sm:mb-3 text-white"
+              style={{ 
+                color: 'white',
+                opacity: 1,
+                visibility: 'visible'
+              }}
             >
-              Our Key Skills
+              Explore Our{' '}
+              <span className="bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 bg-clip-text text-transparent">
+                Work
+              </span>
             </motion.h2>
-            <motion.p 
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              viewport={{ once: true }}
-              className="text-gray-400 text-base sm:text-lg max-w-2xl mx-auto mb-12"
-            >
-              The foundation of our work lies in combining creativity with technical expertise.
-            </motion.p>
-            <div className="grid md:grid-cols-4 gap-8">
-              {skills.map((skill, index) => {
-                const Icon = iconMap[skill.icon] || PenTool;
-                return (
-                  <motion.div 
-                    key={index}
-                    initial={{ opacity: 0, y: 50, rotateX: -15 }}
-                    whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
-                    transition={{ duration: 0.6, delay: index * 0.15 }}
-                    viewport={{ once: true }}
-                    whileHover={{ scale: 1.05, y: -10 }}
-                    className="bg-gray-800/50 p-8 rounded-2xl border border-gray-700 hover:border-purple-500 transition-all group"
-                  >
-                    <motion.div
-                      initial={{ scale: 0, rotate: -180 }}
-                      whileInView={{ scale: 1, rotate: 0 }}
-                      transition={{ duration: 0.6, delay: index * 0.15 + 0.2 }}
-                      viewport={{ once: true }}
-                    >
-                      <Icon className="text-purple-400 mb-4 w-12 h-12 mx-auto" />
-                    </motion.div>
-                    <h3 className="text-xl sm:text-2xl font-bold mb-2">{skill.title}</h3>
-                    <p className="text-gray-400 text-sm sm:text-base">{skill.description}</p>
-                  </motion.div>
-                );
-              })}
-            </div>
+            <motion.div 
+              initial={{ scaleX: 0 }}
+              whileInView={{ scaleX: 1 }}
+              transition={{ duration: 1, delay: 0.3, ease: "easeInOut" }}
+              viewport={{ once: false, margin: "-100px" }}
+              className="w-12 sm:w-16 h-1 bg-gradient-to-r from-purple-500 to-pink-500 mx-auto"
+            ></motion.div>
           </div>
-        </section>
-      )}
 
-      {/* Services Section */}
-      {services.length > 0 && (
-        <section className="bg-gray-900 py-20">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center">
-              <motion.h2 
+          {/* Category Filters */}
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            viewport={{ once: true, margin: "-50px" }}
+            className="mb-6 sm:mb-8"
+          >
+            <div className="flex flex-wrap justify-center items-center gap-2 sm:gap-3 px-4">
+              <motion.button
                 initial={{ opacity: 0, scale: 0.8 }}
                 whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.7 }}
-                viewport={{ once: true }}
-                className="text-3xl sm:text-4xl font-bold text-white mb-4"
+                transition={{ duration: 0.5, delay: 0.1, ease: "easeOut" }}
+                viewport={{ once: true, margin: "-50px" }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => handleCategoryChange('all')}
+                className={`flex items-center gap-1.5 sm:gap-2 px-4 sm:px-5 py-2 rounded-lg text-xs sm:text-sm font-semibold transition ${
+                  selectedCategory === 'all'
+                    ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg'
+                    : 'bg-gray-800 hover:bg-gray-700 text-gray-300'
+                }`}
               >
-                Your Story, Beautifully Told
-              </motion.h2>
-              <motion.p 
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.2 }}
-                viewport={{ once: true }}
-                className="text-gray-400 text-base sm:text-lg max-w-2xl mx-auto"
-              >
-                Every frame matters. We blend artistry with cutting-edge technology to create videos that resonate and inspire.
-              </motion.p>
-            </div>
-            <div className="grid md:grid-cols-3 gap-8 mt-16">
-              {services.map((service, index) => {
-                const Icon = iconMap[service.icon] || PenTool;
+                <Sparkles size={14} className="sm:w-4 sm:h-4" />
+                <span>All Projects</span>
+              </motion.button>
+
+              {categories.map((cat, index) => {
+                const Icon = iconMap[cat.icon] || Sparkles;
                 return (
-                  <motion.div 
-                    key={index}
-                    initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50, rotateY: index % 2 === 0 ? -20 : 20 }}
-                    whileInView={{ opacity: 1, x: 0, rotateY: 0 }}
-                    transition={{ duration: 0.8, delay: index * 0.2 }}
-                    viewport={{ once: true }}
-                    whileHover={{ y: -15, scale: 1.03 }}
-                    className="bg-gray-800/50 backdrop-blur-sm p-8 rounded-2xl border border-gray-700 hover:border-purple-500 transition-all duration-300 group"
+                  <motion.button
+                    key={cat.id}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.5, delay: 0.15 + index * 0.08, ease: "easeOut" }}
+                    viewport={{ once: true, margin: "-50px" }}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => handleCategoryChange(cat.id)}
+                    className={`flex items-center gap-1.5 sm:gap-2 px-4 sm:px-5 py-2 rounded-lg text-xs sm:text-sm font-semibold transition ${
+                      selectedCategory === cat.id
+                        ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg'
+                        : 'bg-gray-800 hover:bg-gray-700 text-gray-300'
+                    }`}
                   >
-                    <motion.div 
-                      initial={{ scale: 0, rotate: -180 }}
-                      whileInView={{ scale: 1, rotate: 0 }}
-                      transition={{ duration: 0.7, delay: index * 0.2 + 0.3 }}
-                      viewport={{ once: true }}
-                      className="w-16 h-16 bg-purple-600/20 rounded-xl flex items-center justify-center mb-6 group-hover:bg-purple-600/30 transition-colors"
-                    >
-                      <Icon className="text-purple-400" size={32} />
-                    </motion.div>
-                    <h3 className="text-xl sm:text-2xl font-bold text-white mb-4">{service.title}</h3>
-                    <p className="text-gray-400 text-sm sm:text-base">{service.description}</p>
-                  </motion.div>
+                    <Icon size={14} className="sm:w-4 sm:h-4" />
+                    <span>{cat.name}</span>
+                  </motion.button>
                 );
               })}
             </div>
+          </motion.div>
+
+          {/* Projects Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
+            {currentProjects.map((p, index) => (
+              <motion.div
+                key={p.id}
+                initial={{ opacity: 0, y: 60, scale: 0.95 }}
+                whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ 
+                  duration: 0.7, 
+                  delay: index * 0.08,
+                  ease: [0.22, 1, 0.36, 1]
+                }}
+                viewport={{ once: true, margin: "-50px" }}
+                whileHover={{ y: -10, scale: 1.02, transition: { duration: 0.3 } }}
+                className="group bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg overflow-hidden border border-gray-700 hover:border-purple-500 transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/10"
+              >
+                {/* Thumbnail with Play Button */}
+                <div className="relative aspect-video overflow-hidden bg-gray-800">
+                  <motion.img
+                    initial={{ scale: 1.15, opacity: 0 }}
+                    whileInView={{ scale: 1, opacity: 1 }}
+                    transition={{ duration: 1, ease: "easeOut" }}
+                    viewport={{ once: true, margin: "-50px" }}
+                    src={p.thumbnail_url || p.thumbnail}
+                    alt={p.title}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                  <button
+                    onClick={() => setVideoPopup(p.video_url || p.video)}
+                    className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                    aria-label={`Play ${p.title}`}
+                  >
+                    <motion.div 
+                      whileHover={{ scale: 1.15, rotate: 90, transition: { duration: 0.4, ease: "easeOut" } }}
+                      className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center shadow-lg"
+                    >
+                      <Play size={18} className="sm:w-5 sm:h-5 fill-white ml-0.5" />
+                    </motion.div>
+                  </button>
+                </div>
+                
+                {/* Project Info */}
+                <motion.div 
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+                  viewport={{ once: true, margin: "-50px" }}
+                  className="p-4 sm:p-5"
+                >
+                  <h3 className="text-base sm:text-lg font-semibold mb-2 line-clamp-1 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-purple-400 group-hover:to-pink-400 transition-all">
+                    {p.title}
+                  </h3>
+                  <p className="text-gray-400 text-xs sm:text-sm mb-3 line-clamp-2 leading-relaxed">
+                    {p.description}
+                  </p>
+                  <div className="flex items-center gap-1.5 text-gray-500 text-xs">
+                    <Eye size={14} />
+                    <span>{p.views}</span>
+                  </div>
+                </motion.div>
+              </motion.div>
+            ))}
           </div>
-        </section>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <motion.div 
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              viewport={{ once: true, margin: "-50px" }}
+              className="flex justify-center items-center gap-2 mt-8 sm:mt-10"
+            >
+              <button
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="px-3 py-2 sm:px-4 rounded-lg bg-gray-800 hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed text-xs sm:text-sm transition"
+              >
+                Previous
+              </button>
+              
+              <div className="flex gap-1 sm:gap-2">
+                {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
+                  let pageNum;
+                  if (totalPages <= 5) {
+                    pageNum = i + 1;
+                  } else if (currentPage <= 3) {
+                    pageNum = i + 1;
+                  } else if (currentPage >= totalPages - 2) {
+                    pageNum = totalPages - 4 + i;
+                  } else {
+                    pageNum = currentPage - 2 + i;
+                  }
+                  
+                  return (
+                    <button
+                      key={pageNum}
+                      onClick={() => setCurrentPage(pageNum)}
+                      className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg text-xs sm:text-sm font-medium transition ${
+                        currentPage === pageNum
+                          ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg'
+                          : 'bg-gray-800 hover:bg-gray-700 text-gray-300'
+                      }`}
+                    >
+                      {pageNum}
+                    </button>
+                  );
+                })}
+              </div>
+              
+              <button
+                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                className="px-3 py-2 sm:px-4 rounded-lg bg-gray-800 hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed text-xs sm:text-sm transition"
+              >
+                Next
+              </button>
+            </motion.div>
+          )}
+        </div>
+      </section>
+
+      {/* Video Modal */}
+      {videoPopup && (
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.4, ease: "easeInOut" }}
+          className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-3 sm:p-4 md:p-6"
+        >
+          <motion.button
+            initial={{ scale: 0, rotate: -90 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            onClick={() => setVideoPopup(null)}
+            className="absolute top-3 right-3 sm:top-4 sm:right-4 md:top-6 md:right-6 w-10 h-10 sm:w-12 sm:h-12 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center transition-all z-10"
+            aria-label="Close video"
+          >
+            <X size={20} className="sm:w-6 sm:h-6" />
+          </motion.button>
+          <motion.div 
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+            className="max-w-5xl w-full"
+          >
+            <video
+              src={videoPopup}
+              controls
+              autoPlay
+              playsInline
+              className="w-full rounded-lg shadow-2xl aspect-video"
+            />
+          </motion.div>
+        </motion.div>
       )}
 
       {/* Process / Tools Section */}

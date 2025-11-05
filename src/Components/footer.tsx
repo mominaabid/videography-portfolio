@@ -34,20 +34,6 @@ const Footer = () => {
               <span className="group-hover:text-purple-300 transition-colors duration-300">Los Angeles, CA</span>
             </p>
           </div>
-          <div className="flex gap-2 sm:gap-3 lg:gap-4 mt-3 sm:mt-4 lg:mt-6">
-            <a href="#" className="w-8 h-8 sm:w-9 sm:h-9 lg:w-10 lg:h-10 bg-gray-800 hover:bg-gradient-to-r hover:from-purple-500 hover:to-purple-700 rounded flex items-center justify-center transition-all duration-300 transform hover:scale-110 hover:-translate-y-1 hover:shadow-lg hover:shadow-purple-500/50">
-              <Instagram size={14} className="sm:w-4 sm:h-4 lg:w-[18px] lg:h-[18px] transition-transform duration-300 hover:rotate-12" />
-            </a>
-            <a href="#" className="w-8 h-8 sm:w-9 sm:h-9 lg:w-10 lg:h-10 bg-gray-800 hover:bg-gradient-to-r hover:from-purple-500 hover:to-purple-700 rounded flex items-center justify-center transition-all duration-300 transform hover:scale-110 hover:-translate-y-1 hover:shadow-lg hover:shadow-purple-500/50">
-              <Youtube size={14} className="sm:w-4 sm:h-4 lg:w-[18px] lg:h-[18px] transition-transform duration-300 hover:rotate-12" />
-            </a>
-            <a href="#" className="w-8 h-8 sm:w-9 sm:h-9 lg:w-10 lg:h-10 bg-gray-800 hover:bg-gradient-to-r hover:from-purple-500 hover:to-purple-700 rounded flex items-center justify-center transition-all duration-300 transform hover:scale-110 hover:-translate-y-1 hover:shadow-lg hover:shadow-purple-500/50">
-              <Twitter size={14} className="sm:w-4 sm:h-4 lg:w-[18px] lg:h-[18px] transition-transform duration-300 hover:rotate-12" />
-            </a>
-            <a href="#" className="w-8 h-8 sm:w-9 sm:h-9 lg:w-10 lg:h-10 bg-gray-800 hover:bg-gradient-to-r hover:from-purple-500 hover:to-purple-700 rounded flex items-center justify-center transition-all duration-300 transform hover:scale-110 hover:-translate-y-1 hover:shadow-lg hover:shadow-purple-500/50">
-              <Linkedin size={14} className="sm:w-4 sm:h-4 lg:w-[18px] lg:h-[18px] transition-transform duration-300 hover:rotate-12" />
-            </a>
-          </div>
         </div>
 
         {/* Quick Links */}

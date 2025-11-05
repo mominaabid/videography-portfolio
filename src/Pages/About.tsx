@@ -21,7 +21,11 @@ import Footer from "../Components/footer";
 interface Stat {
   id: number;
   name: string;
-  value: number;
+  value: string;
+  suffix: string;
+  icon: string;
+  order: number;
+  is_active: boolean;
 }
 interface CoreValue {
   id: number;
@@ -82,6 +86,17 @@ const itemVariant = {
   show: { opacity: 1, y: 0, scale: 1, transition: { duration: 1, ease: smoothEase } },
 };
 
+// Helper to parse "4M" → 4000000, "10K" → 10000 for animation
+const parseStatValue = (value: string): number => {
+  const match = value.match(/^(\d+)([MK]?)$/);
+  if (!match) return 0;
+  const num = parseInt(match[1]);
+  const suffix = match[2];
+  if (suffix === "M") return num * 1_000_000;
+  if (suffix === "K") return num * 1_000;
+  return num;
+};
+
 const About = () => {
   const [hero, setHero] = useState<Hero | null>(null);
   const [stats, setStats] = useState<Stat[]>([]);
@@ -134,7 +149,7 @@ const About = () => {
           skillsJson,
           ctaJson,
           tabsJson,
-        ] = await Promise.all([
+        ]: any[] = await Promise.all([
           heroRes.json(),
           statsRes.json(),
           coreRes.json(),
@@ -161,7 +176,7 @@ const About = () => {
     fetchAll();
   }, []);
 
-  // Counter Animation (unchanged logic but same behavior)
+  // Counter Animation — parses string for animation but displays raw value
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -174,7 +189,8 @@ const About = () => {
             const progress = Math.min(elapsed / duration, 1);
 
             const updated = stats.reduce((acc, stat) => {
-              acc[stat.name] = Math.floor(stat.value * progress);
+              const numericValue = parseStatValue(stat.value);
+              acc[stat.name] = Math.floor(numericValue * progress);
               return acc;
             }, {} as Record<string, number>);
 
@@ -199,130 +215,7 @@ const About = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-900 to-black text-white overflow-x-hidden">
-      {/* HERO */}
-      {hero && (
-        <section className="relative overflow-hidden min-h-screen h-[110vh] sm:h-screen flex items-center justify-center">
-          {/* subtle overlay: animated for parallax-like depth */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1.2, ease: smoothEase }}
-            className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-transparent z-10 pointer-events-none"
-            aria-hidden
-          />
-
-          <motion.video
-            initial={{ scale: 1.02 }}
-            animate={{ scale: 1 }}
-            transition={{ duration: 12, ease: smoothEase }}
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="absolute top-0 left-0 w-full h-full object-cover opacity-50"
-          >
-            <source src={hero.video_url} type="video/mp4" />
-          </motion.video>
-
-          <div className="relative z-20 flex items-center justify-center text-center px-4 sm:px-8 w-full h-full py-20">
-            <div className="max-w-2xl sm:max-w-3xl w-full">
-              <motion.div
-                initial={{ opacity: 0, y: 10, scale: 0.98 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{ duration: 1, delay: 0.2, ease: smoothEase }}
-                className="inline-flex items-center gap-2 bg-purple-600/20 border border-purple-500/30 px-3 py-1 rounded-full mb-4 sm:mb-6 text-sm sm:text-base"
-              >
-                <Sparkles size={14} className="text-purple-400" />
-                <span>About Me</span>
-              </motion.div>
-
-              <motion.h1
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1.2, delay: 0.3, ease: smoothEase }}
-                className="text-3xl sm:text-5xl font-bold mb-4 leading-snug"
-              >
-                {hero.title.split(" ").slice(0, -2).join(" ")}
-                <span className="block bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 bg-clip-text text-transparent mt-1">
-                  {hero.title.split(" ").slice(-2).join(" ")}
-                </span>
-              </motion.h1>
-
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1, delay: 0.5, ease: smoothEase }}
-                className="text-gray-300 text-base sm:text-lg mb-6"
-              >
-                {hero.subtitle}
-              </motion.p>
-
-              <motion.button
-                initial={{ opacity: 0, scale: 0.98 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ type: "spring" as const, stiffness: 80, damping: 10, delay: 0.7 }}
-                whileHover={{ scale: 1.04 }}
-                whileTap={{ scale: 0.98 }}
-                className="group bg-gradient-to-r from-purple-600 to-pink-600 px-6 py-3 rounded-lg font-semibold flex items-center gap-2 mx-auto text-sm sm:text-base"
-              >
-                <PlayCircle size={18} />
-                {hero.button_text}
-              </motion.button>
-            </div>
-          </div>
-
-          <div className="absolute bottom-0 h-16 bg-gradient-to-t from-gray-900 to-transparent w-full z-10 pointer-events-none" />
-        </section>
-      )}
-
-      {/* STATS */}
-      {stats.length > 0 && (
-        <section ref={statsRef} className="py-16 px-6 bg-gradient-to-br from-gray-900 to-[#1A0D2A]">
-          <motion.div
-            variants={sectionContainer}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, margin: "-80px" }}
-            custom={0.1}
-            className="max-w-6xl mx-auto"
-          >
-            <motion.div
-              variants={{
-                hidden: { opacity: 0 },
-                show: { opacity: 1, transition: { staggerChildren: 0.14 } },
-              }}
-              className="grid grid-cols-2 md:grid-cols-4 gap-6"
-            >
-              {stats.map((stat, i) => {
-                const Icon = [Briefcase, Users, Award, Globe][i % 4];
-                return (
-                  <motion.div
-                    key={stat.id}
-                    variants={itemVariant}
-                    whileHover={{ scale: 1.05, y: -6, transition: hoverSpring }}
-                    className="bg-gray-800/50 p-6 rounded-2xl border border-gray-700/50 text-center"
-                  >
-                    <motion.div
-                      initial={{ scale: 0.88, rotate: -20, opacity: 0 }}
-                      whileInView={{ scale: 1, rotate: 0, opacity: 1 }}
-                      transition={{ duration: 0.9, ease: smoothEase }}
-                      viewport={{ once: true, margin: "-50px" }}
-                      className="w-14 h-14 mx-auto bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center mb-4"
-                    >
-                      <Icon size={20} />
-                    </motion.div>
-                    <div className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-                      {counters[stat.name] || 0}+
-                    </div>
-                    <div className="text-gray-400 mt-2 text-sm sm:text-base">{stat.name}</div>
-                  </motion.div>
-                );
-              })}
-            </motion.div>
-          </motion.div>
-        </section>
-      )}
-
+      
       {/* TABS */}
       {tabContent.length > 0 && (
         <section className="py-12 sm:py-16 px-4 sm:px-8 bg-gray-900">
@@ -428,6 +321,57 @@ const About = () => {
               </div>
             </div>
           </div>
+        </section>
+      )}
+      {/* STATS */}
+      {stats.length > 0 && (
+        <section ref={statsRef} className="py-16 px-6 bg-gradient-to-br from-gray-900 to-[#1A0D2A]">
+          <motion.div
+            variants={sectionContainer}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-80px" }}
+            custom={0.1}
+            className="max-w-6xl mx-auto"
+          >
+            <motion.div
+              variants={{
+                hidden: { opacity: 0 },
+                show: { opacity: 1, transition: { staggerChildren: 0.14 } },
+              }}
+              className="grid grid-cols-2 md:grid-cols-4 gap-6"
+            >
+              {stats.map((stat) => {
+                const iconIndex = ["Briefcase", "Users", "Award", "Globe"].indexOf(stat.icon);
+                const Icon = iconIndex !== -1 ? [Briefcase, Users, Award, Globe][iconIndex] : Briefcase;
+                const displayValue = counters[stat.name] !== undefined
+                  ? stat.value + stat.suffix
+                  : stat.value + stat.suffix;
+                return (
+                  <motion.div
+                    key={stat.id}
+                    variants={itemVariant}
+                    whileHover={{ scale: 1.05, y: -6, transition: hoverSpring }}
+                    className="bg-gray-800/50 p-6 rounded-2xl border border-gray-700/50 text-center"
+                  >
+                    <motion.div
+                      initial={{ scale: 0.88, rotate: -20, opacity: 0 }}
+                      whileInView={{ scale: 1, rotate: 0, opacity: 1 }}
+                      transition={{ duration: 0.9, ease: smoothEase }}
+                      viewport={{ once: true, margin: "-50px" }}
+                      className="w-14 h-14 mx-auto bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center mb-4"
+                    >
+                      <Icon size={20} />
+                    </motion.div>
+                    <div className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                      {displayValue}
+                    </div>
+                    <div className="text-gray-400 mt-2 text-sm sm:text-base">{stat.name}</div>
+                  </motion.div>
+                );
+              })}
+            </motion.div>
+          </motion.div>
         </section>
       )}
 

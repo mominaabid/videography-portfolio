@@ -11,20 +11,7 @@ import {
   Film,
   Eye,
   X,
-  ChevronRight,
-  ChevronLeft,
 } from 'lucide-react';
-
-interface HeroSlide {
-  id: number;
-  title: string;
-  image: string;
-  video: string;
-  category: string;
-  views: string;
-  image_url?: string;
-  video_url?: string;
-}
 
 interface Category {
   id: number;
@@ -55,49 +42,36 @@ const iconMap: Record<string, any> = {
 };
 
 const Portfolio = () => {
-  const [heroSlides, setHeroSlides] = useState<HeroSlide[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<number | 'all'>('all');
-  const [currentSlide, setCurrentSlide] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [videoPopup, setVideoPopup] = useState<string | null>(null);
   const projectsPerPage = 6;
 
- useEffect(() => {
-  const fetchData = async () => {
-    try {
-      const [heroRes, catRes, projRes] = await Promise.all([
-        fetch('https://backendvideography.vercel.app/api/portfolio/hero-slides/'),
-        fetch('https://backendvideography.vercel.app/api/portfolio/categories/'),
-        fetch('https://backendvideography.vercel.app/api/portfolio/projects/'),
-      ]);
-
-      const heroData = await heroRes.json();
-      const catData = await catRes.json();
-      const projData = await projRes.json();
-
-      setHeroSlides(heroData.results || heroData);
-      setCategories(catData.results || catData);
-      setProjects(projData.results || projData);
-    } catch (error) {
-      console.error('Error fetching portfolio data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  fetchData();
-}, []);
-
   useEffect(() => {
-    if (heroSlides.length === 0) return;
-    const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, [heroSlides]);
+    const fetchData = async () => {
+      try {
+        const [catRes, projRes] = await Promise.all([
+          fetch('https://backendvideography.vercel.app/api/portfolio/categories/'),
+          fetch('https://backendvideography.vercel.app/api/portfolio/projects/'),
+        ]);
+
+        const catData = await catRes.json();
+        const projData = await projRes.json();
+
+        setCategories(catData.results || catData);
+        setProjects(projData.results || projData);
+      } catch (error) {
+        console.error('Error fetching portfolio data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const filteredProjects =
     selectedCategory === 'all'
@@ -116,11 +90,6 @@ const Portfolio = () => {
     setCurrentPage(1);
   };
 
-  const nextSlide = () =>
-    setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
-  const prevSlide = () =>
-    setCurrentSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length);
-
   if (loading) {
     return (
       <div className="min-h-screen flex justify-center items-center bg-black text-white">
@@ -134,174 +103,33 @@ const Portfolio = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-900 to-black text-white overflow-x-hidden">
-      <Header/>
-      {/* Hero Section */}
-      <section className="relative h-[85vh] sm:h-[75vh] md:h-[80vh] lg:h-[85vh] overflow-hidden">
-        {/* Background Slides */}
-        <div className="absolute inset-0">
-          {heroSlides.map((slide, index) => (
-            <div
-              key={slide.id}
-              className={`absolute inset-0 transition-opacity duration-1000 ${
-                index === currentSlide ? 'opacity-100' : 'opacity-0'
-              }`}
-            >
-              <img
-                src={slide.image_url || slide.image}
-                alt={slide.title}
-                className="w-full h-full object-cover object-center"
-                loading={index === 0 ? 'eager' : 'lazy'}
-              />
-              <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/80"></div>
-            </div>
-          ))}
-        </div>
-
-        {/* Content */}
-        <div className="relative z-10 h-full flex items-center px-4 sm:px-6 lg:px-8">
-          <div className="max-w-7xl mx-auto w-full">
-            <div className="grid md:grid-cols-2 gap-6 md:gap-10 lg:gap-12 items-center">
-              {/* Left Content */}
-              <motion.div 
-                initial={{ opacity: 0, x: -80 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 1, ease: "easeOut" }}
-                className="text-center md:text-left space-y-3 sm:space-y-4 md:space-y-5"
-              >
-                <motion.div 
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
-                  className="inline-flex items-center gap-2 bg-purple-600/20 border border-purple-500/30 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full"
-                >
-                  <Film className="text-purple-400" size={16} />
-                  <span className="text-purple-300 text-xs sm:text-sm font-medium">
-                    Featured Project
-                  </span>
-                </motion.div>
-                
-                <motion.h1 
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.9, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                  className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold leading-tight px-2 sm:px-0"
-                >
-                  {heroSlides[currentSlide]?.title || 'Amazing Project'}
-                </motion.h1>
-                
-                <motion.div 
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: 0.5, ease: "easeOut" }}
-                  className="flex items-center justify-center md:justify-start flex-wrap gap-2 sm:gap-3"
-                >
-                  <span className="px-3 sm:px-4 py-1 sm:py-1.5 bg-purple-600/30 rounded-full text-xs sm:text-sm">
-                    {heroSlides[currentSlide]?.category || 'Category'}
-                  </span>
-                  <div className="flex items-center gap-1.5 sm:gap-2 text-gray-300 text-xs sm:text-sm">
-                    <Eye size={16} />
-                    <span>{heroSlides[currentSlide]?.views || '0'} views</span>
-                  </div>
-                </motion.div>
-                
-                <motion.div 
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.8, delay: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                  className="pt-2"
-                >
-                  <button
-                    onClick={() => setVideoPopup(heroSlides[currentSlide]?.video_url || heroSlides[currentSlide]?.video)}
-                    className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 sm:px-8 py-2.5 sm:py-3.5 rounded-lg font-semibold text-sm sm:text-base hover:scale-105 active:scale-95 transition-all inline-flex items-center gap-2 shadow-lg shadow-purple-500/30"
-                  >
-                    <Play size={18} />
-                    <span>Watch Full Video</span>
-                  </button>
-                </motion.div>
-              </motion.div>
-
-              {/* Right Video Preview - Desktop Only */}
-              <motion.div 
-                initial={{ opacity: 0, x: 80, rotateY: 15 }}
-                animate={{ opacity: 1, x: 0, rotateY: 0 }}
-                transition={{ duration: 1.2, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                className="hidden md:block relative"
-              >
-                <div className="overflow-hidden rounded-xl border-2 sm:border-4 border-purple-500/50 shadow-2xl shadow-purple-500/20 aspect-video">
-                  <video
-                    src={heroSlides[currentSlide]?.video_url || heroSlides[currentSlide]?.video}
-                    muted
-                    loop
-                    autoPlay
-                    playsInline
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              </motion.div>
-            </div>
-          </div>
-        </div>
-
-        {/* Navigation Controls */}
-        {heroSlides.length > 1 && (
-          <>
-            {/* Arrow Buttons */}
-            <button
-              onClick={prevSlide}
-              className="absolute left-2 sm:left-4 lg:left-6 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center transition-all"
-              aria-label="Previous slide"
-            >
-              <ChevronLeft size={20} className="sm:w-6 sm:h-6" />
-            </button>
-            <button
-              onClick={nextSlide}
-              className="absolute right-2 sm:right-4 lg:right-6 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center transition-all"
-              aria-label="Next slide"
-            >
-              <ChevronRight size={20} className="sm:w-6 sm:h-6" />
-            </button>
-
-            {/* Slide Indicators */}
-            <div className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-1.5 sm:gap-2">
-              {heroSlides.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentSlide(index)}
-                  className={`h-1.5 sm:h-2 rounded-full transition-all ${
-                    index === currentSlide
-                      ? 'bg-purple-500 w-6 sm:w-8'
-                      : 'bg-white/40 hover:bg-white/60 w-1.5 sm:w-2'
-                  }`}
-                  aria-label={`Go to slide ${index + 1}`}
-                />
-              ))}
-            </div>
-          </>
-        )}
-      </section>
-
+      <Header />
       {/* Projects Section */}
       <section className="py-10 sm:py-12 md:py-16 px-4 sm:px-6 lg:px-8 bg-gray-900">
         <div className="max-w-7xl mx-auto">
           {/* Section Header */}
           <div className="text-center mb-6 sm:mb-8 md:mb-10">
             <motion.h2 
-              initial={{ opacity: 0, y: -30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-              viewport={{ once: true, margin: "-100px" }}
-              className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 sm:mb-3"
-            >
-              Explore Our{' '}
-              <span className="bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 bg-clip-text text-transparent">
-                Work
-              </span>
-            </motion.h2>
+  initial={{ opacity: 1, y: 0 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+  className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 sm:mb-3 text-white"
+  style={{ 
+    color: 'white',
+    opacity: 1,
+    visibility: 'visible'
+  }}
+>
+  Explore Our{' '}
+  <span className="bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 bg-clip-text text-transparent">
+    Work
+  </span>
+</motion.h2>
             <motion.div 
               initial={{ scaleX: 0 }}
               whileInView={{ scaleX: 1 }}
               transition={{ duration: 1, delay: 0.3, ease: "easeInOut" }}
-              viewport={{ once: true, margin: "-100px" }}
+              viewport={{ once: false, margin: "-100px" }}
               className="w-12 sm:w-16 h-1 bg-gradient-to-r from-purple-500 to-pink-500 mx-auto"
             ></motion.div>
           </div>
@@ -483,6 +311,7 @@ const Portfolio = () => {
         </div>
       </section>
 
+
       {/* CTA Section */}
       <section className="py-10 sm:py-14 md:py-16 bg-gradient-to-br from-purple-900/20 to-gray-900 text-center px-4 sm:px-6">
         <div className="max-w-3xl mx-auto">
@@ -518,7 +347,7 @@ const Portfolio = () => {
           </motion.button>
         </div>
       </section>
-      <Footer/>
+      <Footer />
 
       {/* Video Modal */}
       {videoPopup && (
