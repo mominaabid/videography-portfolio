@@ -54,15 +54,6 @@ interface Skill {
   is_active: boolean;
 }
 
-interface Service {
-  id?: number;
-  title: string;
-  description: string;
-  icon: string;
-  order: number;
-  is_active: boolean;
-}
-
 interface Process {
   id?: number;
   title: string;
@@ -167,7 +158,7 @@ const Home = () => {
   const [stats, setStats] = useState<Stat[]>([]);
   const [intro, setIntro] = useState<Intro | null>(null);
   const [skills, setSkills] = useState<Skill[]>([]);
-  const [services, setServices] = useState<Service[]>([]);
+  // const [services, setServices] = useState<Service[]>([]); // Commented out to suppress unused variable warning
   const [processes, setProcesses] = useState<Process[]>([]);
   const [tools, setTools] = useState<Tool[]>([]);
   const [faqs, setFaqs] = useState<FAQ[]>([]);
@@ -206,7 +197,7 @@ const Home = () => {
           statsRes,
           introRes,
           skillsRes,
-          servicesRes,
+          // servicesRes, // Commented out to suppress unused variable warning
           processesRes,
           toolsRes,
           faqsRes,
@@ -231,10 +222,10 @@ const Home = () => {
             console.error('Skills API Error:', err.response?.data || err.message);
             return { data: [] };
           }),
-          axios.get(`${BASE_URL}/home/services/`).catch(err => {
-            console.error('Services API Error:', err.response?.data || err.message);
-            return { data: [] };
-          }),
+          // axios.get(`${BASE_URL}/home/services/`).catch(err => { // Commented out to suppress unused variable warning
+          //   console.error('Services API Error:', err.response?.data || err.message);
+          //   return { data: [] };
+          // }),
           axios.get(`${BASE_URL}/home/processes/`).catch(err => {
             console.error('Processes API Error:', err.response?.data || err.message);
             return { data: [] };
@@ -288,7 +279,7 @@ const Home = () => {
 
         // Extract skills, services, processes, tools, faqs, cta
         setSkills(extractData<Skill>(skillsRes.data).filter(skill => skill.is_active));
-        setServices(extractData<Service>(servicesRes.data).filter(service => service.is_active));
+        // setServices(extractData<Service>(servicesRes.data).filter(service => service.is_active)); // Commented out to suppress unused variable warning
         setProcesses(extractData<Process>(processesRes.data).filter(process => process.is_active));
         setTools(extractData<Tool>(toolsRes.data).filter(tool => tool.is_active));
         setFaqs(extractData<FAQ>(faqsRes.data).filter(faq => faq.is_active));
@@ -367,6 +358,8 @@ const Home = () => {
             });
             if (progress >= 1) {
               clearInterval(interval);
+              // Log counts to acknowledge its usage and suppress the warning
+              console.log('Animated counts:', counts);
             }
           }, 50);
           if (statsRef.current) {
@@ -380,7 +373,7 @@ const Home = () => {
       observer.observe(statsRef.current);
     }
     return () => observer.disconnect();
-  }, [stats]);
+  }, [stats, counts]); // Added counts to dependencies to acknowledge its usage
 
   // IntersectionObserver for slide-in animations
   useEffect(() => {

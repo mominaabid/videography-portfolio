@@ -79,17 +79,6 @@ const itemVariant = {
   show: { opacity: 1, y: 0, scale: 1, transition: { duration: 1, ease: smoothEase } },
 };
 
-// Helper to parse "4M" → 4000000, "10K" → 10000 for animation
-const parseStatValue = (value: string): number => {
-  const match = value.match(/^(\d+)([MK]?)$/);
-  if (!match) return 0;
-  const num = parseInt(match[1]);
-  const suffix = match[2];
-  if (suffix === "M") return num * 1_000_000;
-  if (suffix === "K") return num * 1_000;
-  return num;
-};
-
 const About = () => {
   const [stats, setStats] = useState<Stat[]>([]);
   const [coreValues, setCoreValues] = useState<CoreValue[]>([]);
@@ -98,7 +87,6 @@ const About = () => {
   const [cta, setCTA] = useState<CTA | null>(null);
   const [tabContent, setTabContent] = useState<TabContent[]>([]);
   const [activeTab, setActiveTab] = useState<"story" | "philosophy" | "approach">("story");
-  const [counters, setCounters] = useState<Record<string, number>>({});
   const statsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -149,38 +137,6 @@ const About = () => {
 
     fetchAll();
   }, []);
-
-  // Counter Animation
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && stats.length > 0) {
-          const duration = 2000;
-          const startTime = Date.now();
-
-          const interval = setInterval(() => {
-            const elapsed = Date.now() - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-
-            const updated = stats.reduce((acc, stat) => {
-              const numericValue = parseStatValue(stat.value);
-              acc[stat.name] = Math.floor(numericValue * progress);
-              return acc;
-            }, {} as Record<string, number>);
-
-            setCounters(updated);
-            if (progress >= 1) clearInterval(interval);
-          }, 30);
-
-          return () => clearInterval(interval);
-        }
-      },
-      { threshold: 0.3 }
-    );
-
-    if (statsRef.current) observer.observe(statsRef.current);
-    return () => observer.disconnect();
-  }, [stats]);
 
   const valueIcons = [Heart, Eye, Lightbulb, Users];
   const timelineIcons = [PlayCircle, Award, Briefcase, Globe, Sparkles];
