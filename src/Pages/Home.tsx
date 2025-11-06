@@ -320,65 +320,70 @@ const Home = () => {
   }, []);
 
   // === DATA FETCHING ===
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
+// === DATA FETCHING ===
+useEffect(() => {
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
 
-        const [
-          heroRes,
-          statsRes,
-          introRes,
-          skillsRes,
-          toolsRes,
-          faqsRes,
-          ctaRes,
-          tabsRes,
-          projectsRes
-        ] = await Promise.all([
-          axios.get(`${BASE_URL}/home/hero/`).catch(() => ({ data: null })),
-          axios.get(`${BASE_URL}/home/stats/`).catch(() => ({ data: [] })),
-          axios.get(`${BASE_URL}/home/intro/`).catch(() => ({ data: null })),
-          axios.get(`${BASE_URL}/home/skills/`).catch(() => ({ data: [] })),
-          axios.get(`${BASE_URL}/home/tools/`).catch(() => ({ data: [] })),
-          axios.get(`${BASE_URL}/home/faqs/`).catch(() => ({ data: [] })),
-          axios.get(`${BASE_URL}/home/cta/`).catch(() => ({ data: null })),
-          axios.get(`${BASE_URL}/about/tab-content/`).catch(() => ({ data: [] })),
-          axios.get(`${BASE_URL}/api/portfolio/categories/`).catch(() => ({ data: [] })),
-          axios.get(`${BASE_URL}/api/portfolio/projects/`).catch(() => ({ data: [] }))
-        ]);
+      const [
+        heroRes,
+        statsRes,
+        introRes,
+        skillsRes,
+        toolsRes,
+        faqsRes,
+        ctaRes,
+        tabsRes,
+        // remove categories if you don’t need them on Home
+        projectsRes
+      ] = await Promise.all([
+        axios.get(`${BASE_URL}/home/hero/`).catch(() => ({ data: null })),
+        axios.get(`${BASE_URL}/home/stats/`).catch(() => ({ data: [] })),
+        axios.get(`${BASE_URL}/home/intro/`).catch(() => ({ data: null })),
+        axios.get(`${BASE_URL}/home/skills/`).catch(() => ({ data: [] })),
+        axios.get(`${BASE_URL}/home/tools/`).catch(() => ({ data: [] })),
+        axios.get(`${BASE_URL}/home/faqs/`).catch(() => ({ data: [] })),
+        axios.get(`${BASE_URL}/home/cta/`).catch(() => ({ data: null })),
+        axios.get(`${BASE_URL}/about/tab-content/`).catch(() => ({ data: [] })),
+        // categories removed – not used on Home
+        axios.get(`${BASE_URL}/api/portfolio/projects/`).catch(() => ({ data: { results: [] } }))
+      ]);
 
-        const heroData = extractData<Hero>(heroRes.data);
-        const heroItem = heroData[0];
-        if (heroItem?.typewriter_phrases) {
-          const phrasesData = Array.isArray(heroItem.typewriter_phrases)
-            ? heroItem.typewriter_phrases
-            : typeof heroItem.typewriter_phrases === 'string'
+      // ---- HERO ----
+      const heroData = extractData<Hero>(heroRes.data);
+      const heroItem = heroData[0];
+      if (heroItem?.typewriter_phrases) {
+        const phrasesData = Array.isArray(heroItem.typewriter_phrases)
+          ? heroItem.typewriter_phrases
+          : typeof heroItem.typewriter_phrases === 'string'
             ? heroItem.typewriter_phrases.split(',').map(p => p.trim())
             : ['Cinematic Excellence'];
-          setPhrases(phrasesData);
-        }
-
-        setStats(extractData<Stat>(statsRes.data).filter(s => s.is_active));
-        setIntro(extractData<Intro>(introRes.data)[0] || null);
-        setSkills(extractData<Skill>(skillsRes.data).filter(s => s.is_active));
-        setTools(extractData<Tool>(toolsRes.data).filter(t => t.is_active));
-        setFaqs(extractData<FAQ>(faqsRes.data).filter(f => f.is_active));
-        setCta(extractData<CTA>(ctaRes.data)[0] || null);
-        setTabContent(extractData<TabContent>(tabsRes.data));
-        
-        setProjects(extractData<Project>(projectsRes.data));
-
-        setLoading(false);
-      } catch (err: any) {
-        setError(`Failed to load data: ${err.message}`);
-        setLoading(false);
+        setPhrases(phrasesData);
       }
-    };
 
-    fetchData();
-  }, []);
+      setStats(extractData<Stat>(statsRes.data).filter(s => s.is_active));
+      setIntro(extractData<Intro>(introRes.data)[0] || null);
+      setSkills(extractData<Skill>(skillsRes.data).filter(s => s.is_active));
+      setTools(extractData<Tool>(toolsRes.data).filter(t => t.is_active));
+      setFaqs(extractData<FAQ>(faqsRes.data).filter(f => f.is_active));
+      setCta(extractData<CTA>(ctaRes.data)[0] || null);
+      setTabContent(extractData<TabContent>(tabsRes.data));
+
+      // ---- PROJECTS (the important line) ----
+      const projectList = extractData<Project>(projectsRes.data);
+      setProjects(projectList);
+
+      setLoading(false);
+    } catch (err: any) {
+      setError(`Failed to load data: ${err.message}`);
+      setLoading(false);
+    }
+  };
+
+  fetchData();
+}, []);
 
   // === TYPEWRITER EFFECT ===
   useEffect(() => {
