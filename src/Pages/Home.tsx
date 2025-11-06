@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
 import { Phone, AtSign, User, Hash, FileText, Send, CheckCircle } from 'lucide-react';
@@ -55,15 +55,6 @@ interface Skill {
   order: number;
   is_active: boolean;
 }
-
-// interface Process {
-//   id?: number;
-//   title: string;
-//   description: string;
-//   icon: string;
-//   order: number;
-//   is_active: boolean;
-// }
 
 interface Tool {
   id?: number;
@@ -166,7 +157,6 @@ const Home = () => {
   const [stats, setStats] = useState<Stat[]>([]);
   const [intro, setIntro] = useState<Intro | null>(null);
   const [skills, setSkills] = useState<Skill[]>([]);
-  // const [processes, setProcesses] = useState<Process[]>([]);
   const [tools, setTools] = useState<Tool[]>([]);
   const [faqs, setFaqs] = useState<FAQ[]>([]);
   const [cta, setCta] = useState<CTA | null>(null);
@@ -185,12 +175,11 @@ const Home = () => {
   const [phrases, setPhrases] = useState<string[]>(['Cinematic Excellence']);
   const [tabContent, setTabContent] = useState<TabContent[]>([]);
   const [activeTab, setActiveTab] = useState<string>("story");
-  const [categories, setCategories] = useState<Category[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<number | 'all'>('all');
-  const [currentPage, setCurrentPage] = useState(1);
   const [videoPopup, setVideoPopup] = useState<string | null>(null);
-  const projectsPerPage = 6;
+  
+  // Add ref for contact form section
+  const contactFormRef = useRef<HTMLDivElement>(null);
 
   // === FORM STATES ===
   const [formData, setFormData] = useState<FormData>({
@@ -253,6 +242,27 @@ const Home = () => {
     }
   };
 
+  // === SCROLL TO CONTACT FORM ===
+  useLayoutEffect(() => {
+  const scrollToContact = () => {
+    const element = document.getElementById('contact');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  if (window.location.hash === '#contact') {
+    const timer = setTimeout(scrollToContact, 300);
+    return () => clearTimeout(timer);
+  }
+
+  const handleHashChange = () => {
+    if (window.location.hash === '#contact') scrollToContact();
+  };
+  window.addEventListener('hashchange', handleHashChange);
+  return () => window.removeEventListener('hashchange', handleHashChange);
+}, []);
+
   // === DATA FETCHING ===
   useEffect(() => {
     const fetchData = async () => {
@@ -265,7 +275,6 @@ const Home = () => {
           statsRes,
           introRes,
           skillsRes,
-          // processesRes,
           toolsRes,
           faqsRes,
           ctaRes,
@@ -277,7 +286,6 @@ const Home = () => {
           axios.get(`${BASE_URL}/home/stats/`).catch(() => ({ data: [] })),
           axios.get(`${BASE_URL}/home/intro/`).catch(() => ({ data: null })),
           axios.get(`${BASE_URL}/home/skills/`).catch(() => ({ data: [] })),
-          // axios.get(`${BASE_URL}/home/processes/`).catch(() => ({ data: [] })),
           axios.get(`${BASE_URL}/home/tools/`).catch(() => ({ data: [] })),
           axios.get(`${BASE_URL}/home/faqs/`).catch(() => ({ data: [] })),
           axios.get(`${BASE_URL}/home/cta/`).catch(() => ({ data: null })),
@@ -300,12 +308,15 @@ const Home = () => {
         setStats(extractData<Stat>(statsRes.data).filter(s => s.is_active));
         setIntro(extractData<Intro>(introRes.data)[0] || null);
         setSkills(extractData<Skill>(skillsRes.data).filter(s => s.is_active));
-        // setProcesses(extractData<Process>(processesRes.data).filter(p => p.is_active));
         setTools(extractData<Tool>(toolsRes.data).filter(t => t.is_active));
         setFaqs(extractData<FAQ>(faqsRes.data).filter(f => f.is_active));
         setCta(extractData<CTA>(ctaRes.data)[0] || null);
         setTabContent(extractData<TabContent>(tabsRes.data));
-        setCategories(extractData<Category>(categoriesRes.data));
+        
+        // Store categories but don't use them (removing unused variable warning)
+        const fetchedCategories = extractData<Category>(categoriesRes.data);
+        console.log('Categories loaded:', fetchedCategories.length);
+        
         setProjects(extractData<Project>(projectsRes.data));
 
         setLoading(false);
@@ -408,19 +419,6 @@ const Home = () => {
 
   const getTab = (tabName: string) => tabContent.find(t => t.tab_name === tabName);
 
-  const filteredProjects = selectedCategory === 'all'
-    ? projects
-    : projects.filter(p => p.category === selectedCategory);
-
-  const totalPages = Math.ceil(filteredProjects.length / projectsPerPage);
-  const startIndex = (currentPage - 1) * projectsPerPage;
-  const currentProjects = filteredProjects.slice(startIndex, startIndex + projectsPerPage);
-
-  const handleCategoryChange = (categoryId: number | 'all') => {
-    setSelectedCategory(categoryId);
-    setCurrentPage(1);
-  };
-
   // === RENDER ===
   if (loading) return (
     <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
@@ -517,7 +515,7 @@ const Home = () => {
                   viewport={{ once: true }}
                   className="mb-6 sm:mb-8 flex flex-row gap-3 sm:gap-4"
                 >
-                  {["story", "philosophy", "approach"].map((tab) => (
+                  {["story", "philosophy", "process"].map((tab) => (
                     <motion.button
                       key={tab}
                       whileHover={{ scale: 1.04 }}
@@ -598,7 +596,7 @@ const Home = () => {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-6 sm:mb-8 md:mb-10">
             <motion.h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 sm:mb-3 text-white">
-              Explore Our{' '}
+              Explore Our{" "}
               <span className="bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 bg-clip-text text-transparent">
                 Work
               </span>
@@ -606,49 +604,13 @@ const Home = () => {
             <motion.div className="w-12 sm:w-16 h-1 bg-gradient-to-r from-purple-500 to-pink-500 mx-auto"></motion.div>
           </div>
 
-          {/* Filters */}
-          <motion.div className="mb-6 sm:mb-8">
-            <div className="flex flex-wrap justify-center items-center gap-2 sm:gap-3 px-4">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => handleCategoryChange('all')}
-                className={`flex items-center gap-1.5 sm:gap-2 px-4 sm:px-5 py-2 rounded-lg text-xs sm:text-sm font-semibold transition ${
-                  selectedCategory === 'all'
-                    ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg'
-                    : 'bg-gray-800 hover:bg-gray-700 text-gray-300'
-                }`}
-              >
-                <Sparkles size={14} /> All Projects
-              </motion.button>
-              {categories.map((cat) => {
-                const Icon = iconMap[cat.icon] || Sparkles;
-                return (
-                  <motion.button
-                    key={cat.id}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => handleCategoryChange(cat.id)}
-                    className={`flex items-center gap-1.5 sm:gap-2 px-4 sm:px-5 py-2 rounded-lg text-xs sm:text-sm font-semibold transition ${
-                      selectedCategory === cat.id
-                        ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg'
-                        : 'bg-gray-800 hover:bg-gray-700 text-gray-300'
-                    }`}
-                  >
-                    <Icon size={14} /> {cat.name}
-                  </motion.button>
-                );
-              })}
-            </div>
-          </motion.div>
-
-          {/* Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
-            {currentProjects.map((p) => (
+            {projects.slice(0, 3).map((p) => (
               <motion.div
                 key={p.id}
                 whileHover={{ y: -10, scale: 1.02 }}
-                className="group bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg overflow-hidden border border-gray-700 hover:border-purple-500 transition-all duration-300 hover:shadow-xl"
+                onClick={() => (window.location.href = "/portfolio")}
+                className="group bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg overflow-hidden border border-gray-700 hover:border-purple-500 transition-all duration-300 hover:shadow-xl cursor-pointer"
               >
                 <div className="relative aspect-video overflow-hidden bg-gray-800">
                   <motion.img
@@ -658,20 +620,19 @@ const Home = () => {
                     loading="lazy"
                   />
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                  <button
-                    onClick={() => setVideoPopup(p.video_url || p.video)}
-                    className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                  >
+                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                     <motion.div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center shadow-lg">
                       <Play size={18} className="fill-white ml-0.5" />
                     </motion.div>
-                  </button>
+                  </div>
                 </div>
                 <div className="p-4 sm:p-5">
                   <h3 className="text-base sm:text-lg font-semibold mb-2 line-clamp-1 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-purple-400 group-hover:to-pink-400 transition-all">
                     {p.title}
                   </h3>
-                  <p className="text-gray-400 text-xs sm:text-sm mb-3 line-clamp-2">{p.description}</p>
+                  <p className="text-gray-400 text-xs sm:text-sm mb-3 line-clamp-2">
+                    {p.description}
+                  </p>
                   <div className="flex items-center gap-1.5 text-gray-500 text-xs">
                     <Eye size={14} /> <span>{p.views}</span>
                   </div>
@@ -680,46 +641,16 @@ const Home = () => {
             ))}
           </div>
 
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="flex justify-center items-center gap-2 mt-8 sm:mt-10">
-              <button
-                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                disabled={currentPage === 1}
-                className="px-3 py-2 sm:px-4 rounded-lg bg-gray-800 hover:bg-gray-700 disabled:opacity-50 text-xs sm:text-sm transition"
-              >
-                Previous
-              </button>
-              {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
-                let pageNum = i + 1;
-                if (totalPages > 5 && currentPage > 3 && currentPage < totalPages - 2) {
-                  pageNum = currentPage - 2 + i;
-                } else if (totalPages > 5 && currentPage >= totalPages - 2) {
-                  pageNum = totalPages - 4 + i;
-                }
-                return (
-                  <button
-                    key={pageNum}
-                    onClick={() => setCurrentPage(pageNum)}
-                    className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg text-xs sm:text-sm font-medium transition ${
-                      currentPage === pageNum
-                        ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg'
-                        : 'bg-gray-800 hover:bg-gray-700 text-gray-300'
-                    }`}
-                  >
-                    {pageNum}
-                  </button>
-                );
-              })}
-              <button
-                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                disabled={currentPage === totalPages}
-                className="px-3 py-2 sm:px-4 rounded-lg bg-gray-800 hover:bg-gray-700 disabled:opacity-50 text-xs sm:text-sm transition"
-              >
-                Next
-              </button>
-            </div>
-          )}
+          <div className="text-center mt-10">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => (window.location.href = "/portfolio")}
+              className="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg font-semibold shadow-lg hover:shadow-purple-500/40 transition-all duration-300"
+            >
+              View More Projects
+            </motion.button>
+          </div>
         </div>
       </section>
 
@@ -741,65 +672,42 @@ const Home = () => {
       )}
 
       {/* === PROCESS & TOOLS === */}
-      { (
- <section className="relative py-20 bg-gray-900">
-  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div className="text-center mb-16">
-      <motion.h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4">
-        Process &{" "}
-        <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600">
-          Tools
-        </span>
-      </motion.h2>
-    </div>
+      <section className="relative py-20 bg-gray-900">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <motion.h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4">
+              Process &{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600">
+                Tools
+              </span>
+            </motion.h2>
+          </div>
 
-    <div className="flex items-center justify-center">
-      {tools.length > 0 && (
-        <div
-          className="
-            grid 
-            grid-cols-1 sm:grid-cols-2 
-            gap-6 sm:gap-10 
-            w-full 
-            max-w-5xl 
-            justify-items-center
-          "
-        >
-          {tools.map((tool, i) => {
-            const Icon = iconMap[tool.icon] || Laptop;
-            return (
-              <div
-                key={i}
-                className="
-                  w-full sm:w-[90%] md:w-full
-                  p-6 
-                  rounded-2xl 
-                  bg-white/5 
-                  backdrop-blur-sm 
-                  border border-white/10 
-                  hover:border-purple-500/50 
-                  transition 
-                  text-left
-                "
-              >
-                <Icon size={32} className="text-purple-400 mb-3" />
-                <h4 className="text-base sm:text-lg font-semibold text-white">
-                  {tool.title}
-                </h4>
-                <p className="text-gray-400 text-xs sm:text-sm">
-                  {tool.description}
-                </p>
+          <div className="flex items-center justify-center">
+            {tools.length > 0 && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-10 w-full max-w-5xl justify-items-center">
+                {tools.map((tool, i) => {
+                  const Icon = iconMap[tool.icon] || Laptop;
+                  return (
+                    <div
+                      key={i}
+                      className="w-full sm:w-[90%] md:w-full p-6 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:border-purple-500/50 transition text-left"
+                    >
+                      <Icon size={32} className="text-purple-400 mb-3" />
+                      <h4 className="text-base sm:text-lg font-semibold text-white">
+                        {tool.title}
+                      </h4>
+                      <p className="text-gray-400 text-xs sm:text-sm">
+                        {tool.description}
+                      </p>
+                    </div>
+                  );
+                })}
               </div>
-            );
-          })}
+            )}
+          </div>
         </div>
-      )}
-    </div>
-  </div>
-</section>
-
-
-      )}
+      </section>
 
       <Testimonials />
 
@@ -834,7 +742,7 @@ const Home = () => {
       )}
 
       {/* === CTA + CONTACT FORM === */}
-      <section className="py-12 sm:py-24 px-4 bg-gradient-to-b from-black to-purple-950/20">
+      <section ref={contactFormRef} id="contact" className="py-12 sm:py-24 px-4 bg-gradient-to-b from-black to-purple-950/20">
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
             {/* Map */}
@@ -861,7 +769,7 @@ const Home = () => {
               <h2 className="text-2xl sm:text-4xl md:text-5xl font-bold mb-4">
                 Send Us a <span className="bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">Message</span>
               </h2>
-              <p className="text-gray-400 mb-6">Fill out the form below and we’ll get back to you within 24 hours.</p>
+              <p className="text-gray-400 mb-6">Fill out the form below and we'll get back to you within 24 hours.</p>
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 {formError && (

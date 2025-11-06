@@ -86,7 +86,7 @@ const About = () => {
   const [skills, setSkills] = useState<Skill[]>([]);
   const [cta, setCTA] = useState<CTA | null>(null);
   const [tabContent, setTabContent] = useState<TabContent[]>([]);
-  const [activeTab, setActiveTab] = useState<"story" | "philosophy" | "approach">("story");
+  const [activeTab, setActiveTab] = useState<"story" | "philosophy" | "process">("story");
   const statsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -138,6 +138,11 @@ const About = () => {
     fetchAll();
   }, []);
 
+  // Function to navigate to contact form
+  const navigateToContact = () => {
+  window.location.href = "/#contact";
+  };
+
   const valueIcons = [Heart, Eye, Lightbulb, Users];
   const timelineIcons = [PlayCircle, Award, Briefcase, Globe, Sparkles];
   const skillIcons = [Camera, Sparkles, Film, Zap, Target, Eye];
@@ -157,7 +162,7 @@ const About = () => {
               viewport={{ once: true, margin: "-80px" }}
               className="flex flex-wrap justify-center gap-3 sm:gap-4 mb-8 sm:mb-12"
             >
-              {["story", "philosophy", "approach"].map((tab, index) => (
+              {["story", "philosophy", "process"].map((tab, index) => (
                 <motion.button
                   key={tab}
                   initial={{ opacity: 0, scale: 0.98 }}
@@ -512,17 +517,18 @@ const About = () => {
               {cta.description}
             </motion.p>
             <motion.button
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.9, delay: 0.25, ease: smoothEase }}
-              viewport={{ once: true, margin: "-80px" }}
-              whileHover={{ scale: 1.06, transition: hoverSpring }}
-              whileTap={{ scale: 0.98 }}
-              className="group inline-flex items-center gap-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:scale-105 transition-transform px-6 sm:px-8 py-3 sm:py-4 rounded-lg font-semibold"
-            >
-              <span className="text-sm sm:text-base">{cta.button_text}</span>
-              <ArrowRight className="group-hover:translate-x-2 transition-transform" />
-            </motion.button>
+  initial={{ opacity: 0, y: 20 }}
+  whileInView={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.9, delay: 0.25, ease: smoothEase }}
+  viewport={{ once: true, margin: "-80px" }}
+  whileHover={{ scale: 1.06, transition: hoverSpring }}
+  whileTap={{ scale: 0.98 }}
+  onClick={navigateToContact}  // ADD THIS LINE
+  className="group inline-flex items-center gap-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:scale-105 transition-transform px-6 sm:px-8 py-3 sm:py-4 rounded-lg font-semibold cursor-pointer"  // ADD cursor-pointer
+>
+  <span className="text-sm sm:text-base">{cta.button_text}</span>
+  <ArrowRight className="group-hover:translate-x-2 transition-transform" />
+</motion.button>
           </div>
         </section>
       )}

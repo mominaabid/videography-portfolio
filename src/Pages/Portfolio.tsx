@@ -334,17 +334,17 @@ const Portfolio = () => {
             Let's bring your vision to life with cinematic excellence.
           </motion.p>
           <motion.button
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            viewport={{ once: true, margin: "-100px" }}
-            whileHover={{ scale: 1.05, transition: { duration: 0.3 } }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => (window.location.href = '/contact')}
-            className="bg-gradient-to-r from-purple-600 to-pink-600 hover:scale-105 active:scale-95 text-white px-6 sm:px-8 py-2.5 sm:py-3.5 rounded-lg font-semibold text-sm sm:text-base transition-all shadow-lg shadow-purple-500/30"
-          >
-            Start Your Project
-          </motion.button>
+  initial={{ opacity: 0, y: 30 }}
+  whileInView={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.8, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
+  viewport={{ once: true, margin: "-100px" }}
+  whileHover={{ scale: 1.05, transition: { duration: 0.3 } }}
+  whileTap={{ scale: 0.95 }}
+  onClick={() => (window.location.href = '/#contact')}
+  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:scale-105 active:scale-95 text-white px-6 sm:px-8 py-2.5 sm:py-3.5 rounded-lg font-semibold text-sm sm:text-base transition-all shadow-lg shadow-purple-500/30"
+>
+  Start Your Project
+</motion.button>
         </div>
       </section>
       <Footer />

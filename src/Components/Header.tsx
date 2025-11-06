@@ -4,7 +4,7 @@ import { Menu, X } from 'lucide-react';
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [siteConfig, setSiteConfig] = useState({ logo_url: null, site_name: 'Alex Rodriguez' });
+  const [siteConfig, setSiteConfig] = useState({ logo_url: null, site_name: 'Logo' });
 
   useEffect(() => {
     const handleScroll = () => {
