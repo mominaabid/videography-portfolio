@@ -527,7 +527,7 @@ useEffect(() => {
                   viewport={{ once: true }}
                   src={intro.image_url || intro.image}
                   alt="Videographer"
-                  className="w-full max-w-[90%] h-[300px] sm:h-[400px] md:h-[500px] lg:h-[600px] object-cover border-2 sm:border-4 border-gray-700 rounded-xl sm:rounded-2xl shadow-[0_0_20px_rgba(147,112,219,0.8)] mx-auto"
+                  className="w-full max-w-[70%] sm:max-w-[85%] md:max-w-[90%] h-auto aspect-[3/4] object-cover border-2 sm:border-4 border-gray-700 rounded-xl sm:rounded-2xl shadow-[0_0_20px_rgba(147,112,219,0.8)] mx-auto"
                 />
                 {stats.length > 0 ? (
                   <div ref={statsRef} className="grid grid-cols-2 gap-3 sm:gap-6 pt-6 sm:pt-8">

@@ -17,6 +17,7 @@ import {
   Target,
 } from "lucide-react";
 import Footer from "../Components/footer";
+import Header from "../Components/Header";
 
 interface Stat {
   id: number;
@@ -150,7 +151,7 @@ const About = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-900 to-black text-white overflow-x-hidden">
-      
+    <Header />      
       {/* TABS */}
       {tabContent.length > 0 && (
         <section className="py-12 sm:py-16 px-4 sm:px-8 bg-gray-900">
