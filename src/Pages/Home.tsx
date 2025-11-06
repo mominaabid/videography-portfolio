@@ -503,13 +503,13 @@ useEffect(() => {
 
       {/* === INTRO SECTION === */}
       {intro && (
-        <section className="intro-section py-0 sm:py-12 px-0 bg-gray-900 overflow-visible">
+        <section className="intro-section py-0 px-0 bg-gray-900 overflow-visible -mt-4">
           <motion.div
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
-            className="max-w-7xl pb-6 sm:pb-8 mx-auto w-full bg-gray-900 rounded-3xl shadow-2xl"
+            className="max-w-7xl mx-auto w-full bg-gray-900 rounded-3xl shadow-2xl"
           >
             <div className="flex flex-col md:flex-row gap-0">
               {/* Left: Image + Stats */}
@@ -518,7 +518,7 @@ useEffect(() => {
                 whileInView={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.9, delay: 0.2 }}
                 viewport={{ once: true }}
-                className="md:w-1/2 pl-1 sm:pl-8 md:pl-32 pr-0 pt-4 sm:pt-6 md:pt-4 pb-4 flex flex-col items-center"
+                className="md:w-1/2 pl-1 sm:pl-8 md:pl-32 pr-0 pt-0 pb-4 flex flex-col items-center"
               >
                 <motion.img
                   initial={{ opacity: 0, scale: 0.8, rotateY: -20 }}
@@ -527,10 +527,10 @@ useEffect(() => {
                   viewport={{ once: true }}
                   src={intro.image_url || intro.image}
                   alt="Videographer"
-                  className="w-full max-w-[70%] sm:max-w-[85%] md:max-w-[90%] h-auto aspect-[3/4] object-cover border-2 sm:border-4 border-gray-700 rounded-xl sm:rounded-2xl shadow-[0_0_20px_rgba(147,112,219,0.8)] mx-auto"
+                  className="w-fw-full max-w-[70%] sm:max-w-[85%] md:max-w-[90%] h-auto aspect-[3/4] object-cover border-2 sm:border-4 border-gray-700 rounded-xl sm:rounded-2xl shadow-[0_0_20px_rgba(147,112,219,0.8)] mx-auto -mt-4 sm:-mt-6 md:-mt-8"
                 />
                 {stats.length > 0 ? (
-                  <div ref={statsRef} className="grid grid-cols-2 gap-3 sm:gap-6 pt-6 sm:pt-8">
+                  <div ref={statsRef} className="grid grid-cols-2 gap-3 sm:gap-6 pt-8 sm:pt-6">
                     {stats.map((stat, index) => {
                       const Icon = iconMap[stat.icon] || Calendar;
                       return (
