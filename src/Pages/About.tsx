@@ -143,7 +143,7 @@ const About = () => {
   window.location.href = "/#contact";
   };
 
-  const valueIcons = [Heart, Eye, Lightbulb, Users];
+  const valueIcons = [Heart, Film, Lightbulb, Users];
   const timelineIcons = [PlayCircle, Award, Briefcase, Globe, Sparkles];
   const skillIcons = [Camera, Sparkles, Film, Zap, Target, Eye];
   const getTab = (name: string) => tabContent.find((t) => t.tab_name === name);

@@ -40,7 +40,7 @@ const Footer = () => {
         <div className="animate-fadeInUp" style={{ animationDelay: '0.1s' }}>
           <h3 className="text-sm sm:text-base lg:text-lg font-semibold mb-3 sm:mb-4 lg:mb-6 text-white transition-colors duration-300 hover:text-purple-400">Quick Links</h3>
           <ul className="space-y-2 sm:space-y-2.5 lg:space-y-3">
-            {['Home', 'About', 'Portfolio', 'Contact'].map((link, index) => (
+            {['Home', 'About', 'Portfolio', ].map((link, index) => (
               <li key={link} style={{ animationDelay: `${0.1 + index * 0.05}s` }} className="animate-fadeInLeft">
                 <a
                   href={link === 'Home' ? '/' : `/${link.toLowerCase()}`}
@@ -94,7 +94,7 @@ const Footer = () => {
 
       {/* Bottom Bar */}
       <div className="max-w-7xl mx-auto mt-8 sm:mt-12 lg:mt-16 pt-4 sm:pt-6 lg:pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center gap-3 sm:gap-4 text-xs sm:text-sm text-gray-500 animate-fadeInUp" style={{ animationDelay: '0.4s' }}>
-        <p className="transition-colors duration-300 hover:text-purple-400 text-center md:text-left">© 2024 Alex Rodriguez. All rights reserved.</p>
+        <p className="transition-colors duration-300 hover:text-purple-400 text-center md:text-left">© 2025 Alex Rodriguez. All rights reserved.</p>
         <div className="flex flex-wrap justify-center gap-3 sm:gap-4 lg:gap-6">
           <a href="/privacy-policy" className="hover:text-purple-400 transition-all duration-300 relative group whitespace-nowrap">
             <span className="relative z-10">Privacy Policy</span>

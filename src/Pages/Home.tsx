@@ -1,15 +1,17 @@
 import { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
-import { Phone, AtSign, User, Hash, FileText, Send, CheckCircle } from 'lucide-react';
+import {
+  Phone, AtSign, User, Hash, FileText, Send, CheckCircle, Download
+} from 'lucide-react';
 import emailjs from 'emailjs-com';
 import Header from '../Components/Header';
 import Footer from '../Components/footer';
 import Testimonials from '../Components/Testimonials';
 import {
   Play, Award, Calendar, Users, MapPin, ArrowUpRight, HelpCircle,
-  PenTool, Palette, Music, MessageCircle, Edit3, Cpu, Camera, Laptop, Workflow, Wifi,
-  Sparkles, Heart, Building2, Film, Eye, X
+  PenTool, Palette, Music, MessageCircle, Edit3, Cpu, Camera, Laptop,
+  Workflow, Wifi, Sparkles, Heart, Building2, Film, Eye, X
 } from 'lucide-react';
 
 // === INTERFACES ===
@@ -92,12 +94,12 @@ interface TabContent {
   image_url?: string;
 }
 
-interface Category {
-  id: number;
-  name: string;
-  icon: string;
-  count: number;
-}
+// interface Category {
+//   id: number;
+//   name: string;
+//   icon: string;
+//   count: number;
+// }
 
 interface Project {
   id: number;
@@ -128,7 +130,18 @@ interface FormData {
   message: string;
 }
 
+interface CVData {
+  cv_file: string;
+  cv_file_url?: string;
+  cv_url?: string;
+}
+
 const BASE_URL = 'https://backendvideography.vercel.app';
+
+// Dynamic endpoint – local in dev, prod in build
+const CV_ENDPOINT = import.meta.env.DEV
+  ? 'http://127.0.0.1:8000/api/cv/active/'
+  : `${BASE_URL}/api/cv/active/`;
 
 // === HELPERS ===
 const extractData = <T,>(response: any): T[] => {
@@ -177,9 +190,52 @@ const Home = () => {
   const [activeTab, setActiveTab] = useState<string>("story");
   const [projects, setProjects] = useState<Project[]>([]);
   const [videoPopup, setVideoPopup] = useState<string | null>(null);
-  
-  // Add ref for contact form section
   const contactFormRef = useRef<HTMLDivElement>(null);
+
+  // === CV STATE ===
+  const [, setCvData] = useState<CVData | null>(null);
+  const [cvLoading, setCvLoading] = useState(false);
+
+  // === FETCH CV (exactly as you requested) ===
+  useEffect(() => {
+    const fetchCV = async () => {
+      try {
+        const response = await fetch(CV_ENDPOINT);
+        if (response.ok) {
+          const data = await response.json();
+          setCvData(data.length > 0 ? data[0] : null);
+        }
+      } catch (error) {
+        console.error("Error fetching CV:", error);
+      }
+    };
+    fetchCV();
+  }, []);
+
+  // === HANDLE VIEW CV (API call + open in new tab) ===
+ const handleViewCV = async () => {
+  setCvLoading(true);
+  try {
+    const response = await fetch(CV_ENDPOINT);
+    if (response.ok) {
+      const data = await response.json();
+      const cv = Array.isArray(data) && data.length > 0 ? data[0] : data;
+
+      if (cv?.cv_url) {
+        window.open(cv.cv_url, '_blank', 'noopener,noreferrer');
+      } else {
+        alert('CV URL not found.');
+      }
+    } else {
+      alert('Failed to load CV. Please try again.');
+    }
+  } catch (error) {
+    console.error("Error fetching CV on click:", error);
+    alert('Network error. Please check your connection.');
+  } finally {
+    setCvLoading(false);
+  }
+};
 
   // === FORM STATES ===
   const [formData, setFormData] = useState<FormData>({
@@ -244,24 +300,24 @@ const Home = () => {
 
   // === SCROLL TO CONTACT FORM ===
   useLayoutEffect(() => {
-  const scrollToContact = () => {
-    const element = document.getElementById('contact');
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const scrollToContact = () => {
+      const element = document.getElementById('contact');
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    };
+
+    if (window.location.hash === '#contact') {
+      const timer = setTimeout(scrollToContact, 300);
+      return () => clearTimeout(timer);
     }
-  };
 
-  if (window.location.hash === '#contact') {
-    const timer = setTimeout(scrollToContact, 300);
-    return () => clearTimeout(timer);
-  }
-
-  const handleHashChange = () => {
-    if (window.location.hash === '#contact') scrollToContact();
-  };
-  window.addEventListener('hashchange', handleHashChange);
-  return () => window.removeEventListener('hashchange', handleHashChange);
-}, []);
+    const handleHashChange = () => {
+      if (window.location.hash === '#contact') scrollToContact();
+    };
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
 
   // === DATA FETCHING ===
   useEffect(() => {
@@ -279,7 +335,6 @@ const Home = () => {
           faqsRes,
           ctaRes,
           tabsRes,
-          categoriesRes,
           projectsRes
         ] = await Promise.all([
           axios.get(`${BASE_URL}/home/hero/`).catch(() => ({ data: null })),
@@ -312,10 +367,6 @@ const Home = () => {
         setFaqs(extractData<FAQ>(faqsRes.data).filter(f => f.is_active));
         setCta(extractData<CTA>(ctaRes.data)[0] || null);
         setTabContent(extractData<TabContent>(tabsRes.data));
-        
-        // Store categories but don't use them (removing unused variable warning)
-        const fetchedCategories = extractData<Category>(categoriesRes.data);
-        console.log('Categories loaded:', fetchedCategories.length);
         
         setProjects(extractData<Project>(projectsRes.data));
 
@@ -577,7 +628,20 @@ const Home = () => {
                             <Play size={16} className="group-hover:scale-110 transition-transform" />
                             {intro.primary_button_text}
                           </button>
-                          <button className="bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white px-3 py-2 sm:px-5 sm:py-2.5 rounded-lg font-semibold text-sm sm:text-base transition-all duration-300 border border-white/30 hover:border-white/50 w-fit mx-auto sm:mx-0">
+
+                          {/* CV BUTTON: Fresh API call + open in new tab */}
+                          <button
+                            onClick={handleViewCV}
+                            disabled={cvLoading}
+                            className={`flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white px-3 py-2 sm:px-5 sm:py-2.5 rounded-lg font-semibold text-sm sm:text-base transition-all duration-300 border border-white/30 hover:border-white/50 w-fit mx-auto sm:mx-0 ${
+                              cvLoading ? 'opacity-50 cursor-not-allowed' : ''
+                            }`}
+                          >
+                            {cvLoading ? (
+                              <div className="w-4 h-4 border-2 border-t-transparent border-white rounded-full animate-spin"></div>
+                            ) : (
+                              <Download size={16} />
+                            )}
                             {intro.secondary_button_text}
                           </button>
                         </motion.div>
