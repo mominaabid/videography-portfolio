@@ -665,9 +665,9 @@ useEffect(() => {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-6 sm:mb-8 md:mb-10">
             <motion.h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 sm:mb-3 text-white">
-              Explore Our{" "}
+             The Niches That{" "}
               <span className="bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 bg-clip-text text-transparent">
-                Work
+                Define My Portfolio
               </span>
             </motion.h2>
             <motion.div className="w-12 sm:w-16 h-1 bg-gradient-to-r from-purple-500 to-pink-500 mx-auto"></motion.div>
