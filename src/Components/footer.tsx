@@ -7,7 +7,7 @@ const Footer = () => {
         {/* Brand Section */}
         <div className="animate-fadeInUp">
           <h2 className="text-lg sm:text-xl lg:text-2xl font-bold mb-2 sm:mb-3 lg:mb-4 bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 bg-clip-text text-transparent transform hover:scale-105 transition-transform duration-300">
-            Alex Rodriguez
+            Muhammad Daud
           </h2>
           <p className="text-gray-400 text-xs sm:text-sm leading-relaxed mb-3 sm:mb-4 lg:mb-6 transition-colors duration-300 hover:text-gray-300">
             Professional videographer creating cinematic stories that inspire and engage audiences worldwide.
@@ -18,20 +18,20 @@ const Footer = () => {
               <svg className="w-3 h-3 sm:w-4 sm:h-4 text-purple-400 group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
               </svg>
-              <span className="group-hover:text-purple-300 transition-colors duration-300 break-all">alex@alexrodriguez.video</span>
+              <span className="group-hover:text-purple-300 transition-colors duration-300 break-all">muhammad.daud.editor@gmail.com</span>
             </p>
             <p className="text-gray-400 text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2 group transition-all duration-300 hover:translate-x-1">
               <svg className="w-3 h-3 sm:w-4 sm:h-4 text-purple-400 group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
               </svg>
-              <span className="group-hover:text-purple-300 transition-colors duration-300">+1 (555) 123-4567</span>
+              <span className="group-hover:text-purple-300 transition-colors duration-300">+923028974047</span>
             </p>
             <p className="text-gray-400 text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2 group transition-all duration-300 hover:translate-x-1">
               <svg className="w-3 h-3 sm:w-4 sm:h-4 text-purple-400 group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
-              <span className="group-hover:text-purple-300 transition-colors duration-300">Los Angeles, CA</span>
+              <span className="group-hover:text-purple-300 transition-colors duration-300">Islamabad,Pakistan</span>
             </p>
           </div>
         </div>
@@ -94,21 +94,8 @@ const Footer = () => {
 
       {/* Bottom Bar */}
       <div className="max-w-7xl mx-auto mt-8 sm:mt-12 lg:mt-16 pt-4 sm:pt-6 lg:pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center gap-3 sm:gap-4 text-xs sm:text-sm text-gray-500 animate-fadeInUp" style={{ animationDelay: '0.4s' }}>
-        <p className="transition-colors duration-300 hover:text-purple-400 text-center md:text-left">© 2025 Alex Rodriguez. All rights reserved.</p>
-        <div className="flex flex-wrap justify-center gap-3 sm:gap-4 lg:gap-6">
-          <a href="/privacy-policy" className="hover:text-purple-400 transition-all duration-300 relative group whitespace-nowrap">
-            <span className="relative z-10">Privacy Policy</span>
-            <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-purple-400 group-hover:w-full transition-all duration-300"></span>
-          </a>
-          <a href="/terms-of-service" className="hover:text-purple-400 transition-all duration-300 relative group whitespace-nowrap">
-            <span className="relative z-10">Terms of Service</span>
-            <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-purple-400 group-hover:w-full transition-all duration-300"></span>
-          </a>
-          <a href="#" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="hover:text-purple-400 transition-all duration-300 relative group whitespace-nowrap">
-            <span className="relative z-10">Back to Top</span>
-            <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-purple-400 group-hover:w-full transition-all duration-300"></span>
-          </a>
-        </div>
+        <p className="transition-colors duration-300 hover:text-purple-400 text-center md:text-left">© 2025. All rights reserved.</p>
+     
       </div>
     </footer>
   );

@@ -256,47 +256,43 @@ const Home = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
     setFormError(null);
   };
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  if (!formData.name || !formData.email || !formData.subject || !formData.message) {
+    setFormError('Please fill in all required fields.');
+    return;
+  }
 
-    if (!formData.name || !formData.email || !formData.subject || !formData.message) {
-      setFormError('Please fill in all required fields.');
-      return;
-    }
-
-    const templateParams = {
-      name: formData.name,
-      email: formData.email,
-      whatsapp: formData.whatsapp,
-      subject: formData.subject,
-      message: formData.message,
-    };
-
-    try {
-      await emailjs.send(
-        'service_62k6n0x',
-        'template_feji55x',
-        templateParams,
-        'qU_ljJITgXTBKHwWp'
-      );
-
-      await emailjs.send(
-        'service_62k6n0x',
-        'template_hcg887f',
-        templateParams,
-        'qU_ljJITgXTBKHwWp'
-      );
-
-      setIsSubmitted(true);
-      setFormError(null);
-      setFormData({ name: '', email: '', whatsapp: '', subject: '', message: '' });
-      setTimeout(() => setIsSubmitted(false), 3000);
-    } catch (err) {
-      console.error(err);
-      setFormError('Failed to send message. Please try again.');
-    }
+  const templateParams = {
+    name: formData.name,
+    email: formData.email,
+    whatsapp: formData.whatsapp,
+    subject: formData.subject,
+    message: formData.message,
   };
+
+  try {
+    console.log('Sending email with params:', templateParams); // Debug log
+    
+    const response = await emailjs.send(
+      'service_t0pawjh',
+      'template_05v1iyi',
+      templateParams,
+      'Cw8opDgdlvyc27n2Q'
+    );
+    
+    console.log('Email sent successfully:', response); // Debug log
+
+    setIsSubmitted(true);
+    setFormError(null);
+    setFormData({ name: '', email: '', whatsapp: '', subject: '', message: '' });
+    setTimeout(() => setIsSubmitted(false), 3000);
+  } catch (err: any) {
+    console.error('EmailJS Error:', err); // Detailed error log
+    setFormError(`Failed to send message: ${err?.text || err?.message || 'Unknown error'}`);
+  }
+};
 
   // === SCROLL TO CONTACT FORM ===
   useLayoutEffect(() => {
